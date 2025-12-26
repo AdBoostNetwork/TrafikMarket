@@ -4,6 +4,7 @@ class account():
     1)id (tg id int)
     2)name (str max 50 smbols)
     3)current_balance (float)
+    4)frozen_balance (float)
     4)ids_of_deals (list of ints)
     5)scs_count (int)
     6)id_of_trnactions (list of ints)
@@ -46,7 +47,7 @@ class deal():
     3) buyer_id (int)
     4) buyer_trnaction_id (int)
     5) seller_trnaction_id (int)
-    6) type (str) (scs_completed/canceled/active)
+    6) type (str) (scs_completed/canceled/active/disputed/in_disput)
     7) chat (str)
     """
 
@@ -89,4 +90,23 @@ def undep(summ):
     :param summ:
     :return:
     """
+
+    "___________________________________"
+    """Функционал бота для админов
+    
+/start-> приветствие с двумя кнопками
+1) 'получить инфу об юзере'->запрашивает id/name юзера, если получает инт то это ади, если не инт, это юз.
+после чего присылает сообщение с инфой об пользователе с двумя кнопками
+1.1) 'Забанить/разбанить' -> меняет account.is_banned и обновляет инфу в сообщении 
+1.2) 'Вернуться'-> возвращает к /start
+
+2) 'Посмотреть открытые споры' -> выводит сообщение с 7 кнопками первые пять, это объекты deal.type==disputed, в сортировке deal.deal_id по возрастанию
+2.1-2.5) 'спор по заказу 69'  -> меняет deal.type на in_disput (чтобы 2 админа не брали один спор) и выводит инфу по заказу и 2 кнопки:
+2.1.1) 'Прав продавец' -> меняет deal.type на scs_completed, создает транзакции списывания денег у покупателя из account.frozen_balance
+и пополнения у продавца в account.current_ballance. возвращает на сообщение с заказами
+2.1.2) 'Прав покупатель' -> меняет deal.type на canceled, возвращает покупателю деньги из account.frozen_balance в account.current_ballance
+2.6) 'Показать следующие 5 споров' -> показывает след 5 объявлений 
+2.7) 'Вернуться' -> возвращает к /start
+
+"""
 

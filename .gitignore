@@ -1,5 +1,5 @@
 ../TraffkMarket/.idea/
 .DS_Store
-.env
+Backend/.env
 .idea/
 .vscode/

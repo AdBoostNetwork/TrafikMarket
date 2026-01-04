@@ -1,6 +1,7 @@
 from database import get_appeal_buy_id, change_appeal, create_appeal
 from classes import Appeal
 
+
 async def msg_to_support(user_id, text):
     appeal = await get_appeal_buy_id(user_id)
 

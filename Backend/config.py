@@ -14,7 +14,8 @@ class DbConfig:
 
 load_dotenv()
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+MAIN_BOT_TOKEN = os.getenv("MAIN_BOT_TOKEN")
+SUPP_BOT_TOKEN = os.getenv("SUPPORT_BOT_TOKEN")
 
 DB_CONFIG = DbConfig(
     admin=os.getenv("DB_ADMIN"),

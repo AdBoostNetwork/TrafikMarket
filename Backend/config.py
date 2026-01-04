@@ -1,15 +1,6 @@
 import os
 from dotenv import load_dotenv
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
-class DbConfig:
-    admin: str
-    password: str
-    host: str
-    port: int
-    db_name: str
+from classes import DbConfig
 
 
 load_dotenv()

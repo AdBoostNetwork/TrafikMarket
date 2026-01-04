@@ -22,6 +22,9 @@ async def get_appeal_buy_id(user_from_id):
 
         appeal = result.mappings().first()
 
+        if not appeal:
+            return "appeal_not_found"
+
         return Appeal(
             appeal["user_from_id"],
             appeal["last_msg"],
@@ -30,12 +33,12 @@ async def get_appeal_buy_id(user_from_id):
         )
 
 
-async def change_appeal_status(user_from_id, status):
-    query = text("UPDATE appeals SET status = :status WHERE user_from_id = :user_from_id")
+async def change_appeal(user_from_id, status, last_msg, chat_append):
+    query = text("UPDATE appeals SET status = :status, last_msg = :last_msg, chat = chat || E'\n' || :chat_append WHERE user_from_id = :user_from_id")
 
     async with new_session() as session:
         try:
-            await session.execute(query,{"user_from_id": user_from_id, "status": status})
+            await session.execute(query,{"user_from_id": user_from_id, "status": status, "last_msg": last_msg, "chat_append": chat_append})
             await session.commit()
 
             return {"success": True}

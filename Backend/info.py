@@ -24,6 +24,7 @@ class Account():
 class Trnaction():
     """
     1) trnaction_id (int)
+    2) user_id (int)
     2) status (finished/in_progress/canceled)
     3) trnactn_time (datetime)
     4) summ (float)

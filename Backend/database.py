@@ -1,6 +1,6 @@
 from config import DB_CONFIG
 from classes import Appeal
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import text
 
 
@@ -36,6 +36,22 @@ async def change_appeal_status(user_from_id, status):
     async with new_session() as session:
         try:
             await session.execute(query,{"user_from_id": user_from_id, "status": status})
+            await session.commit()
+
+            return {"success": True}
+
+        except Exception as e:
+            await session.rollback()
+
+            return {"success": False, "error": str(e)}
+
+
+async def create_appeal(data: Appeal):
+    query = text("INSERT INTO appeals (user_from_id, last_msg, chat, status) VALUES (:user_from_id, :last_msg, :chat, :status)")
+
+    async with new_session() as session:
+        try:
+            await session.execute(query,{"user_from_id": data.user_from_id, "last_msg": data.last_msg, "chat": data.chat, "status": data.status})
             await session.commit()
 
             return {"success": True}

@@ -3,16 +3,18 @@ class Account():
     Хранится:
     1)id (tg id int)
     2)name (str max 50 smbols)
-    3)current_balance (float)
-    4)frozen_balance (float)
-    4)ids_of_deals (list of ints)
-    5)scs_count (int)
-    6)id_of_trnactions (list of ints)
-    7)id_of_amnts (list of ints)
-    8)ref_link (str max 50 smbols)
-    9)ref_ids (list of ints)
-    10)referi (int)
-    11)is_banned (bool)
+    3)tg_username (str max 50 smbols)
+    4)avatar_filename (str max 50 smbols)
+    5)current_balance (float)
+    6)frozen_balance (float)
+    7)ids_of_deals (list of ints)
+    8)scs_count (int)
+    9)id_of_trnactions (list of ints)
+    10)id_of_amnts (list of ints)
+    11)ref_link (str max 50 smbols)
+    12)ref_ids (list of ints)
+    13)referi (int)
+    14)is_banned (bool)
 
 
     Сoздается при нажатии /start в боте.
@@ -35,10 +37,10 @@ class Announ():
     1) announ_id (int)
     2) announ_name (str)
     3) seller_id (int)
-    3) price
-    4) topic
-    5)
-    6) status (in_moderating/moderated)
+    4) price (float)
+    5) topic (str)
+    6) announ_imgs (list of str)
+    7) status (in_moderating/moderated)
     """
 
 class Channel(Announ):
@@ -220,8 +222,9 @@ class Deal():
     1) deal_id (int)
     2) seller_id (int)
     3) buyer_id (int)
-    4) buyer_trnaction_id (int)
-    5) seller_trnaction_id (int)
+    4) deal_name (str) (по типу "Продажа канала"/"Покупка аккаунта")
+    5) cost (float)
+    6) deal_info (str)
     6) type (str) (scs_completed/canceled/active/disputed/in_disput)
     7) chat (str)
     """
@@ -250,8 +253,8 @@ def acc_maker(user_id, ref_id):
     """
 
 def get_account_info(user_id, ref_id = None):
-    """
-    Запускается при запуске бота. Если акка с таким id не существует, запускает функцию acc_maker
+    """нкцию acc_maker
+    Запускается при запуске бота. Если акка с таким id не существует, запускает фу
 
     :param user_id: tg_id (int)
     :param ref_id: refer_id (int)|None

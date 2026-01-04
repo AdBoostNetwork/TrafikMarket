@@ -3,3 +3,4 @@
 .env
 .idea/
 .vscode/
+bots/Support_bot/config.py

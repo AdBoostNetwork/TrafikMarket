@@ -28,3 +28,19 @@ async def get_appeal_buy_id(user_from_id):
             appeal["chat"],
             appeal["status"]
         )
+
+
+async def change_appeal_status(user_from_id, status):
+    query = text("UPDATE appeals SET status = :status WHERE user_from_id = :user_from_id")
+
+    async with new_session() as session:
+        try:
+            await session.execute(query,{"user_from_id": user_from_id, "status": status})
+            await session.commit()
+
+            return {"success": True}
+
+        except Exception as e:
+            await session.rollback()
+
+            return {"success": False, "error": str(e)}

@@ -389,11 +389,18 @@ def config_tp_bot_buttons(user_id: int = None, status: str = None, circle: int):
     :return: config, is_end
     """
 
+def close_appeal(appeal_id):
+    """
+    Закрывает апелляцию
+
+    :param appeal_id:
+    :return:
+    """
 
 #функционал юзера
 def create_new_appeal (user_id, topic):
     """
-    Создает новую аппеляцию, файл для чата, и папку для доп файлов
+    Создает новую апелляцию, файл для чата, и папку для доп файлов
     :param user_id:
     :param topic:
     :return:
@@ -415,7 +422,7 @@ def msg_to_support(appeal_id: int, text: str, filenames: list):
 
 def download_file(appeal_id: int, file):
     """
-    Сохранение приложенного файла. Вызывается столько раз, сколько файлов приложенно. Избежать конфликта имен. Возвращает имя.
+    Сохранение приложенного файла. Вызывается столько раз, сколько файлов приложено. Избежать конфликта имен. Возвращает имя.
     :param appeal_id:
     :param file:
     :return: filename
@@ -423,11 +430,17 @@ def download_file(appeal_id: int, file):
 
 
 #для админов
+def take_appeal(appeal_id):
+    """
+    Возвращает все, кроме статуса (расписывать не буду)
 
+    :param appeal_id:
+    :return:
+    """
 
 def msg_from_support(user_id, text):
     """
-    Отправляет ответ юзеру в боте, добавляет text к appeal.chat, ставит appeal.status=closed
+    Добавляет text к appeal.chat, ставит appeal.status=waiting_user
     :param user_id:
     :param text:
     :return:

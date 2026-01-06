@@ -230,12 +230,16 @@ class Deal():
     7) chat (str)
     """
 
-class Appeal():
+class Appeal_chat():
     """
-    1) user_from_id (int)
-    2) last_msg (str)
-    3) chat (str)
-    4) status (response_waiting/closed)
+    1) id (int)
+    2) user_id (int)
+    3) topic (str)
+    4) last_msg (str)
+    5) last_msg_files (list[str]) список имен файлов, прикрепленный к ласт сообщению
+    6) chat_filename (str) имя txt файла с чатом, лежащего на сервере
+    7) files_folder_filename (str) имя папки в файлами к обращению
+    8) status (waiting_adm/waiting_user/closed)
     """
 
 
@@ -319,6 +323,8 @@ def get_account_info(user_id, ref_id = None):
 
 "___________________________________"
 """Прочие функции бота:"""
+
+
 def sent_deal_msg(user_to_id, text, deal_info):
     """
     Отправляет сообщение второму участнику сделки, сохраняет его в deal.chat
@@ -364,11 +370,60 @@ def undep(summ):
 """
 "___________________________________"
 "бот ТП, функции"
-def msg_to_support(user_id, text):
-    """получает appeal() по user_id, если нет, то создает, добавляет text к appeal.chat, ставит appeal.status=response_waiting
-    :param user_id:
-    :param text:
+#общее
+def config_tp_bot_buttons(user_id: int = None, status: str = None, circle: int):
     """
+    Ставит фильтр (идин из первых двух параметров, и из полученных значений БД делает срез [5*circle: 5*(circle+1)] тут обработать крайние значения).
+    И возвращает словарь:
+    config = {f"Обращение №{id} по теме {topic}": id
+    f"Обращение №{id} по теме {topic}": id
+    f"Обращение №{id} по теме {topic}": id
+    f"Обращение №{id} по теме {topic}": id
+    f"Обращение №{id} по теме {topic}": id
+    }
+    и булевcкое значение is_end
+
+    :param user_id:
+    :param status:
+    :param circle:
+    :return: config, is_end
+    """
+
+
+#функционал юзера
+def create_new_appeal (user_id, topic):
+    """
+    Создает новую аппеляцию, файл для чата, и папку для доп файлов
+    :param user_id:
+    :param topic:
+    :return:
+    """
+
+
+
+def msg_to_support(appeal_id: int, text: str, filenames: list):
+    """
+    получает Appeal_chat() по appeal_id, добавляет text к Appeal_chat.chat и ставит его Appeal_chat.last_msg,
+    заменяет Appeal_chat.last_msg_files на filenames, ставит ставит Appeal_chat.status=waiting_adm
+
+    :param appeal_id:
+    :param text:
+    :param filenames:
+    :return:
+    """
+
+
+def download_file(appeal_id: int, file):
+    """
+    Сохранение приложенного файла. Вызывается столько раз, сколько файлов приложенно. Избежать конфликта имен. Возвращает имя.
+    :param appeal_id:
+    :param file:
+    :return: filename
+    """
+
+
+#для админов
+
 
 def msg_from_support(user_id, text):
     """

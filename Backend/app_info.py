@@ -1,7 +1,9 @@
 #Файл с информацией о функциях для взаимодействия фронтенда с бэкендом
 
 #Основная библиотека для связи фронтенда с бэкендом — FastAPI (https://fastapi.tiangolo.com/)
+from fastapi import FastAPI
 
+app = FastAPI()
 
 # ==== Страница 1 (Главное меню) ====
 
@@ -15,7 +17,29 @@
 # ==== Страница 4 (Заказы) ====
 
 
+
 # ==== Страница 5 (Реферальные ссылки) ====
+
+@app.get("/ref_link")
+#Ручка FastAPI, делающая get запрос к серверу для получения реферальной ссылки пользователя
+
+def get_ref_link(user_id: int):
+    """
+    Вызывает функцию БД (get_ref_link_db) для получения реферальной ссылки пользователя по user_id
+    Возвращает ссылку (строку)
+
+    :param user_id — Id пользователя, который обращается к приложению
+    :return: ref_link — Строка с ссылкой
+    """
+
+
+def get_ref_link_db(user_id: int):
+    """
+    Делает запрос к БД для получения реферальной ссылки по user_id
+
+    :param user_id — Id пользователя
+    :return: ref_link — Строка с ссылкой
+    """
 
 
 
@@ -39,7 +63,7 @@ class MyProfile:
     deps_list: list
 
 
-'@app.get("/my_profile")'
+@app.get("/my_profile")
 #Ручка FastAPI, делающая get запрос к серверу для получения данных, нужных для отрисовки страницы профиля
 
 def get_profile(user_id: int):
@@ -55,7 +79,7 @@ def get_profile_info_db(user_id: int):
     Делает запрос к БД для получения данных профиля по user_id и возвращает их в виде набора переменных:
     (name, deals_count, success_deals, balance, deps_list)
 
-    :param user_id:
+    :param user_id — Id пользователя
     :return: name, deals_count, success_deals, balance, deps_list
     """
 

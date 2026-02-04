@@ -1,5 +1,5 @@
-from config import DB_CONFIG
-from classes import Appeal
+from .config import DB_CONFIG
+from .classes import Appeal
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import text
 

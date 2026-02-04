@@ -6,16 +6,19 @@ from ..states.support import SupportState
 
 router = Router()
 
-SECTION_NAMES = {
-    "finance": "Финансы",
-    "orders": "Заказы",
-    "moderation": "Модерация объявлений",
+MAIN_MENU_SECTIONS = {
+    "dep": "Пополнения",
+    "undep": "Вывод",
+    "announs": "Объявления",
+    "deals": "Сделки",
+    "acc": "Аккаунт",
+    "other": "Другое  ",
 }
 
 @router.callback_query(lambda c: c.data.startswith("support:"))
 async def support_section(callback: CallbackQuery, state: FSMContext):
     section_key = callback.data.split(":")[1]
-    section_name = SECTION_NAMES.get(section_key, "выбранному разделу")
+    section_name = MAIN_MENU_SECTIONS.get(section_key, "выбранному разделу")
 
     await state.set_state(SupportState.waiting_for_question)
     await state.update_data(section=section_name)

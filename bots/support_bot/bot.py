@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 
 from .config import BOT_TOKEN
-from .handlers import start, callbacks, question
+from .handlers import start, user_callbacks, question
 
 async def main():
     bot = Bot(token=BOT_TOKEN)

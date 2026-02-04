@@ -1,7 +1,7 @@
 import asyncio
 
-from database import get_appeal_buy_id, create_appeal, change_appeal_status
-from classes import Appeal
+from .database import get_appeal_buy_id, create_appeal
+from .classes import Appeal
 
 
 new_appeal = Appeal(

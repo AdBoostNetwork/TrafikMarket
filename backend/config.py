@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from classes import DbConfig
+from .classes import DbConfig
 
 
 load_dotenv()

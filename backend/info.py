@@ -234,7 +234,7 @@ class Appeal_chat():
     """
     1) id (int)
     2) user_id (int)
-    3) topic (str)
+    3) topic (dep/undep/announs/deals/acc/other)
     4) last_msg (str)
     5) last_msg_files (list[str]) список имен файлов, прикрепленный к ласт сообщению
     6) chat_filename (str) имя txt файла с чатом, лежащего на сервере
@@ -371,7 +371,7 @@ def undep(summ):
 "___________________________________"
 "бот ТП, функции"
 #общее
-def config_tp_bot_buttons(user_id: int = None, status: str = None, circle: int):
+def config_tp_bot_buttons(user_id: int = None, status: str = None, circle: int = 0):
     """
     Ставит фильтр (идин из первых двух параметров, и из полученных значений БД делает срез [5*circle: 5*(circle+1)] тут обработать крайние значения).
     И возвращает словарь:

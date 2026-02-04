@@ -1,6 +1,6 @@
 ../TraffkMarket/.idea/
 .DS_Store
-Backend/.env
+backend/.env
 .idea/
 .vscode/
 bots/Support_bot/config.py

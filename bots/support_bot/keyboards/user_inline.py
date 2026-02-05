@@ -3,7 +3,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 def user_start_menu():
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [ #first str
+            [
                 InlineKeyboardButton(text="Пополнения⬇️", callback_data="support:dep"),
                 InlineKeyboardButton(text="Вывод⬆️", callback_data="support:undep"),
             ],
@@ -24,7 +24,7 @@ def user_start_menu():
 
 def user_dialogs_list_menu(circle:int = 0):
     dialog_list=dict()# тут будет конфигурационная функция
-    menu=list([InlineKeyboardButton(text=dialog_name, callback_data=f":{dialog_list(dialog_name)}"),] for dialog_name in dialog_list)
+    menu=list([InlineKeyboardButton(text=dialog_name, callback_data=f"get_dialog:{dialog_list(dialog_name)}"),] for dialog_name in dialog_list)
     menu.append([InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),])
     return InlineKeyboardMarkup(
         inline_keyboard=menu

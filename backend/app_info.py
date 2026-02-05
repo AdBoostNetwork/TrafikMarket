@@ -14,41 +14,12 @@ app = FastAPI()
 
 # ==== Страница 2 (Меню объявлений: Каналы/Реклама/Трафик/Аккаунты) ====
 
-
-class FiltersInfo:
-    ...
-
-class AnnounsList:
-    ...
-
-
-
-@app.get("/get_announs_list")
-#Ручка FastAPI, делающая get запрос к серверу для получения данных списка объявлений
-
-def get_announs_list(announs_type: str):
-    """
-    Вызывает функцию БД для получения списка объявлений, а так же функцию БД для получения списка фильтров.
-    Возвращает данные для страницы в формате объекта класса AnnounsList, содержащего информацию о фильтрах и объявлениях.
-
-    :param announs_type - Тип объявлений (Каналы/Реклама/Трафик/Аккаунты). Принимает одно из значений.
-
-    1. channels
-    2. ads
-    3. traffik
-    4. accounts
-
-    :return AnnounsList
-    """
-
-
-
-
-# ==== Страница 3 (Страница объявления) ====
+# ==== Страница 2.1 (Меню объявлений: Каналы) ====
 
 class SellerInfo:
     """
-    Класс с данными продавца. Объект этого класса создаётся при запросе данных для заполнения объявления и содержит:
+    Класс с данными продавца
+
 
     :param name — Имя продавца,
     :param deals_count — Количество сделок продавца,
@@ -60,6 +31,111 @@ class SellerInfo:
 
 
 class AnnounInfo:
+    """
+    Класс, объект которого содержит информацию об одном объявлении для страницы
+
+    :param seller — Объект класса SellerInfo,
+    :param name — Название объявления,
+    :param price — Цена объявления,
+    :param short_description — Краткое описание объявления, отображающееся на странице,
+    :param type_value — Значение категории объявления (пример, для канала — тематика и тд)
+    """
+    seller: SellerInfo
+    name: str
+    price: float
+    short_description: str
+    type_value: str
+
+
+class AnnounsList:
+    """
+    Класс, объект которого содержит список объявлений
+
+    :param announs: list[AnnounInfo]
+    """
+    announs: list[AnnounInfo]
+
+
+class ChnsFilters:
+    """
+    Класс, который содержит набор фильтров для раздела "Каналы"
+
+    :param topic — Тематика канала
+    :param country — Страна
+    :param chn_type — Тип (Открытый/Закрытый)
+
+    :param price_from — Цена от
+    :param price_to — Цена до
+
+    :param subs_from — Подписчики от
+    :param subs_to — Подписчики до
+
+    :param profit_from — Доходность от
+    :param profit_to — Доходность до
+
+    :param cover_from — Охват от
+    :param cover_to — Охват до
+
+    :param requests_for_join — Заявки на вступление (Да/Нет)
+
+    = None сделано для того, чтобы все параметры были необязательными (пользователь может не выбрать часть/все фильтры)
+    """
+    topic: str = None
+    country: str = None
+    chn_type: str = None
+    price_from: int = None
+    price_to: int = None
+    subs_from: int = None
+    subs_to: int = None
+    profit_from: int = None
+    profit_to: int = None
+    cover_from: int = None
+    cover_to: int = None
+    requests_for_join: bool = None
+
+
+@app.get("/get_channels_list")
+#Ручка FastAPI, делающая get запрос к серверу для получения данных списка объявлений тематики "Каналы"
+
+def get_channels_list(
+        topic: str = None,
+        country: str = None,
+        chn_type: str = None,
+        price_from: int = None,
+        price_to: int = None,
+        subs_from: int = None,
+        subs_to: int = None,
+        profit_from: int = None,
+        profit_to: int = None,
+        cover_from: int = None,
+        cover_to: int = None,
+        requests_for_join: bool = None):
+        """
+        Создаёт объект класса ChnsFilters и заполняет его полученными аргументами. После этого передаёт его в функицю БД, которая возвращает список объявлений.
+        Аргументы пояснять не буду, тк они расписаны в классе ChnsFilters
+
+        Что-то вроде:
+
+        active_filters = ChnsFilters(params), где params — полученный список аргументов.
+        get_channels_list_db(active_filters)
+
+        :return AnnounsList
+        """
+
+
+def get_channels_list_db(active_filters: ChnsFilters):
+    """
+    Делает запрос к БД для получения списка объявлений каналов в соответсвтии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
+    :param active_filters — Полученный набор фильтров
+
+    :return: AnnounsList
+    """
+
+
+# ==== Страница 3 (Страница объявления) ====
+
+
+class FullAnnounInfo:
     """
     Класс с данными объявления. Объект этого класса создаётся при запросе данных для заполнения объявления и содержит:
 
@@ -79,11 +155,11 @@ class AnnounInfo:
 def get_announ(announ_id: int):
     """
     Вызывает функцию БД для получения информации об объявлении по его announ_id
-    Возврашает данные объявления в виде объекта класс AnnounInfo
+    Возврашает данные объявления в виде объекта класс FullAnnounInfo
 
     :param announ_id — Id объявления
 
-    :return AnnounInfo
+    :return FullAnnounInfo
     """
 
 def get_announ_info_db(announ_id: int):
@@ -105,7 +181,7 @@ class OrderInfo:
     Класс, объект которого содержит информацию об одном заказе/объявлении для страницы "Заказы".
     Список из таких объектов составляет объект класса MyOrders, который передаётся странице.
 
-    :param seller — Объект класса SellerInfo (пояснение и структуру класса см выше, в описании страницы "Страница объявления"),
+    :param seller — Объект класса SellerInfo,
     :param name — Название заказа/объявления,
     :param price — Цена заказа/объявления,
     :param short_description — Краткое описание заказа/объявления, отображающееся на странице,

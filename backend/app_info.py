@@ -14,7 +14,7 @@ app = FastAPI()
 
 # ==== Страница 2 (Меню объявлений: Каналы/Реклама/Трафик/Аккаунты) ====
 
-# ==== Страница 2.1 (Меню объявлений: Каналы) ====
+# ==== Страница 2.1 (Меню объявлений: Каналы)
 
 class SellerInfo:
     """
@@ -126,7 +126,7 @@ def get_channels_list(
 
 def get_channels_list_db(active_filters: ChnsFilters):
     """
-    Делает запрос к БД для получения списка объявлений каналов в соответсвтии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
+    Делает запрос к БД для получения списка объявлений каналов в соответствии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
     :param active_filters — Полученный набор фильтров
 
     :return: AnnounsList
@@ -197,7 +197,7 @@ def get_ad_list(
 
 def get_ad_list_db(active_filters: AdFilters):
     """
-    Делает запрос к БД для получения списка объявлений каналов в соответсвтии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
+    Делает запрос к БД для получения списка объявлений каналов в соответствии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
     :param active_filters — Полученный набор фильтров
 
     :return: AnnounsList
@@ -232,6 +232,7 @@ class TrafficFilters:
 @app.get("/get_traffic_list")
 #Ручка FastAPI, делающая get запрос к серверу для получения данных списка объявлений тематики "Трафик"
 
+
 def get_traffic_list(
         topic: str = None,
         platform: str = None,
@@ -254,7 +255,67 @@ def get_traffic_list(
 
 def get_traffic_list_db(active_filters: TrafficFilters):
     """
-    Делает запрос к БД для получения списка объявлений каналов в соответсвтии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
+    Делает запрос к БД для получения списка объявлений каналов в соответствии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
+    :param active_filters — Полученный набор фильтров
+
+    :return: AnnounsList
+    """
+
+
+
+
+# ==== Страница 2.4 (Меню объявлений: Аккаунты)
+
+class AccsFilters:
+    """
+    Класс, который содержит набор фильтров для раздела "Аккаунты"
+
+    :param country — Страна
+    :param log_type — Тип входа
+    :param idle_time — Время отлеги
+    :param acc_type — Тип (Траст/Новорег)
+    :param premium — Премиум (нет/месяц/год/2 года)
+    :param stars_count — Количество звезд
+    :param gifts — Подарки (Да/Нет)
+    :param tg_level — Уровень тг
+    """
+    country: str = None
+    log_type: str = None
+    idle_time: str = None
+    acc_type: str = None
+    premium: str = None
+    stars_count: str = None
+    gifts: bool = None
+    tg_level: int = None
+
+
+@app.get("/get_accs_list")
+#Ручка FastAPI, делающая get запрос к серверу для получения данных списка объявлений тематики "Аккаунты"
+
+
+def get_accs_list(
+    country: str = None,
+    log_type: str = None,
+    idle_time: str = None,
+    acc_type: str = None,
+    premium: str = None,
+    stars_count: str = None,
+    gifts: bool = None,
+    tg_level: int = None
+):
+    """
+    Создаёт объект класса AccsFilters и заполняет его полученными аргументами. После этого передаёт его в функицю БД, которая возвращает список объявлений.
+    Аргументы пояснять не буду, тк они расписаны в классе AccsFilters
+
+    active_filters = AccsFilters(params), где params — полученный список аргументов.
+    get_ad_list_db(active_filters)
+
+    :return AnnounsList
+    """
+
+def get_accs_list_db(active_filters: AccsFilters):
+    """
+    Делает запрос к БД для получения списка объявлений каналов в соответствии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
     :param active_filters — Полученный набор фильтров
 
     :return: AnnounsList

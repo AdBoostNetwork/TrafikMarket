@@ -109,7 +109,8 @@ def get_channels_list(
         profit_to: int = None,
         cover_from: int = None,
         cover_to: int = None,
-        requests_for_join: bool = None):
+        requests_for_join: bool = None
+):
         """
         Создаёт объект класса ChnsFilters и заполняет его полученными аргументами. После этого передаёт его в функицю БД, которая возвращает список объявлений.
         Аргументы пояснять не буду, тк они расписаны в классе ChnsFilters
@@ -135,7 +136,6 @@ def get_channels_list_db(active_filters: ChnsFilters):
 
 
 # ==== Страница 2.2 (Меню объявлений: Реклама)
-
 
 class AdFilters:
     """
@@ -182,7 +182,8 @@ def get_ad_list(
     er_from: int = None,
     er_to: int = None,
     price_from: int = None,
-    price_to: int = None):
+    price_to: int = None
+):
     """
     Создаёт объект класса AdFilters и заполняет его полученными аргументами. После этого передаёт его в функицю БД, которая возвращает список объявлений.
     Аргументы пояснять не буду, тк они расписаны в классе AdFilters
@@ -201,6 +202,65 @@ def get_ad_list_db(active_filters: AdFilters):
 
     :return: AnnounsList
     """
+
+
+
+# ==== Страница 2.3 (Меню объявлений: Трафик)
+
+class TrafficFilters:
+    """
+    Класс, который содержит набор фильтров для раздела "Трафик"
+
+    :param topic — Тематика
+    :param platform — Платформа
+    :param traffic_type — Тип залива
+    :param audience_type — Тип аудитории
+    :param country — Страна
+
+    :param price_from — Цена от
+    :param price_to — Цена до
+    """
+    topic: str = None
+    platform: str = None
+    traffic_type: str = None
+    audience_type: str = None
+    country: str = None
+    price_from: int = None
+    price_to: int = None
+
+
+@app.get("/get_traffic_list")
+#Ручка FastAPI, делающая get запрос к серверу для получения данных списка объявлений тематики "Трафик"
+
+def get_traffic_list(
+        topic: str = None,
+        platform: str = None,
+        traffic_type: str = None,
+        audience_type: str = None,
+        country: str = None,
+        price_from: int = None,
+        price_to: int = None
+):
+        """
+        Создаёт объект класса TrafficFilters и заполняет его полученными аргументами. После этого передаёт его в функицю БД, которая возвращает список объявлений.
+        Аргументы пояснять не буду, тк они расписаны в классе TrafficFilters
+
+        active_filters = TrafficFilters(params), где params — полученный список аргументов.
+        get_ad_list_db(active_filters)
+
+        :return AnnounsList
+        """
+
+
+def get_traffic_list_db(active_filters: TrafficFilters):
+    """
+    Делает запрос к БД для получения списка объявлений каналов в соответсвтии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
+    :param active_filters — Полученный набор фильтров
+
+    :return: AnnounsList
+    """
+
+
 
 
 # ==== Страница 3 (Страница объявления) ====

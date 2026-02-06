@@ -758,3 +758,48 @@ def create_channel_announ_db(data: ChannelCreateSchema):
 
     :return: {"success": True}/{"error": error_value} — Возвращает либо успех, либо сообщение с ошибкой
     """
+
+
+
+
+# ==== Страница 7.1 (Создание объявления Рекламы)
+
+class AdCreateSchema(AnnounCreateSchema):
+    """
+    Класс параметров создания объявления тематики "Реклама"
+
+    :param topic — Тематика
+    :param country — Страна
+    :param cover — Охват
+    :param cpm — ЦПМ
+    :param er — ЕР
+    """
+    topic: str
+    country: str
+    cover: int
+    cpm: int
+    er: int
+
+
+@app.post("/create_ad_announ")
+#Ручка FastAPI, делающая post запрос к серверу для сохранения данных нового объявления Рекламы в БД
+
+
+def create_ad_announ(data: AdCreateSchema):
+    """
+    Вызывает функцию БД для сохранения данных объявления
+
+    :param data — Данные объявления
+
+    :return: create_status — Успех или Ошибка, появляется из функции БД
+    """
+
+
+def create_ad_announ_db(data: AdCreateSchema):
+    """
+    Сохраняет данные объявления канала в БД
+
+    :param data — Данные объявления
+
+    :return: {"success": True}/{"error": error_value} — Возвращает либо успех, либо сообщение с ошибкой
+    """

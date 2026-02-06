@@ -360,12 +360,12 @@ class ChannelSchema(AnnounBaseSchema):
     :param cover_count — Охват
     :param profit — Доходность
     """
-    topic: str = None
-    chn_type: str = None
-    country: str = None
-    subs_count: int = None
-    cover_count: int = None
-    profit: int = None
+    topic: str
+    chn_type: str
+    country: str
+    subs_count: int
+    cover_count: int
+    profit: int
 
 
 @app.get("/get_chn_announ")
@@ -453,11 +453,11 @@ class TrafficSchema(AnnounBaseSchema):
     :param audience_type — Тип аудитории
     :param country — Страна
     """
-    topic: str = None
-    platform: str = None
-    traffic_type: str = None
-    audience_type: str = None
-    country: str = None
+    topic: str
+    platform: str
+    traffic_type: str
+    audience_type: str
+    country: str
 
 
 @app.get("/get_traffic_announ")
@@ -502,14 +502,14 @@ class AccSchema(AnnounBaseSchema):
     :param gifts — Подарки (Да/Нет)
     :param tg_level — Уровень тг
     """
-    country: str = None
-    log_type: str = None
-    idle_time: str = None
-    acc_type: str = None
-    premium: str = None
-    stars_count: str = None
-    gifts: bool = None
-    tg_level: int = None
+    country: str
+    log_type: str
+    idle_time: str
+    acc_type: str
+    premium: str
+    stars_count: str
+    gifts: bool
+    tg_level: int
 
 
 @app.get("/get_acc_announ")
@@ -693,3 +693,68 @@ def get_profile_info_db(user_id: int):
 
 
 # ==== Страница 7 (Создание объявления) ====
+
+class AnnounCreateSchema:
+    """
+    Класс с общими данными объявления для создания всех типов объявлений
+
+    :param seller_id — Id продавца
+    :param status — Статус объявления
+    :param title — Название объявления,
+    :param price — Цена объявления,
+    :param short_text — Краткое описание,
+    :param long_text — Подробное описание,
+    :param imgs — Картинки объявления
+    """
+    seller_id: int
+    status: str
+    title: str
+    price: str
+    short_text: str
+    long_text: str
+    imgs: list[str]
+
+
+# ==== Страница 7.1 (Создание объявления Канала)
+
+class ChannelCreateSchema(AnnounCreateSchema):
+    """
+    Класс параметров создания объявления тематики "Каналы".
+
+    :param topic — Тематика,
+    :param chn_type — Тип канала,
+    :param country — Страна,
+    :param subs_count — Количество подписчиков,
+    :param cover_count — Охват,
+    :param profit — Доходность
+    """
+    topic: str
+    chn_type: str
+    country: str
+    subs_count: int
+    cover_count: int
+    profit: int
+
+
+@app.post("/create_channel_announ")
+#Ручка FastAPI, делающая post запрос к серверу для сохранения данных нового объявления Канала в БД
+
+
+def create_channel_announ(data: ChannelCreateSchema):
+    """
+    Вызывает функцию БД для сохранения данных объявления
+
+    :param data — Данные объявления
+
+    :return: create_status — Успех или Ошибка, появляется из функции БД
+    """
+
+
+def create_channel_announ_db(data: ChannelCreateSchema):
+    """
+    Сохраняет данные объявления канала в БД
+
+    :param data — Данные объявления
+
+    :return: {"success": True}/{"error": error_value} — Возвращает либо успех, либо сообщение с ошибкой
+    """

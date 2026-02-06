@@ -383,6 +383,7 @@ def get_chn_announ(announ_id: int):
     :return ChannelSchema
     """
 
+
 def get_chn_announ_db(announ_id: int):
     """
     Делает запрос к БД по announ_id и возвращает информацию в виде data[]
@@ -418,7 +419,7 @@ class AdSchema(AnnounBaseSchema):
 #Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Реклама"
 
 
-def get_chn_announ(announ_id: int):
+def get_ad_announ(announ_id: int):
     """
     Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект AdSchema
     Возврашает данные объявления в виде объекта класс AdSchema
@@ -435,9 +436,55 @@ def get_ad_announ_db(announ_id: int):
 
     :param announ_id — Id объявления
 
-    :return: ChannelSchema
+    :return: AdSchema
     """
 
+
+
+
+# ==== Страница 3.3 (Страница объявления: Трафик)
+
+
+class TrafficSchema(AnnounBaseSchema):
+    """
+    Класс параметров объявления тематики "Трафик"
+
+    :param topic — Тематика
+    :param platform — Платформа
+    :param traffic_type — Тип залива
+    :param audience_type — Тип аудитории
+    :param country — Страна
+    """
+    topic: str = None
+    platform: str = None
+    traffic_type: str = None
+    audience_type: str = None
+    country: str = None
+
+
+@app.get("/get_traffic_announ")
+#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Трафик"
+
+
+def get_traffic_announ(announ_id: int):
+    """
+    Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект TrafficSchema
+    Возврашает данные объявления в виде объекта класс TrafficSchema
+
+    :param announ_id — Id объявления
+
+    :return TrafficSchema
+    """
+
+
+def get_traffic_announ_db(announ_id: int):
+    """
+    Делает запрос к БД по announ_id и возвращает информацию в виде data[]
+
+    :param announ_id — Id объявления
+
+    :return: TrafficSchema
+    """
 
 
 

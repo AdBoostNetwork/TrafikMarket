@@ -372,9 +372,10 @@ class ChannelSchema(AnnounBaseSchema):
 @app.get("/get_chn_announ")
 #Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Каналы"
 
+
 def get_chn_announ(announ_id: int):
     """
-    Вызывает функцию БД для получения информации об объявлении по его announ_id
+    Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект ChannelSchema
     Возврашает данные объявления в виде объекта класс ChannelSchema
 
     :param announ_id — Id объявления
@@ -384,7 +385,53 @@ def get_chn_announ(announ_id: int):
 
 def get_chn_announ_db(announ_id: int):
     """
-    Делает запрос к БД по announ_id и возвращает информацию
+    Делает запрос к БД по announ_id и возвращает информацию в виде data[]
+
+    :param announ_id — Id объявления
+
+    :return: ChannelSchema
+    """
+
+
+
+
+# ==== Страница 3.2 (Страница объявления: Реклама)
+
+class AdSchema(AnnounBaseSchema):
+    """
+    Класс параметров объявления тематики "Реклама"
+
+    :param topic — Тематика
+    :param country — Страна
+    :param cover — Охват
+    :param cpm — ЦПМ
+    :param er — ЕР
+    """
+    topic: str
+    country: str
+    cover: int
+    cpm: int
+    er: int
+
+
+@app.get("/get_ad_announ")
+#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Реклама"
+
+
+def get_chn_announ(announ_id: int):
+    """
+    Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект AdSchema
+    Возврашает данные объявления в виде объекта класс AdSchema
+
+    :param announ_id — Id объявления
+
+    :return AdSchema
+    """
+
+
+def get_ad_announ_db(announ_id: int):
+    """
+    Делает запрос к БД по announ_id и возвращает информацию в виде data[]
 
     :param announ_id — Id объявления
 

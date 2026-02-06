@@ -327,40 +327,68 @@ def get_accs_list_db(active_filters: AccsFilters):
 # ==== Страница 3 (Страница объявления) ====
 
 
-class FullAnnounInfo:
+class AnnounBaseSchema:
     """
-    Класс с данными объявления. Объект этого класса создаётся при запросе данных для заполнения объявления и содержит:
+    Класс с общими данными объявления для всех типов объявлений. Объект этого класса создаётся при запросе данных для заполнения объявления и содержит:
 
     :param seller — Объект класса SellerInfo, содержит Имя, количество сделок и процент успешных сделок продавца,
     :param title — Название объявления,
     :param price — Цена объявления,
-    :param ...
+    :param short_text — Краткое описание объявления,
+    :param long_text — Подробное описание объявления,
+    :param imgs — Картинки объявления
     """
     seller: SellerInfo
     title: str
-    price: float
+    price: int
+    short_text: str
+    long_text: str
+    imgs: list[str]
 
 
-@app.get("/get_announ")
-#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления
 
-def get_announ(announ_id: int):
+
+# ==== Страница 3.1 (Страница объявления: Каналы)
+
+class ChannelSchema(AnnounBaseSchema):
+    """
+    Класс параметров объявления тематики "Каналы"
+
+    :param topic — Тематика
+    :param chn_type — Тип канала
+    :param country — Страна
+    :param subs_count — Количество подписичков
+    :param cover_count — Охват
+    :param profit — Доходность
+    """
+    topic: str = None
+    chn_type: str = None
+    country: str = None
+    subs_count: int = None
+    cover_count: int = None
+    profit: int = None
+
+
+@app.get("/get_chn_announ")
+#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Каналы"
+
+def get_chn_announ(announ_id: int):
     """
     Вызывает функцию БД для получения информации об объявлении по его announ_id
-    Возврашает данные объявления в виде объекта класс FullAnnounInfo
+    Возврашает данные объявления в виде объекта класс ChannelSchema
 
     :param announ_id — Id объявления
 
-    :return FullAnnounInfo
+    :return ChannelSchema
     """
 
-def get_announ_info_db(announ_id: int):
+def get_chn_announ_db(announ_id: int):
     """
-    Делает запрос к БД по announ_id и возвращает информацию в виде переменных
+    Делает запрос к БД по announ_id и возвращает информацию
 
     :param announ_id — Id объявления
 
-    :return: name, deals_count, success_deals, title, price, ...
+    :return: ChannelSchema
     """
 
 

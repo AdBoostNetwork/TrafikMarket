@@ -762,7 +762,7 @@ def create_channel_announ_db(data: ChannelCreateSchema):
 
 
 
-# ==== Страница 7.1 (Создание объявления Рекламы)
+# ==== Страница 7.2 (Создание объявления Рекламы)
 
 class AdCreateSchema(AnnounCreateSchema):
     """
@@ -796,6 +796,51 @@ def create_ad_announ(data: AdCreateSchema):
 
 
 def create_ad_announ_db(data: AdCreateSchema):
+    """
+    Сохраняет данные объявления канала в БД
+
+    :param data — Данные объявления
+
+    :return: {"success": True}/{"error": error_value} — Возвращает либо успех, либо сообщение с ошибкой
+    """
+
+
+
+
+# ==== Страница 7.3 (Создание объявления Трафика)
+
+class TrafficCreateSchema(AnnounCreateSchema):
+    """
+    Класс параметров создания объявления тематики "Трафик"
+
+    :param topic — Тематика
+    :param platform — Платформа
+    :param traffic_type — Тип залива
+    :param audience_type — Тип аудитории
+    :param country — Страна
+    """
+    topic: str
+    platform: str
+    traffic_type: str
+    audience_type: str
+    country: str
+
+
+@app.post("/create_traffic_announ")
+#Ручка FastAPI, делающая post запрос к серверу для сохранения данных нового объявления Трафика в БД
+
+
+def create_traffic_announ(data: TrafficCreateSchema):
+    """
+    Вызывает функцию БД для сохранения данных объявления
+
+    :param data — Данные объявления
+
+    :return: create_status — Успех или Ошибка, появляется из функции БД
+    """
+
+
+def create_traffic_announ_db(data: TrafficCreateSchema):
     """
     Сохраняет данные объявления канала в БД
 

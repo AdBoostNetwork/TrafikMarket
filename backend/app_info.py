@@ -848,3 +848,54 @@ def create_traffic_announ_db(data: TrafficCreateSchema):
 
     :return: {"success": True}/{"error": error_value} — Возвращает либо успех, либо сообщение с ошибкой
     """
+
+
+
+
+# ==== Страница 7.4 (Создание объявления Аккаунты)
+
+class AccCreateSchema(AnnounBaseSchema):
+    """
+    Класс параметров создания объявления тематики "Аккаунты"
+
+    :param country — Страна
+    :param log_type — Тип входа
+    :param idle_time — Время отлеги
+    :param acc_type — Тип (Траст/Новорег)
+    :param premium — Премиум (нет/месяц/год/2 года)
+    :param stars_count — Количество звезд
+    :param gifts — Подарки (Да/Нет)
+    :param tg_level — Уровень тг
+    """
+    country: str
+    log_type: str
+    idle_time: str
+    acc_type: str
+    premium: str
+    stars_count: str
+    gifts: bool
+    tg_level: int
+
+
+@app.post("/create_acc_announ")
+#Ручка FastAPI, делающая post запрос к серверу для сохранения данных нового объявления Аккаунтов в БД
+
+
+def create_acc_announ(data: AccCreateSchema):
+    """
+    Вызывает функцию БД для сохранения данных объявления
+
+    :param data — Данные объявления
+
+    :return: create_status — Успех или Ошибка, появляется из функции БД
+    """
+
+
+def create_acc_announ_db(data: AccCreateSchema):
+    """
+    Сохраняет данные объявления канала в БД
+
+    :param data — Данные объявления
+
+    :return: {"success": True}/{"error": error_value} — Возвращает либо успех, либо сообщение с ошибкой
+    """

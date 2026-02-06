@@ -326,7 +326,6 @@ def get_accs_list_db(active_filters: AccsFilters):
 
 # ==== Страница 3 (Страница объявления) ====
 
-
 class AnnounBaseSchema:
     """
     Класс с общими данными объявления для всех типов объявлений. Объект этого класса создаётся при запросе данных для заполнения объявления и содержит:
@@ -444,7 +443,6 @@ def get_ad_announ_db(announ_id: int):
 
 # ==== Страница 3.3 (Страница объявления: Трафик)
 
-
 class TrafficSchema(AnnounBaseSchema):
     """
     Класс параметров объявления тематики "Трафик"
@@ -485,6 +483,59 @@ def get_traffic_announ_db(announ_id: int):
 
     :return: TrafficSchema
     """
+
+
+
+
+# ==== Страница 3.4 (Страница объявления: Аккаунты)
+
+class AccSchema(AnnounBaseSchema):
+    """
+    Класс параметров объявления тематики "Аккаунты"
+
+    :param country — Страна
+    :param log_type — Тип входа
+    :param idle_time — Время отлеги
+    :param acc_type — Тип (Траст/Новорег)
+    :param premium — Премиум (нет/месяц/год/2 года)
+    :param stars_count — Количество звезд
+    :param gifts — Подарки (Да/Нет)
+    :param tg_level — Уровень тг
+    """
+    country: str = None
+    log_type: str = None
+    idle_time: str = None
+    acc_type: str = None
+    premium: str = None
+    stars_count: str = None
+    gifts: bool = None
+    tg_level: int = None
+
+
+@app.get("/get_acc_announ")
+#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Аккаунты"
+
+
+def get_acc_announ(announ_id: int):
+    """
+    Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект AccSchema
+    Возврашает данные объявления в виде объекта класс AccSchema
+
+    :param announ_id — Id объявления
+
+    :return AccSchema
+    """
+
+
+def get_acc_announ_db(announ_id: int):
+    """
+    Делает запрос к БД по announ_id и возвращает информацию в виде data[]
+
+    :param announ_id — Id объявления
+
+    :return: AccSchema
+    """
+
 
 
 

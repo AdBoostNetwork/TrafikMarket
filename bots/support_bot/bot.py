@@ -9,7 +9,7 @@ async def main():
     dp = Dispatcher()
 
     dp.include_router(start.router)
-    dp.include_router(callbacks.router)
+    dp.include_router(user_callbacks.router)
     dp.include_router(question.router)
 
     await dp.start_polling(bot)

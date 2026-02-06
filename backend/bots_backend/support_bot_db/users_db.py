@@ -1,10 +1,10 @@
-def create_new_appeal (user_id, topic):
+def create_new_appeal (user_id, topic) -> int:
     """
     Создает новую апелляцию, файл для чата, и папку для доп файлов.
     Возвращает id обращения
     :param user_id:
     :param topic:
-    :return:
+    :return: appeal_id
     """
 
 
@@ -38,7 +38,7 @@ def download_file(appeal_id: int, file):
     :return: filename
     """
 
-def config_tp_bot_buttons(user_id: int = None, status: str = None, circle: int = 0):
+def config_tp_bot_buttons(user_id: int) -> dict:
     """
     Ставит фильтр (идин из первых двух параметров, и из полученных значений БД делает срез [5*circle: 5*(circle+1)] тут обработать крайние значения).
     И возвращает словарь:
@@ -48,13 +48,22 @@ def config_tp_bot_buttons(user_id: int = None, status: str = None, circle: int =
     f"Обращение №{id} по теме {topic}": id
     f"Обращение №{id} по теме {topic}": id
     }
-    и булевcкое значение is_end
 
     :param user_id:
-    :param status:
-    :param circle:
-    :return: config, is_end
+    :return: config
     """
+    return {
+        "Почему Артур огузок?": 1234
+    }
+
+
+def get_last_msg(appeal_id):
+    """
+    Возвращает appeal_chat.last_msg, appeal_chat.last_msg_files, appeal_chat.is_last_msg_from_user
+    :param appeal_id:
+    :return:
+    """
+    return "По жизни", ["my_files/dick_pick.jpg"], False
 
 def close_appeal(appeal_id):
     """

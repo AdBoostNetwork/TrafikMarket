@@ -15,7 +15,7 @@ def msg_from_support(user_id, text):
     """
 
 
-def config_tp_bot_buttons(user_id: int = None, status: str = None, circle: int = 0):
+def config_tp_bot_buttons(user_id: int, status: str = None, circle: int = 0):
     """
     Ставит фильтр (идин из первых двух параметров, и из полученных значений БД делает срез [5*circle: 5*(circle+1)] тут обработать крайние значения).
     И возвращает словарь:

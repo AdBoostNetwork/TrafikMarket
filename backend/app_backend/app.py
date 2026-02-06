@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from  .logger import get_logger
+from  logger import get_logger
 
 
 logger = get_logger(__name__)

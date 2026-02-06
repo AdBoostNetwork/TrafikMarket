@@ -42,7 +42,7 @@ async def get_dialog(callback: CallbackQuery, state: FSMContext):
         await callback.answer()
         return
     await callback.message.answer("Вот последний ответ от поддержки вам:")
-    await callback.message.answer(f"<pre>{text}</pre>", reply_markup=user_dialog_menu())
+    await callback.message.answer(f"<blockquote>{text}</blockquote>", parse_mode="HTML", reply_markup=user_dialog_menu())
     await callback.answer()
 
 

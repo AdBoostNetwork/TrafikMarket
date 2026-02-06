@@ -637,6 +637,19 @@ def get_ref_link_db(user_id: int):
 
 # ==== Страница 6 (Профиль) ====
 
+class Transaction:
+    """
+    Класс с данными транзакций, нужными для отрисовки профиля
+
+    :param trn_type — Тип транзакции, Пополнение/Списание
+    :param trn_summ — Сумма транзакции
+    :param trn_date — Дата и время транзакции
+    """
+    trn_type: str
+    trn_summ: str
+    trn_date: str
+
+
 class MyProfile:
     """
     Класс с данными профиля. Объект этого класса создаётся при запросе данных для страницы профиля и заполняется данными:
@@ -651,11 +664,12 @@ class MyProfile:
     deals_count: int
     success_deals: int
     balance: float
-    deps_list: list
+    deps_list: list[Transaction]
 
 
 @app.get("/my_profile")
 #Ручка FastAPI, делающая get запрос к серверу для получения данных, нужных для отрисовки страницы профиля
+
 
 def get_profile(user_id: int):
     """
@@ -664,6 +678,7 @@ def get_profile(user_id: int):
     :param user_id — Id пользователя, который обращается к приложению
     :return: MyProfile
     """
+
 
 def get_profile_info_db(user_id: int):
     """

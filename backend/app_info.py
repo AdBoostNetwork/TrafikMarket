@@ -141,16 +141,66 @@ class AdFilters:
     """
     Класс, который содержит набор фильтров для раздела "Реклама"
 
-    :param topic Тематика рекламы
-    :param country Страна
-    :param cover
+    :param topic — Тематика рекламы
+    :param country — Страна
+
+    :param cover_from — Охват от
+    :param cover_to — Охват до
+
+    :param cpm_from — ЦПМ от
+    :param cpm_to — ЦПМ до
+
+    :param er_from — ЕР от
+    :param er_to — ЕР до
+
+    :param price_from — Цена от
+    :param price_to — Цена до
     """
+    topic: str = None
+    country: str = None
+    cover_from: int = None
+    cover_to: int = None
+    cpm_from: int = None
+    cpm_to: int = None
+    er_from: int = None
+    er_to: int = None
+    price_from: int = None
+    price_to: int = None
 
 
 @app.get("/get_ad_list")
 #Ручка FastAPI, делающая get запрос к серверу для получения данных списка объявлений тематики "Реклама"
 
 
+def get_ad_list(
+    topic: str = None,
+    country: str = None,
+    cover_from: int = None,
+    cover_to: int = None,
+    cpm_from: int = None,
+    cpm_to: int = None,
+    er_from: int = None,
+    er_to: int = None,
+    price_from: int = None,
+    price_to: int = None):
+    """
+    Создаёт объект класса AdFilters и заполняет его полученными аргументами. После этого передаёт его в функицю БД, которая возвращает список объявлений.
+    Аргументы пояснять не буду, тк они расписаны в классе AdFilters
+
+    active_filters = AdFilters(params), где params — полученный список аргументов.
+    get_ad_list_db(active_filters)
+
+    :return AnnounsList
+    """
+
+
+def get_ad_list_db(active_filters: AdFilters):
+    """
+    Делает запрос к БД для получения списка объявлений каналов в соответсвтии с фильтрами. Заполняет ими объекты класса AnnounInfo и AnnounsList
+    :param active_filters — Полученный набор фильтров
+
+    :return: AnnounsList
+    """
 
 
 # ==== Страница 3 (Страница объявления) ====

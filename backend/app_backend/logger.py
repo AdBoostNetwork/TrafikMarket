@@ -11,7 +11,7 @@ def setup_logging():
     root.setLevel(logging.INFO)
 
     formatter = logging.Formatter(
-        fmt="%(asctime)s | %(levelname)s | %(name)s %(funcName)s | %(message)s",
+        fmt="%(asctime)s | %(levelname)s | file: %(name)s | func: %(funcName)s | %(message)s",
         datefmt="%d-%m-%Y %H:%M:%S",
     )
 

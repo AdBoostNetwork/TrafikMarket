@@ -224,14 +224,25 @@ Facebook
 
 class Accs(Announ):
     """
-    1)country (str)
-    2)log_type (str)
-    3)idle_time (str)
-    4)acc_type (str)
-    5)premium (str)
-    6)quant_of_stars (str)
-    7)gifts (bool)
-    8)tg_lvl (int)
+    Класс параметров объявления тематики "Аккаунты"
+
+    :param country — Страна
+    :param log_type — Тип входа
+    :param idle_time — Время отлеги
+    :param acc_type — Тип (Траст/Новорег)
+    :param premium — Премиум (нет/месяц/год/2 года)
+    :param stars_count — Количество звезд
+    :param gifts — Подарки (Да/Нет)
+    :param tg_level — Уровень тг
+
+    country: str
+    log_type: str
+    idle_time: str
+    acc_type: str
+    premium: str
+    stars_count: str
+    gifts: bool
+    tg_level: int
 
     (Фильтры для раздела аккаунтов
 

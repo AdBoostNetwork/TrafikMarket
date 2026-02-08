@@ -121,11 +121,19 @@ class Channel(Announ):
 
 class Ad(Announ):
     """
-    1)channel_subject (str)
-    2)channel_country (str)
-    3)audience_reach (int)
-    4)cpm (int)
-    5)er (int)
+    Класс параметров объявления тематики "Реклама"
+
+    :param topic — Тематика
+    :param country — Страна
+    :param cover — Охват
+    :param cpm — ЦПМ
+    :param er — ЕР
+
+    topic: str
+    country: str
+    cover: int
+    cpm: int
+    er: int
 
 
 Фильтры рекламы:
@@ -155,13 +163,21 @@ class Ad(Announ):
 Цена > подписчики > охват > ER > cpm]
     """
 
-class Traffik(Announ):
+class Traffic(Announ):
     """
-    1)traff_subject(str)
-    2)platform_from(str)
-    3)traff_type(str)
-    4)audience_type(str)
-    5)audience_country(str)
+    Класс параметров объявления тематики "Трафик"
+
+    :param topic — Тематика
+    :param platform — Платформа
+    :param traffic_type — Тип залива
+    :param audience_type — Тип аудитории
+    :param country — Страна
+
+    topic: str
+    platform: str
+    traffic_type: str
+    audience_type: str
+    country: str
 
 
 

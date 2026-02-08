@@ -1,3 +1,6 @@
+from starlette import status
+
+
 class Account():
     """аккаунт
     Хранится:
@@ -36,14 +39,25 @@ class Trnaction():
 
 class Announ():
     """
-    1) announ_id (int)
-    2) announ_name (str)
-    3) seller_id (int)
-    4) price (float) (отображается до 2-3 знаков)
-    5) topic (str)
-    6) announ_imgs (list of str)
-    7) status (in_moderating/moderated)
+    :param announ_id — Id объявления
+    :param announ_title — Название объявления
+    :param seller_id — Id продавца
+    :param price — Цена
+    :param short_text — Краткое описание объявления,
+    :param long_text — Подробное описание объявления,
+    :param announ_imgs — Картинки объявления
+    :param status — Статус проверки объявления (moderating/moderated)
     """
+
+    announ_id: int
+    announ_title: str
+    seller_id: int
+    price: float
+    short_text: str
+    long_text: str
+    announ_imgs: list[str]
+    status: str
+
 
 class Channel(Announ):
     """

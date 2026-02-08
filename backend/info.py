@@ -10,7 +10,7 @@ class Account():
     7)ids_of_deals (list of ints)
     8)scs_count (int)
     9)id_of_trnactions (list of ints)
-    10)id_of_amnts (list of ints)
+    10)id_of_announs (list of ints)
     11)ref_link (str max 50 smbols)
     12)ref_ids (list of ints)
     13)referi (int)
@@ -29,6 +29,7 @@ class Trnaction():
     3) trnactn_time (datetime)
     4) summ (float)
     5) sys_msg (str) #для сохранения типа ошибки, чтобы админы могли помочь
+    6) type (str) In/Out
     """
 
 

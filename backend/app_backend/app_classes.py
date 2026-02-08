@@ -29,7 +29,7 @@ class Transaction:
 
 @dataclass(frozen=True)
 class MyProfile:
-    """Класс с данными профиля"""
+    """Класс с данными для страницы профиля"""
     name: str
     deals_count: int
     success_deals: int

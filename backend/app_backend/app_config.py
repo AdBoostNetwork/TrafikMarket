@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from app_classes import AppDbConfig, FastApiConfig
+from .app_classes import AppDbConfig, FastApiConfig
 
 
 DB_SECRETS_PATH = Path(__file__).resolve().parents[2] / "data" / "db_secrets.json"

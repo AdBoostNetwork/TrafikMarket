@@ -61,13 +61,21 @@ class Announ():
 
 class Channel(Announ):
     """
-    channel_subject (str)
-    subs_quant (int)
-    requests_quant (int)
-    chn_type (bool)
-    chn_country (str)
-    prafitabiltiy (int)
-    entry_requests (bool)
+    :param topic — Тематика
+    :param chn_type — Тип канала
+    :param country — Страна
+    :param subs_count — Количество подписичков
+    :param cover_count — Охват
+    :param profit — Доходность
+    :param entry_requests — Есть ли заявки
+
+    topic: str
+    chn_type: str
+    country: str
+    subs_count: int
+    cover_count: float
+    profit: float
+    entry_requests: bool
 
 
     Фильтры каналов:

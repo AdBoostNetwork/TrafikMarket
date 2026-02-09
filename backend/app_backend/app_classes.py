@@ -31,6 +31,7 @@ class Transaction:
 class MyProfile:
     """Класс с данными для страницы профиля"""
     name: str
+    avatar_filename: str
     deals_count: int
     success_deals: int
     balance: float

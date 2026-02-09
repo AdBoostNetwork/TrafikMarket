@@ -21,7 +21,8 @@ async def get_profile(user_id: int):
             deals_count=data["deals_count"],
             success_deals=data["success_count"],
             balance=data["current_balance"],
-       #     deps_list=data["deps_list"],
+            avatar_filename=data["avatar_filename"],
+            deps_list=data["deps_list"],
         )
 
         logger.info("Данные профиля пользователя %s успешно получены", user_id)

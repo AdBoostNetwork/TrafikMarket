@@ -8,21 +8,10 @@
   <link rel="stylesheet" href="../style.css" />
 
   <style>
-    /* =========================
-       ПОДГОНКА ПОД МАКЕТ (TODO выполнен)
-       - Центральный блок (баланс+кнопки) УЖЕ, чем история
-       - Больше отступ между центральным блоком и историей
-       - "История операций" меньше и визуально ближе к центру (через ширину контейнера)
-       - Аватар/имя/мета/баланс/кнопки/операции подогнаны по размерам и жирности
-       - НИЗ (фон .bottom-nav) НЕ ТРОГАЮ: ты правишь сам
-       ========================= */
-
-    /* Чуть меньше пустоты сверху (шапка Telegram снаружи) */
     .app {
       padding-top: 18px;
     }
 
-    /* Общий контент */
     .content {
       display: flex;
       flex-direction: column;
@@ -30,17 +19,16 @@
       padding-bottom: 8px;
     }
 
-    /* --- Верх профиля --- */
     .profile-head {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 25px;       /* больше воздуха аватар -> имя */
+      gap: 25px;
       padding: 6px 0 2px;
     }
 
     .avatar {
-      width: 104px;         /* ближе к макету */
+      width: 104px;
       height: 104px;
       border-radius: 999px;
       background: #7fe06b;
@@ -76,11 +64,8 @@
     margin-top: -25px;
     }
 
-    /* =========================
-       Центральный блок (УЖЕ)
-       ========================= */
     .center-wrap {
-      width: 84%;           /* уже, чем история */
+      width: 84%;
       max-width: 360px;
       margin: 0 auto;
       display: flex;
@@ -88,7 +73,6 @@
       gap: 15px;
     }
 
-    /* --- Баланс-карта --- */
     .balance-card {
       width: 100%;
       background: var(--card);
@@ -110,13 +94,13 @@
     }
 
     .balance-currency {
-      font-size: 30px;      /* меньше */
+      font-size: 30px;
       font-weight: 600;
       color: var(--accent);
     }
 
     .balance-value {
-      font-size: 38px;      /* меньше и ближе к макету */
+      font-size: 38px;
       font-weight: 600;
       color: var(--accent);
       letter-spacing: 0.1px;
@@ -133,20 +117,19 @@
       font-weight: 600;
     }
 
-    /* --- Кнопки --- */
     .actions-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;            /* чуть меньше */
+      gap: 15px;
     }
 
     .action-btn {
       border: 0;
-      border-radius: 15px;  /* чуть “плосче” */
+      border-radius: 15px;
       background: var(--card);
       color: var(--white);
-      padding: 14px 12px;   /* ниже по высоте */
-      font-size: 18px;      /* меньше */
+      padding: 14px 12px;
+      font-size: 18px;
       font-weight: 700;
       cursor: pointer;
       letter-spacing: 0.3px;
@@ -163,9 +146,9 @@
 
 
     .history-wrap {
-      width: 94%;           /* шире, чем center-wrap */
+      width: 94%;
       max-width: 520px;
-      margin: 20px auto 0;  /* БОЛЬШЕ отступ между блоками (как в макете) */
+      margin: 20px auto 0;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -173,10 +156,10 @@
 
     .section-title {
       color: var(--muted);
-      font-size: 18px;      /* меньше */
-      font-weight: 600;     /* легче */
+      font-size: 18px;
+      font-weight: 600;
       letter-spacing: 0.05px;
-      margin-left: 30px;     /* “чуть ближе к центру”, т.к. сам контейнер уже */
+      margin-left: 30px;
     }
 
     .ops {
@@ -189,7 +172,7 @@
     .op-item {
       background: var(--card);
       border-radius: 17px;
-      padding: 10px 14px 10px 30px;  /* top right bottom left */
+      padding: 10px 14px 10px 30px;
       display: grid;
       grid-template-columns: 1fr minmax(140px, 160px) 92px;
       gap: 16px;
@@ -207,7 +190,7 @@
 
     .op-summ {
       color: var(--accent);
-      font-size: 18px;      /* чуть меньше */
+      font-size: 18px;
       font-weight: 600;
       text-align: right;
       white-space: nowrap;
@@ -231,9 +214,6 @@
       margin-top: 2px;
     }
 
-    /* =========================
-       Нижняя навигация: размер/воздух (фон НЕ трогаем)
-       ========================= */
     .bottom-nav {
       padding-top: 14px;
       padding-bottom: 18px;
@@ -269,7 +249,6 @@
         </div>
       </div>
 
-      <!-- Центральный блок (уже) -->
       <div class="center-wrap">
         <div class="balance-card">
           <div class="balance-row">
@@ -352,7 +331,6 @@
       }
     }
 
-    // "2026-02-08 16:43:27+00:00" -> "08.02.2026"
     function onlyDate(trnDate) {
       if (!trnDate) return "";
       const s = String(trnDate);

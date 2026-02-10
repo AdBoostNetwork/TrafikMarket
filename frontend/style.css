@@ -175,8 +175,8 @@ body {
     bottom: 0;
     transform: translateX(-50%);
     height: 92px;
-    background: rgba(20, 20, 20, 0.94);
-    border-top: 1px solid #262626;
+    background: transparent;
+    border-top: none;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     align-items: center;
@@ -185,6 +185,7 @@ body {
     width: 100%;
     margin: 0 auto;
 }
+
 
 .nav-item {
     display: flex;

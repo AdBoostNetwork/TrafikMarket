@@ -27,10 +27,12 @@ async def get_profile(user_id: int):
                 for t in data["transactions"]
             ]
 
+        success_deals_percent = int(data["success_count"] * 100 / data["deals_count"]) if data["deals_count"] else 0
+
         profile_info = MyProfile(
             name=data["name"],
             deals_count=data["deals_count"],
-            success_deals=data["success_count"],
+            success_deals_percent=success_deals_percent,
             balance=data["current_balance"],
             avatar_filename=data["avatar_filename"],
             deps_list=deps_list,

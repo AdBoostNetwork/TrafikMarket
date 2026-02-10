@@ -33,6 +33,6 @@ class MyProfile:
     name: str
     avatar_filename: str
     deals_count: int
-    success_deals: int
+    success_deals_percent: int
     balance: float
     deps_list: list[Transaction]

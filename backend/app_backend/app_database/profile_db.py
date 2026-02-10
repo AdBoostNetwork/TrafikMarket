@@ -38,7 +38,7 @@ async def get_user_transactions(session, user_id: int):
 
     return [
         {
-            "type": r["type"],
+            "type": r["tr_type"],
             "summ": r["summ"],
             "transaction_time": r["transaction_time"],
         }

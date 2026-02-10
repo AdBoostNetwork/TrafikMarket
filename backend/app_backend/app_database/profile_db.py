@@ -24,9 +24,7 @@ async def get_user_transactions(session, user_id: int):
     logger.info("Запрос транзакций пользователя | user_id: %s", user_id)
 
     query = text("""
-                 SELECT t.tr_type AS type,
-                        t.summ AS summ,
-                        t.transaction_time AS transaction_time
+                 SELECT t.tr_type, t.summ, t.transaction_time 
                  FROM transactions t
                  WHERE t.user_id = :user_id
                  ORDER BY t.transaction_time DESC

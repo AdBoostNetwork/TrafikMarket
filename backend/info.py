@@ -275,7 +275,7 @@ class Deal():
     3) buyer_id (int)
     4) deal_name (str) (по типу "Продажа канала"/"Покупка аккаунта")
     5) cost (float)
-    6) deal_info (str)
+    6) deal_info (str) —
     6) type (str) (scs_completed/canceled/active/disputed/in_disput)
     7) chat (str)
     """

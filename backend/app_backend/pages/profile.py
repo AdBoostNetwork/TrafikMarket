@@ -2,7 +2,7 @@ from fastapi import APIRouter
 import html
 
 from ..app_classes import MyProfile, Transaction
-from ..database import get_profile_info_db
+from ..app_database.profile_db import get_profile_info_db
 from ..logger import get_logger
 
 

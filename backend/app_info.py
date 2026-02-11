@@ -1,5 +1,5 @@
 #Файл с информацией о функциях для взаимодействия фронтенда с бэкендом
-#just a test
+
 #Основная библиотека для связи фронтенда с бэкендом — FastAPI (https://fastapi.tiangolo.com/)
 from fastapi import FastAPI
 

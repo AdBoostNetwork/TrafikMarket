@@ -210,3 +210,9 @@ body {
 .nav-item.active img {
     filter: brightness(0) saturate(100%) invert(44%) sepia(48%) saturate(2527%) hue-rotate(203deg) brightness(100%) contrast(101%);
 }
+
+.logo-img{
+  max-width: 70%;
+  max-height: 70%;
+  object-fit: contain;
+}

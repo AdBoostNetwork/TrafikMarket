@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Реферальная ссылка</title>
+
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    .app { padding-top: 18px; }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 8px;
+    }
+
+    .center-wrap {
+      width: 84%;
+      max-width: 360px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .logo-card {
+      width: 100%;
+      background: var(--card);
+      border-radius: 25px;
+      min-height: 120px;
+      display: grid;
+      place-items: center;
+      user-select: none;
+    }
+
+    .section-title {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.05px;
+      margin-top: 4px;
+    }
+
+    .ref-input {
+      width: 100%;
+      background: var(--card);
+      border-radius: 18px;
+      padding: 12px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ref-input input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+    }
+
+    .copy-btn {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .copy-btn img {
+      width: 22px;
+      height: 22px;
+      opacity: 0.9;
+      filter: brightness(0) saturate(0) invert(71%) sepia(1%) saturate(0%) hue-rotate(173deg) brightness(90%) contrast(85%);
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-top: 2px;
+    }
+
+    .bottom-nav {
+      padding-top: 14px;
+      padding-bottom: 18px;
+      min-height: 92px;
+    }
+
+    .bottom-nav .nav-item img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .bottom-nav .nav-item span {
+      font-size: 14px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="content">
+      <div class="center-wrap">
+
+        <div class="logo-card">
+          <img class="logo-img" src="../icons/logo.jpg" alt="TrafficMarket">
+        </div>
+
+        <div class="section-title">Реферальная ссылка</div>
+
+        <div class="ref-input">
+          <input id="refLink" type="text" value="https://t.me/..." readonly />
+          <button class="copy-btn" id="copyBtn" aria-label="Скопировать">
+            <img src="../icons/copy_link.svg" alt="" />
+          </button>
+        </div>
+
+        <div class="hint" id="copyHint">
+          Поделись ссылкой — если пользователь зарегистрируется по ней, он будет закреплён за тобой.
+        </div>
+
+      </div>
+    </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="./menu.html">
+      <img src="../icons/menu.svg" alt="" />
+      <span>Меню</span>
+    </a>
+    <a class="nav-item" href="./orders.html">
+      <img src="../icons/orders.svg" alt="" />
+      <span>Заказы</span>
+    </a>
+    <a class="nav-item active" href="./refs.html">
+      <img src="../icons/refs.svg" alt="" />
+      <span>Пригласить</span>
+    </a>
+    <a class="nav-item" href="./profile.html">
+      <img src="../icons/profile.svg" alt="" />
+      <span>Профиль</span>
+    </a>
+  </nav>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000";
+
+    const DEFAULT_LINK = "https://t.me/...";
+    const DEFAULT_HINT = "Поделись ссылкой — если пользователь зарегистрируется по ней, он будет закреплён за тобой.";
+
+    function getUserIdFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const v = params.get("user_id");
+      return v ? v.trim() : null;
+    }
+
+    function setHint(text) {
+      document.getElementById("copyHint").textContent = text;
+    }
+
+    async function safeCopyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      ta.style.top = "-9999px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+
+    async function loadRefLink() {
+      const userId = getUserIdFromQuery();
+
+      if (!userId) {
+        document.getElementById("refLink").value = DEFAULT_LINK;
+        setHint(DEFAULT_HINT);
+        return;
+      }
+
+      try {
+        const url = `${API_BASE}/ref_link?user_id=${encodeURIComponent(userId)}`;
+        const res = await fetch(url);
+        const data = await res.json().catch(() => ({}));
+
+        if (data && typeof data.success === "string" && data.success.trim()) {
+          document.getElementById("refLink").value = data.success.trim();
+          setHint(DEFAULT_HINT);
+          return;
+        }
+
+        if (data && typeof data.error === "string" && data.error.trim()) {
+          document.getElementById("refLink").value = DEFAULT_LINK;
+          setHint(data.error.trim());
+          return;
+        }
+
+        document.getElementById("refLink").value = DEFAULT_LINK;
+        setHint("Неожиданный ответ сервера.");
+      } catch (e) {
+        document.getElementById("refLink").value = DEFAULT_LINK;
+        setHint("Ошибка сети: не удалось загрузить ссылку.");
+      }
+    }
+
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      const input = document.getElementById("refLink");
+      const val = (input.value || "").trim();
+      if (!val) return;
+
+      try {
+        await safeCopyToClipboard(val);
+        setHint("Ссылка успешно скопирована.");
+        setTimeout(() => setHint(DEFAULT_HINT), 1400);
+      } catch (e) {
+        setHint("Не получилось скопировать ссылку.");
+      }
+    });
+
+    loadRefLink();
+  </script>
+</body>
+</html>

@@ -38,12 +38,14 @@ class MyProfile:
     deps_list: list[Transaction]
 
 
+@dataclass(frozen=True)
 class AnnounPageSchema:
     """Ответ единой страницы объявления"""
     type: str
     announ_info: object
 
 
+@dataclass(frozen=True)
 class SellerInfo:
     """Класс с данными продавца"""
     name: str
@@ -51,6 +53,7 @@ class SellerInfo:
     success_deals: int
 
 
+@dataclass(frozen=True)
 class AnnounBaseSchema:
     """Класс с общими данными объявления для всех типов объявлений"""
     seller: SellerInfo
@@ -59,3 +62,5 @@ class AnnounBaseSchema:
     short_text: str
     long_text: str
     imgs: list[str]
+
+

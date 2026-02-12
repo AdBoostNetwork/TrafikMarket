@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import text
 
 from ..app_config import DbConfig
-from ..app_classes import ChannelSchema
+from ..app_classes import SellerInfo, ChannelSchema
 from ..logger import get_logger
 
 
@@ -17,6 +17,43 @@ new_session = async_sessionmaker(engine, expire_on_commit=False)
 async def get_session():
     async with new_session() as session:
         yield session
+
+
+async def get_seller_info_db(session, seller_id: int):
+    logger.info("Получение данных продавца | seller_id: %s", seller_id)
+
+    query = text(
+        """SELECT a.name, a.success_count,
+            (SELECT COUNT(*) FROM deals d WHERE d.seller_id = :seller_id) AS deals_count
+           FROM accounts a WHERE a.user_id = :seller_id""")
+
+    result = await session.execute(query, {"seller_id": seller_id})
+    row = result.mappings().first()
+
+    if row is None:
+        raise Exception(f"seller_not_found seller_id={seller_id}")
+
+    success_count = int(row["success_count"])
+    deals_count = int(row["deals_count"])
+
+    success_deals_percent = int(success_count * 100 / deals_count) if deals_count else 0
+
+    return SellerInfo(
+        name=row["name"],
+        deals_count=deals_count,
+        success_deals_percent=success_deals_percent,
+    )
+
+
+async def get_announ_imgs_db(session, announ_id: int) -> list[str]:
+    logger.info("Получение картинок объявления | Announ id: %s", announ_id)
+
+    query = text("SELECT img_filename FROM imgs WHERE img_announ_id = :announ_id ORDER BY img_id")
+
+    result = await session.execute(query, {"announ_id": announ_id})
+    rows = result.scalars().all()
+
+    return list(rows) if rows else []
 
 
 async def get_channel_announ_db(session, announ_id: int):

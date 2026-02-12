@@ -44,6 +44,13 @@ class AnnounPageSchema:
     announ_info: object
 
 
+class SellerInfo:
+    """Класс с данными продавца"""
+    name: str
+    deals_count: int
+    success_deals: int
+
+
 class AnnounBaseSchema:
     """Класс с общими данными объявления для всех типов объявлений"""
     seller: SellerInfo

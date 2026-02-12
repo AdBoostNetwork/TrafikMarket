@@ -50,7 +50,7 @@ class SellerInfo:
     """Класс с данными продавца"""
     name: str
     deals_count: int
-    success_deals: int
+    success_deals_percent: int
 
 
 @dataclass(frozen=True)
@@ -71,5 +71,5 @@ class ChannelSchema(AnnounBaseSchema):
     chn_type: str
     country: str
     subs_count: int
-    cover_count: int
-    profit: int
+    cover_count: float
+    profit: float

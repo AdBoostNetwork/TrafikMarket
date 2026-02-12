@@ -21,7 +21,7 @@ async def get_session():
 async def get_ref_link_db(user_id: int):
     logger.info("Запрос реферальной ссылки пользователя | user_id: %s", user_id)
 
-    query = text("SELECT accounts.ref_link FROM accounts WHERE accounts.user_id = :user_id ")
+    query = text("SELECT accounts.ref_link FROM accounts WHERE accounts.user_id = :user_id")
 
     async with new_session() as session:
         result = await session.execute(query, {"user_id": user_id})

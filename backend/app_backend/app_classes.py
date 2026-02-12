@@ -64,3 +64,12 @@ class AnnounBaseSchema:
     imgs: list[str]
 
 
+@dataclass(frozen=True)
+class ChannelSchema(AnnounBaseSchema):
+    """Класс параметров объявления тематики Каналы"""
+    topic: str
+    chn_type: str
+    country: str
+    subs_count: int
+    cover_count: int
+    profit: int

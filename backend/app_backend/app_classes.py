@@ -39,8 +39,16 @@ class MyProfile:
 
 
 class AnnounPageSchema:
-    """
-    Ответ единой страницы объявления
-    """
+    """Ответ единой страницы объявления"""
     type: str
     announ_info: object
+
+
+class AnnounBaseSchema:
+    """Класс с общими данными объявления для всех типов объявлений"""
+    seller: SellerInfo
+    title: str
+    price: int
+    short_text: str
+    long_text: str
+    imgs: list[str]

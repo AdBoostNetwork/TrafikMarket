@@ -326,6 +326,17 @@ def get_accs_list_db(active_filters: AccsFilters):
 
 # ==== Страница 3 (Страница объявления) ====
 
+class AnnounPageSchema:
+    """
+    Ответ единой страницы объявления
+
+    :param type — Тип объявления из таблицы announs
+    :param announ_info — Данные объявления нужного типа (ChannelSchema / AdSchema / TrafficSchema / AccSchema)
+    """
+    type: str
+    announ_info: object
+
+
 class AnnounBaseSchema:
     """
     Класс с общими данными объявления для всех типов объявлений. Объект этого класса создаётся при запросе данных для заполнения объявления и содержит:
@@ -343,6 +354,29 @@ class AnnounBaseSchema:
     short_text: str
     long_text: str
     imgs: list[str]
+
+
+@app.get("/get_announ")
+def get_announ(announ_id: int):
+    """
+    Единая ручка страницы объявления
+
+    1) Получить type по announ_id из announs
+    2) Получить announ_info через соответствующую DB-функцию типа
+    3) Вернуть AnnounPageSchema
+    """
+
+
+def get_announ_type_db(announ_id: int):
+    """
+    Возвращает тип объявления по announ_id из таблицы announs
+    """
+
+
+def get_announ_info_db(announ_id: int, announ_type: str):
+    """
+    По типу вызывает нужную DB-функцию и возвращает ChannelSchema/AdSchema/TrafficSchema/AccSchema
+    """
 
 
 
@@ -368,31 +402,6 @@ class ChannelSchema(AnnounBaseSchema):
     profit: int
 
 
-@app.get("/get_chn_announ")
-#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Каналы"
-
-
-def get_chn_announ(announ_id: int):
-    """
-    Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект ChannelSchema
-    Возврашает данные объявления в виде объекта класс ChannelSchema
-
-    :param announ_id — Id объявления
-
-    :return ChannelSchema
-    """
-
-
-def get_chn_announ_db(announ_id: int):
-    """
-    Делает запрос к БД по announ_id и возвращает информацию в виде data[]
-
-    :param announ_id — Id объявления
-
-    :return: ChannelSchema
-    """
-
-
 
 
 # ==== Страница 3.2 (Страница объявления: Реклама)
@@ -412,31 +421,6 @@ class AdSchema(AnnounBaseSchema):
     cover: int
     cpm: int
     er: int
-
-
-@app.get("/get_ad_announ")
-#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Реклама"
-
-
-def get_ad_announ(announ_id: int):
-    """
-    Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект AdSchema
-    Возврашает данные объявления в виде объекта класс AdSchema
-
-    :param announ_id — Id объявления
-
-    :return AdSchema
-    """
-
-
-def get_ad_announ_db(announ_id: int):
-    """
-    Делает запрос к БД по announ_id и возвращает информацию в виде data[]
-
-    :param announ_id — Id объявления
-
-    :return: AdSchema
-    """
 
 
 
@@ -459,30 +443,6 @@ class TrafficSchema(AnnounBaseSchema):
     audience_type: str
     country: str
 
-
-@app.get("/get_traffic_announ")
-#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Трафик"
-
-
-def get_traffic_announ(announ_id: int):
-    """
-    Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект TrafficSchema
-    Возврашает данные объявления в виде объекта класс TrafficSchema
-
-    :param announ_id — Id объявления
-
-    :return TrafficSchema
-    """
-
-
-def get_traffic_announ_db(announ_id: int):
-    """
-    Делает запрос к БД по announ_id и возвращает информацию в виде data[]
-
-    :param announ_id — Id объявления
-
-    :return: TrafficSchema
-    """
 
 
 
@@ -511,30 +471,6 @@ class AccSchema(AnnounBaseSchema):
     gifts: bool
     tg_level: int
 
-
-@app.get("/get_acc_announ")
-#Ручка FastAPI, делающая get запрос к серверу для получения данных открытого объявления тематики "Аккаунты"
-
-
-def get_acc_announ(announ_id: int):
-    """
-    Вызывает функцию БД для получения информации об объявлении по его announ_id. Заполняет полученными данными объект AccSchema
-    Возврашает данные объявления в виде объекта класс AccSchema
-
-    :param announ_id — Id объявления
-
-    :return AccSchema
-    """
-
-
-def get_acc_announ_db(announ_id: int):
-    """
-    Делает запрос к БД по announ_id и возвращает информацию в виде data[]
-
-    :param announ_id — Id объявления
-
-    :return: AccSchema
-    """
 
 
 

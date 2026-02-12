@@ -36,3 +36,11 @@ class MyProfile:
     success_deals_percent: int
     balance: float
     deps_list: list[Transaction]
+
+
+class AnnounPageSchema:
+    """
+    Ответ единой страницы объявления
+    """
+    type: str
+    announ_info: object

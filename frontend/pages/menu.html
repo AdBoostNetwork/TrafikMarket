@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Меню</title>
+
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-top: 18px;
+      padding-bottom: 8px;
+    }
+
+    .center-wrap {
+      width: 84%;
+      max-width: 360px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .search-wrap {
+      width: 100%;
+      background: var(--card);
+      border-radius: 20px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+    }
+
+    .search-ico {
+      width: 20px;
+      height: 20px;
+      opacity: 0.9;
+      filter: brightness(0) saturate(0) invert(71%) sepia(1%) saturate(0%)
+              hue-rotate(173deg) brightness(90%) contrast(85%);
+    }
+
+    .logo-card {
+      width: 100%;
+      background: var(--card);
+      border-radius: 25px;
+      min-height: 120px;
+      display: grid;
+      place-items: center;
+      user-select: none;
+    }
+
+    .tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .tile {
+      background: var(--card);
+      border-radius: 25px;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .tile:active {
+      transform: scale(0.99);
+      opacity: 0.95;
+    }
+
+    .tile img {
+      width: 48px;
+      height: 48px;
+      filter: brightness(0) saturate(0) invert(71%) sepia(1%) saturate(0%)
+              hue-rotate(173deg) brightness(90%) contrast(85%);
+      opacity: 0.95;
+    }
+
+    .tile span {
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .create-btn {
+      width: 100%;
+      background: var(--card);
+      border-radius: 25px;
+      min-height: 70px;
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    .create-btn:active {
+      transform: scale(0.99);
+      opacity: 0.95;
+    }
+
+    .create-btn span {
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .bottom-nav {
+      padding-top: 14px;
+      padding-bottom: 18px;
+      min-height: 92px;
+    }
+    .bottom-nav .nav-item img { width: 30px; height: 30px; }
+    .bottom-nav .nav-item span { font-size: 14px; font-weight: 600; }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="content">
+      <div class="center-wrap">
+
+        <div class="search-wrap">
+          <input id="searchInput" type="text" placeholder="Поиск" />
+          <img class="search-ico" src="../icons/search.svg" alt="" />
+        </div>
+
+        <div class="logo-card">
+            <img class="logo-img" src="../icons/logo.jpg" alt="TrafficMarket">
+        </div>
+
+        <div class="tiles">
+          <a class="tile" id="tileChannels" href="./watch_ad.html">
+            <img src="../icons/chns.svg" alt="" />
+            <span>Каналы</span>
+          </a>
+
+          <a class="tile" id="tileAds" href="./watch_ad.html">
+            <img src="../icons/ad.svg" alt="" />
+            <span>Реклама</span>
+          </a>
+
+          <a class="tile" id="tileTraffic" href="./watch_ad.html">
+            <img src="../icons/trafik.svg" alt="" />
+            <span>Трафик</span>
+          </a>
+
+          <a class="tile" id="tileAccounts" href="./watch_ad.html">
+            <img src="../icons/accs.svg" alt="" />
+            <span>Аккаунты</span>
+          </a>
+        </div>
+
+        <a class="create-btn" id="createAdBtn" href="./create_ad.html">
+          <span>Создать объявление</span>
+        </a>
+
+      </div>
+    </div>
+</div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item active" href="./menu.html">
+      <img src="../icons/menu.svg" alt="" />
+      <span>Меню</span>
+    </a>
+    <a class="nav-item" href="./orders.html">
+      <img src="../icons/orders.svg" alt="" />
+      <span>Заказы</span>
+    </a>
+    <a class="nav-item" href="./refs.html">
+      <img src="../icons/refs.svg" alt="" />
+      <span>Пригласить</span>
+    </a>
+    <a class="nav-item" href="./profile.html">
+      <img src="../icons/profile.svg" alt="" />
+      <span>Профиль</span>
+    </a>
+  </nav>
+
+  <script>
+    function getUserIdFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const v = params.get("user_id");
+      return v ? v.trim() : null;
+    }
+
+    function withUserId(url) {
+      const userId = getUserIdFromQuery();
+      if (!userId) return url;
+
+      const u = new URL(url, window.location.href);
+      u.searchParams.set("user_id", userId);
+      return u.pathname + u.search;
+    }
+
+    function setLink(id, url) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.setAttribute("href", withUserId(url));
+    }
+
+    setLink("tileChannels", "./watch_ad.html?category=channels");
+    setLink("tileAds", "./watch_ad.html?category=ads");
+    setLink("tileTraffic", "./watch_ad.html?category=traffic");
+    setLink("tileAccounts", "./watch_ad.html?category=accounts");
+    setLink("createAdBtn", "./create_ad.html");
+
+    document.querySelectorAll(".bottom-nav a.nav-item").forEach(a => {
+      const href = a.getAttribute("href");
+      if (href) a.setAttribute("href", withUserId(href));
+    });
+
+    // Заглушка поиска
+    document.getElementById("searchInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.target.blur();
+      }
+    });
+  </script>
+</body>
+</html>

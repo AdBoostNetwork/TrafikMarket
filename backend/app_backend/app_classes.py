@@ -73,3 +73,13 @@ class ChannelSchema(AnnounBaseSchema):
     subs_count: int
     cover_count: float
     profit: float
+
+
+@dataclass(frozen=True)
+class AdSchema(AnnounBaseSchema):
+    """Класс параметров объявления тематики Реклама"""
+    topic: str
+    country: str
+    cover: int
+    cpm: int
+    er: int

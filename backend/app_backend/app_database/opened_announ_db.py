@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import text
 
 from ..app_config import DbConfig
-from ..app_classes import SellerInfo, ChannelSchema, AdSchema
+from ..app_classes import SellerInfo, ChannelSchema, AdSchema, TrafficSchema
 from ..logger import get_logger
 
 
@@ -54,6 +54,54 @@ async def get_announ_imgs_db(session, announ_id: int):
     rows = result.scalars().all()
 
     return list(rows) if rows else []
+
+
+async def get_traffic_announ_db(session, announ_id: int):
+    logger.info("Получение объявления (Трафик) | Announ id: %s", announ_id)
+
+    query = text(
+        """
+        SELECT a.seller_id,
+               a.title,
+               a.price,
+               a.short_text,
+               a.long_text,
+
+               t.topic,
+               t.platform,
+               t.traffic_type,
+               t.audience_type,
+               t.country
+        FROM announs a
+                 JOIN traffic t
+                      ON t.trf_announ_id = a.announ_id
+        WHERE a.announ_id = :announ_id;
+        """
+    )
+
+    result = await session.execute(query, {"announ_id": announ_id})
+    row = result.mappings().one_or_none()
+
+    if row is None:
+        logger.warning("Объявление (Трафик) не найдено | announ_id=%s", announ_id)
+        raise Exception(f"traffic_announ_not_found announ_id={announ_id}")
+
+    seller = await get_seller_info_db(session, int(row["seller_id"]))
+    imgs = await get_announ_imgs_db(session, announ_id)
+
+    return TrafficSchema(
+        seller=seller,
+        title=row["title"],
+        price=int(row["price"]),
+        short_text=row["short_text"],
+        long_text=row["long_text"],
+        imgs=imgs,
+        topic=row["topic"],
+        platform=row["platform"],
+        traffic_type=row["traffic_type"],
+        audience_type=row["audience_type"],
+        country=row["country"],
+    )
 
 
 async def get_ad_announ_db(session, announ_id: int):

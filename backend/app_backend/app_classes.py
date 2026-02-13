@@ -84,7 +84,7 @@ class AdSchema(AnnounBaseSchema):
     cpm: int
     er: int
 
-
+@dataclass(frozen=True)
 class TrafficSchema(AnnounBaseSchema):
     """Класс параметров объявления тематики Трафик"""
     topic: str

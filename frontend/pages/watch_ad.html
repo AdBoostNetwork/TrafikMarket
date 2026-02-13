@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Просмотр объявления</title>
+
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    .app { padding-top: 14px; }
+
+    .content{
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: calc(150px + env(safe-area-inset-bottom));
+    }
+
+    .center-wrap{
+      width: 84%;
+      max-width: 360px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .top-bar{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .back-link{
+      text-decoration: none;
+      color: var(--accent, #3b82f6);
+      font-weight: 800;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title{
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      margin-top: 4px;
+      margin-bottom: -2px;
+    }
+
+    .card{
+      width: 100%;
+      background: var(--card);
+      border-radius: 22px;
+      padding: 12px 12px;
+    }
+
+    .seller-row{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .seller-left{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .seller-avatar{
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #5b7cff;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      overflow: hidden;
+    }
+
+    .seller-avatar img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .seller-letter{
+      color: #fff;
+      font-weight: 900;
+      font-size: 18px;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .seller-name{
+      color: var(--white);
+      font-weight: 900;
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 170px;
+    }
+
+    .seller-right{
+      color: var(--white);
+      font-weight: 900;
+      font-size: 14px;
+      opacity: 0.95;
+      white-space: nowrap;
+    }
+
+    .rows{ display: flex; flex-direction: column; }
+
+    .row{
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 2px;
+      border-top: 1px solid rgba(255,255,255,0.10);
+    }
+
+    .row:first-child{ border-top: 0; padding-top: 6px; }
+
+    .row-label{
+      color: rgba(255,255,255,0.55);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .row-value{
+      color: var(--white);
+      font-weight: 900;
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .price{
+      color: var(--accent, #3b82f6);
+      font-weight: 1000;
+      letter-spacing: 0.2px;
+    }
+
+    .chip{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,0.22);
+      color: var(--white);
+      font-weight: 1000;
+      font-size: 13px;
+      line-height: 1;
+      background: rgba(0,0,0,0.10);
+      white-space: nowrap;
+    }
+
+    .desc{
+      color: rgba(255,255,255,0.55);
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+
+    .media-grid{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .media-item{
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 22px;
+      background: var(--card);
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+
+    .media-item img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .media-placeholder{
+      color: rgba(255,255,255,0.70);
+      font-weight: 1000;
+      font-size: 18px;
+    }
+
+    .bottom-actions{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+
+      background: rgba(30, 30, 30, 0.92);
+
+      box-shadow: 0 -1px 0 rgba(255,255,255,0.08);
+
+      padding: 16px 18px;
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      z-index: 9999;
+    }
+
+
+    .btn{
+      pointer-events: auto;
+      width: 84%;
+      max-width: 360px;
+      margin: 0 auto;
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 16px;
+      font-weight: 1000;
+      font-size: 16px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .btn:active{ transform: scale(0.99); opacity: 0.95; }
+
+    .btn-gray{ background: var(--card); color: var(--white); }
+    .btn-blue{ background: var(--accent, #3b82f6); color: #fff; }
+
+    .btn, .card, .media-item { transition: none !important; }
+    .btn:hover, .card:hover, .media-item:hover { transform: none !important; box-shadow: none !important; }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="content">
+      <div class="center-wrap">
+
+        <div class="top-bar">
+          <a class="back-link" id="backBtn" href="./watch_list.html">← Назад</a>
+        </div>
+
+        <div class="section-title">Вы покупаете у</div>
+        <div class="card">
+          <div class="seller-row">
+            <div class="seller-left">
+              <div class="seller-avatar" id="sellerAvatar">
+                <div class="seller-letter">?</div>
+              </div>
+              <div class="seller-name" id="sellerName">—</div>
+            </div>
+            <div class="seller-right" id="sellerStats">Сделок: — • —%</div>
+          </div>
+        </div>
+
+        <div class="section-title">Объявление</div>
+        <div class="card">
+          <div class="rows" id="announRows"></div>
+        </div>
+
+        <div class="section-title">Подробное описание</div>
+        <div class="card">
+          <div class="desc" id="longText">—</div>
+        </div>
+
+        <div class="section-title">Прикрепленные медиа</div>
+        <div class="media-grid" id="mediaGrid"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-actions">
+    <button class="btn btn-gray" id="contactBtn">Связаться с продавцом</button>
+    <button class="btn btn-blue" id="payBtn">Перейти к оплате</button>
+  </div>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000";
+    const ENDPOINT = "/get_announ";
+    const MEDIA_BASE = "../announs_media/";
+    const PAY_LINK_TEMPLATE = "https://t.me/YOUR_BOT?start=pay_{announ_id}";
+
+    function qs(name) {
+      const p = new URLSearchParams(window.location.search);
+      const v = p.get(name);
+      return v ? v.trim() : null;
+    }
+
+    function withUserId(url) {
+      const userId = qs("user_id");
+      if (!userId) return url;
+      const u = new URL(url, window.location.href);
+      u.searchParams.set("user_id", userId);
+      return u.pathname + u.search;
+    }
+
+    function isTruthy(v) {
+      return v !== null && v !== undefined && String(v).trim() !== "";
+    }
+
+    function formatNumber(v) {
+      if (v === null || v === undefined) return "—";
+      const n = Number(v);
+      if (Number.isNaN(n)) return String(v);
+      return new Intl.NumberFormat("ru-RU").format(n);
+    }
+
+    function humanizeCountry(code) {
+      if (!isTruthy(code)) return "—";
+      const c = String(code).toUpperCase();
+      if (c === "RUS" || c === "RU") return "Россия";
+      return code;
+    }
+
+    function rowText(label, value, extraClass = "") {
+      const row = document.createElement("div");
+      row.className = "row";
+      const l = document.createElement("div");
+      l.className = "row-label";
+      l.textContent = label;
+      const r = document.createElement("div");
+      r.className = "row-value " + extraClass;
+      r.textContent = value;
+      row.appendChild(l);
+      row.appendChild(r);
+      return row;
+    }
+
+    function rowChip(label, value) {
+      const row = document.createElement("div");
+      row.className = "row";
+      const l = document.createElement("div");
+      l.className = "row-label";
+      l.textContent = label;
+      const chip = document.createElement("span");
+      chip.className = "chip";
+      chip.textContent = value;
+      const r = document.createElement("div");
+      r.className = "row-value";
+      r.appendChild(chip);
+      row.appendChild(l);
+      row.appendChild(r);
+      return row;
+    }
+
+    function renderSeller(seller) {
+      const name = seller?.name ?? "—";
+      document.getElementById("sellerName").textContent = name;
+
+      const deals = seller?.deals_count ?? 0;
+      const percent = seller?.success_deals_percent ?? 0;
+      document.getElementById("sellerStats").textContent = `Сделок: ${formatNumber(deals)} • ${formatNumber(percent)}%`;
+
+      const avatarFilename = seller?.avatar_filename;
+      const avatarBox = document.getElementById("sellerAvatar");
+      avatarBox.innerHTML = "";
+
+      if (isTruthy(avatarFilename)) {
+        const img = document.createElement("img");
+        img.src = MEDIA_BASE + avatarFilename;
+        img.alt = "";
+        avatarBox.appendChild(img);
+      } else {
+        const letter = (String(name).trim()[0] || "?").toUpperCase();
+        const div = document.createElement("div");
+        div.className = "seller-letter";
+        div.textContent = letter;
+        avatarBox.appendChild(div);
+      }
+    }
+
+    function renderAnnounRows(type, info) {
+      const box = document.getElementById("announRows");
+      box.innerHTML = "";
+
+      box.appendChild(rowText("Название", info?.title ?? "—"));
+      box.appendChild(rowText("Стоимость", `${formatNumber(info?.price)} USDT`, "price"));
+
+      const map = {
+        channel: [
+          { key: "topic", label: "Тематика", kind: "chip" },
+          { key: "chn_type", label: "Тип канала", kind: "chip" },
+          { key: "country", label: "Страна", kind: "chip", fmt: humanizeCountry },
+          { key: "subs_count", label: "Количество подписичков", kind: "text", fmt: formatNumber },
+          { key: "cover_count", label: "Охват", kind: "text", fmt: formatNumber },
+          { key: "profit", label: "Доходность", kind: "text", fmt: (v) => `${formatNumber(v)} USDT` },
+        ],
+        ad: [
+          { key: "topic", label: "Тематика", kind: "chip" },
+          { key: "country", label: "Страна", kind: "chip", fmt: humanizeCountry },
+          { key: "cover", label: "Охват", kind: "text", fmt: formatNumber },
+          { key: "cpm", label: "ЦПМ", kind: "text", fmt: formatNumber },
+          { key: "er", label: "ЕР", kind: "text", fmt: (v) => `${formatNumber(v)}%` },
+        ],
+        traffic: [
+          { key: "topic", label: "Тематика", kind: "chip" },
+          { key: "platform", label: "Платформа", kind: "chip" },
+          { key: "traffic_type", label: "Тип залива", kind: "chip" },
+          { key: "audience_type", label: "Тип аудитории", kind: "chip" },
+          { key: "country", label: "Страна", kind: "chip", fmt: humanizeCountry },
+        ],
+        account: [
+          { key: "country", label: "Страна", kind: "chip", fmt: humanizeCountry },
+          { key: "log_type", label: "Тип входа", kind: "chip" },
+          { key: "idle_time", label: "Время отлеги", kind: "text" },
+          { key: "acc_type", label: "Тип", kind: "chip" },
+          { key: "premium", label: "Премиум", kind: "chip" },
+          { key: "stars_count", label: "Количество звезд", kind: "text", fmt: formatNumber },
+          { key: "gifts", label: "Подарки", kind: "text", fmt: (v) => (v ? "Да" : "Нет") },
+          { key: "tg_level", label: "Уровень тг", kind: "text", fmt: formatNumber },
+        ],
+      };
+
+      const fields = map[type] || [];
+      for (const f of fields) {
+        const raw = info?.[f.key];
+        const value = f.fmt ? f.fmt(raw) : (isTruthy(raw) ? String(raw) : "—");
+        if (f.kind === "chip") box.appendChild(rowChip(f.label, value));
+        else box.appendChild(rowText(f.label, value));
+      }
+    }
+
+    function renderDescription(info) {
+      document.getElementById("longText").textContent = info?.long_text ?? "—";
+    }
+
+    function renderMedia(imgs) {
+      const grid = document.getElementById("mediaGrid");
+      grid.innerHTML = "";
+
+      const list = Array.isArray(imgs) ? imgs : [];
+
+      const final = list.length ? list : ["__placeholder_1__", "__placeholder_2__"];
+
+      final.forEach((filename, idx) => {
+        const item = document.createElement("div");
+        item.className = "media-item";
+
+        if (String(filename).startsWith("__placeholder_")) {
+          const t = document.createElement("div");
+          t.className = "media-placeholder";
+          t.textContent = `Фото ${idx + 1}`;
+          item.appendChild(t);
+        } else {
+          const img = document.createElement("img");
+          img.src = MEDIA_BASE + filename;
+          img.alt = "";
+          item.appendChild(img);
+        }
+
+        grid.appendChild(item);
+      });
+    }
+
+    function categoryToType(category) {
+      const c = (category || "").toLowerCase();
+      if (c === "channels") return "channel";
+      if (c === "ads") return "ad";
+      if (c === "traffic") return "traffic";
+      if (c === "accounts") return "account";
+      return "channel"; // дефолт
+    }
+
+    function getPlaceholderData() {
+      const type = categoryToType(qs("category"));
+
+      const base = {
+        seller: {
+          name: "Humble Eagle",
+          avatar_filename: "", // будет буква
+          deals_count: 21,
+          success_deals_percent: 100
+        },
+        title: "TELEGABANK",
+        price: 579,
+        long_text:
+          "Описание заглушка",
+        imgs: ["__placeholder_1__", "__placeholder_2__"]
+      };
+
+      if (type === "channel") {
+        return {
+          type,
+          announ_info: {
+            ...base,
+            topic: "Новости",
+            chn_type: "Приватный",
+            country: "Россия",
+            subs_count: 12456,
+            cover_count: 3000,
+            profit: 400
+          }
+        };
+      }
+
+      if (type === "ad") {
+        return {
+          type,
+          announ_info: {
+            ...base,
+            topic: "Маркетинг",
+            country: "Россия",
+            cover: 65000,
+            cpm: 6,
+            er: 18
+          }
+        };
+      }
+
+      if (type === "traffic") {
+        return {
+          type,
+          announ_info: {
+            ...base,
+            topic: "E-commerce",
+            platform: "Telegram",
+            traffic_type: "CPC",
+            audience_type: "18-35",
+            country: "Россия"
+          }
+        };
+      }
+
+      return {
+        type,
+        announ_info: {
+          ...base,
+          country: "Россия",
+          log_type: "SMS",
+          idle_time: "6 months",
+          acc_type: "Траст",
+          premium: "нет",
+          stars_count: 120,
+          gifts: true,
+          tg_level: 6
+        }
+      };
+    }
+    async function loadAnnoun() {
+      const announId = qs("announ_id");
+
+      if (!announId) {
+        const demo = getPlaceholderData();
+        renderSeller(demo.announ_info.seller);
+        renderAnnounRows(demo.type, demo.announ_info);
+        renderDescription(demo.announ_info);
+        renderMedia(demo.announ_info.imgs);
+
+        document.getElementById("payBtn").onclick = () => alert("Заглушка");
+        document.getElementById("contactBtn").onclick = () => alert("Заглушка");
+        return;
+      }
+
+      try {
+        const url = `${API_BASE}${ENDPOINT}?announ_id=${encodeURIComponent(announId)}`;
+        const res = await fetch(url);
+        const data = await res.json().catch(() => null);
+
+        if (!data || !data.announ_info) {
+          const demo = getPlaceholderData();
+          renderSeller(demo.announ_info.seller);
+          renderAnnounRows(demo.type, demo.announ_info);
+          renderDescription(demo.announ_info);
+          renderMedia(demo.announ_info.imgs);
+          return;
+        }
+
+        const type = data.type;
+        const info = data.announ_info;
+
+        renderSeller(info.seller);
+        renderAnnounRows(type, info);
+        renderDescription(info);
+        renderMedia(info.imgs);
+
+        const payLink = PAY_LINK_TEMPLATE.replace("{announ_id}", encodeURIComponent(announId));
+        document.getElementById("payBtn").onclick = () => window.open(payLink, "_blank");
+        document.getElementById("contactBtn").onclick = () => alert("Заглушка");
+
+      } catch (e) {
+        const demo = getPlaceholderData();
+        renderSeller(demo.announ_info.seller);
+        renderAnnounRows(demo.type, demo.announ_info);
+        renderDescription(demo.announ_info);
+        renderMedia(demo.announ_info.imgs);
+      }
+    }
+
+    (function setupBack() {
+      const category = qs("category");
+      const u = new URL("./watch_list.html", window.location.href);
+      const userId = qs("user_id");
+      if (userId) u.searchParams.set("user_id", userId);
+      if (category) u.searchParams.set("category", category);
+      document.getElementById("backBtn").setAttribute("href", u.pathname + u.search);
+    })();
+
+    loadAnnoun();
+  </script>
+</body>
+</html>

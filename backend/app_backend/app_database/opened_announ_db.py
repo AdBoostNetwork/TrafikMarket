@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import text
 
 from ..app_config import DbConfig
-from ..app_classes import SellerInfo, ChannelSchema
+from ..app_classes import SellerInfo, ChannelSchema, AdSchema
 from ..logger import get_logger
 
 
@@ -45,7 +45,7 @@ async def get_seller_info_db(session, seller_id: int):
     )
 
 
-async def get_announ_imgs_db(session, announ_id: int) -> list[str]:
+async def get_announ_imgs_db(session, announ_id: int):
     logger.info("Получение картинок объявления | Announ id: %s", announ_id)
 
     query = text("SELECT img_filename FROM imgs WHERE img_announ_id = :announ_id ORDER BY img_id")
@@ -54,6 +54,54 @@ async def get_announ_imgs_db(session, announ_id: int) -> list[str]:
     rows = result.scalars().all()
 
     return list(rows) if rows else []
+
+
+async def get_ad_announ_db(session, announ_id: int):
+    logger.info("Получение объявления рекламы | Announ id: %s", announ_id)
+
+    query = text(
+        """
+        SELECT a.seller_id,
+               a.title,
+               a.price,
+               a.short_text,
+               a.long_text,
+
+               ad.topic,
+               ad.country,
+               ad.cover,
+               ad.cpm,
+               ad.er
+        FROM announs a
+                 JOIN ads ad
+                      ON ad.ad_announ_id = a.announ_id
+        WHERE a.announ_id = :announ_id;
+        """
+    )
+
+    result = await session.execute(query, {"announ_id": announ_id})
+    row = result.mappings().one_or_none()
+
+    if row is None:
+        logger.warning("Объявление (Реклама) не найдено | announ_id=%s", announ_id)
+        raise Exception(f"ad_announ_not_found announ_id={announ_id}")
+
+    seller = await get_seller_info_db(session, int(row["seller_id"]))
+    imgs = await get_announ_imgs_db(session, announ_id)
+
+    return AdSchema(
+        seller=seller,
+        title=row["title"],
+        price=int(row["price"]),
+        short_text=row["short_text"],
+        long_text=row["long_text"],
+        imgs=imgs,
+        topic=row["topic"],
+        country=row["country"],
+        cover=int(row["cover"]),
+        cpm=int(row["cpm"]),
+        er=int(row["er"]),
+    )
 
 
 async def get_channel_announ_db(session, announ_id: int):
@@ -125,7 +173,7 @@ async def get_announ_type_db(session, announ_id: int):
     return announ_type
 
 
-async def get_announ_info_db(session, announ_id: int, announ_type: int):
+async def get_announ_info_db(session, announ_id: int, announ_type: str):
 
     if announ_type == "channel":
         return await get_channel_announ_db(session, announ_id)
@@ -136,7 +184,7 @@ async def get_announ_info_db(session, announ_id: int, announ_type: int):
     if announ_type == "account":
         return await get_account_announ_db(session, announ_id)
 
-    raise Exception({"error": "unknown announ type"})
+    raise Exception(f"unknown_announ_type type: {announ_type}")
 
 
 async def get_announ_page_db(announ_id: int):
@@ -145,3 +193,8 @@ async def get_announ_page_db(announ_id: int):
     async with new_session() as session:
         announ_type = await get_announ_type_db(session, announ_id)
         announ_info = await get_announ_info_db(session, announ_id, announ_type)
+
+    return {
+        "type": announ_type,
+        "announ_info": announ_info,
+    }

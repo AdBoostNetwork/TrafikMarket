@@ -83,3 +83,12 @@ class AdSchema(AnnounBaseSchema):
     cover: int
     cpm: int
     er: int
+
+
+class TrafficSchema(AnnounBaseSchema):
+    """Класс параметров объявления тематики Трафик"""
+    topic: str
+    platform: str
+    traffic_type: str
+    audience_type: str
+    country: str

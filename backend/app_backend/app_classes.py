@@ -59,7 +59,6 @@ class AnnounBaseSchema:
     seller: SellerInfo
     title: str
     price: int
-    short_text: str
     long_text: str
     imgs: list[str]
 

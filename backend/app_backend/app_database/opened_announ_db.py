@@ -65,7 +65,6 @@ async def get_account_announ_db(session, announ_id: int):
         SELECT a.seller_id,
                a.title,
                a.price,
-               a.short_text,
                a.long_text,
 
                ac.country,
@@ -97,7 +96,6 @@ async def get_account_announ_db(session, announ_id: int):
         seller=seller,
         title=row["title"],
         price=int(row["price"]),
-        short_text=row["short_text"],
         long_text=row["long_text"],
         imgs=imgs,
         country=row["country"],
@@ -119,7 +117,6 @@ async def get_traffic_announ_db(session, announ_id: int):
         SELECT a.seller_id,
                a.title,
                a.price,
-               a.short_text,
                a.long_text,
 
                t.topic,
@@ -148,7 +145,6 @@ async def get_traffic_announ_db(session, announ_id: int):
         seller=seller,
         title=row["title"],
         price=int(row["price"]),
-        short_text=row["short_text"],
         long_text=row["long_text"],
         imgs=imgs,
         topic=row["topic"],
@@ -167,7 +163,6 @@ async def get_ad_announ_db(session, announ_id: int):
         SELECT a.seller_id,
                a.title,
                a.price,
-               a.short_text,
                a.long_text,
 
                ad.topic,
@@ -196,7 +191,6 @@ async def get_ad_announ_db(session, announ_id: int):
         seller=seller,
         title=row["title"],
         price=int(row["price"]),
-        short_text=row["short_text"],
         long_text=row["long_text"],
         imgs=imgs,
         topic=row["topic"],
@@ -215,7 +209,6 @@ async def get_channel_announ_db(session, announ_id: int):
         SELECT a.seller_id,
                a.title,
                a.price,
-               a.short_text,
                a.long_text,
 
                c.topic,
@@ -248,7 +241,6 @@ async def get_channel_announ_db(session, announ_id: int):
         seller=seller,
         title=row["title"],
         price=int(row["price"]),
-        short_text=row["short_text"],
         long_text=row["long_text"],
         imgs=imgs,
         topic=row["topic"],

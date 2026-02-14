@@ -8,6 +8,7 @@ import html
 from .pages.profile import profile_page
 from .pages.ref_link import ref_link_page
 from .pages.opened_announ import opened_announ_page
+from pages.announs import announs_page
 from .app_config import AppConfig
 from .logger import get_logger
 
@@ -39,3 +40,4 @@ app.add_middleware(
 app.include_router(profile_page)
 app.include_router(ref_link_page)
 app.include_router(opened_announ_page)
+app.include_router(announs_page)

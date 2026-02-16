@@ -317,7 +317,7 @@
       letter.textContent = first;
 
       if (avatarFilename) {
-        img.src = `../avatars/${avatarFilename}`;
+        img.src = `../users_avas/${avatarFilename}`;
         img.style.display = "block";
         letter.style.display = "none";
 
@@ -409,8 +409,10 @@
     // заглушки
     document.getElementById("depositBtn").addEventListener("click", () => alert("Пополнение — скоро"));
     document.getElementById("withdrawBtn").addEventListener("click", () => alert("Вывод — скоро"));
-    document.getElementById("supportBtn").addEventListener("click", () => alert("Поддержка — скоро"));
 
+    document.getElementById("supportBtn").addEventListener("click", () => {
+      window.open("https://t.me/traffsupportbot", "_blank");
+    });
     loadProfile();
   </script>
 </body>

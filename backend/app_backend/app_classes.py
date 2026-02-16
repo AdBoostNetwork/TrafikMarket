@@ -35,7 +35,8 @@ class MyProfile:
     avatar_filename: str
     deals_count: int
     success_deals_percent: int
-    balance: float
+    free_balance: float
+    frozen_balance: float
     deps_list: list[Transaction]
 
 

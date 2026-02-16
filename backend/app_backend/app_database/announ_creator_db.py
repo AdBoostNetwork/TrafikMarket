@@ -165,6 +165,7 @@ async def post_common_info_db(session, announ_type: str, announ_info: dict):
     if announ_id is None:
         raise Exception("announ_create_error")
 
+    logger.info("Базовые данные объявления успешно записаны | announ_id = %s", announ_id)
     return int(announ_id)
 
 

@@ -1,5 +1,6 @@
 #Классы app
 from dataclasses import dataclass
+from pydantic import BaseModel
 
 
 @dataclass(frozen=True)
@@ -104,3 +105,8 @@ class AccSchema(AnnounBaseSchema):
     stars_count: str
     gifts: bool
     tg_level: int
+
+
+class AnnounCreateSchema(BaseModel):
+    type: str
+    announ_info: dict

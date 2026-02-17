@@ -14,9 +14,9 @@ new_session = async_sessionmaker(engine, expire_on_commit=False)
 async def is_new_user_db(user_id: int):
     query = text(
         """
-        SELECT avatar_filename
+        SELECT name, username, avatar_filename
         FROM accounts
-        WHERE user_id = :user_id
+        WHERE user_id = :user_id;
         """
     )
 
@@ -25,10 +25,9 @@ async def is_new_user_db(user_id: int):
         row = result.mappings().one_or_none()
 
         if row is None:
-            return False, None
+            return False, None, None, None
 
-        #тут вернуть еще имя и юз
-        return True, name, username, row["avatar_filename"]
+        return True, row["name"], row["username"], row["avatar_filename"]
 
 
 async def save_new_user_db(user_data: UserCreateSchema):
@@ -49,24 +48,33 @@ async def save_new_user_db(user_data: UserCreateSchema):
                     "username": user_data.tg_username,
                     "avatar_filename": user_data.avatar_id,
                     "ref_link": user_data.ref_link,
-                    "referrer_id": user_data.referi_if,
+                    "referrer_id": user_data.referi_id,
                 },
             )
             await session.commit()
             return True
 
-    except Exception as e:
-        print(str(e))
+    except Exception:
         return False
 
+
 async def change_avatar_id_db(user_id: int, new_avatar_id: int):
-    """
-    меняем id аватарки юзера, возвращаем успешность
-    :param user_id:
-    :param new_avatar_id:
-    :return:
-    """
-    return True
+    query = text(
+        """
+        UPDATE accounts
+        SET avatar_filename = :avatar_filename
+        WHERE user_id = :user_id;
+        """
+    )
+    try:
+        async with new_session() as session:
+
+            await session.execute(query,{"user_id": user_id, "avatar_filename": new_avatar_id})
+            await session.commit()
+            return True
+
+    except Exception:
+        return False
 
 
 async def change_name_db(user_id: int, new_name: str):

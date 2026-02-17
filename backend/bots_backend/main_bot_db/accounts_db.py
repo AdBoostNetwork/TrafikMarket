@@ -3,7 +3,10 @@ from sqlalchemy import text
 
 from .main_bot_config import db_info
 from backend.classes import UserCreateSchema
+from backend.logger import get_logger
 
+
+logger = get_logger(__name__)
 
 engine = create_async_engine(
     f'postgresql+asyncpg://{db_info.admin}:{db_info.password}@{db_info.host}:{db_info.port}/{db_info.db_name}')
@@ -12,11 +15,13 @@ new_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def is_new_user_db(user_id: int):
+    logger.info(f"Проверка существования пользователя | user_id: {user_id}")
+
     query = text(
         """
         SELECT name, username, avatar_filename
         FROM accounts
-        WHERE user_id = :user_id;
+        WHERE user_id = :user_id
         """
     )
 
@@ -31,6 +36,8 @@ async def is_new_user_db(user_id: int):
 
 
 async def save_new_user_db(user_data: UserCreateSchema):
+    logger.info(f"Сохранение нового пользователя в БД | user_id: {user_data.user_id}")
+
     query = text(
         """
         INSERT INTO accounts (user_id, name, username, avatar_filename, ref_link, referrer_id)
@@ -54,16 +61,19 @@ async def save_new_user_db(user_data: UserCreateSchema):
             await session.commit()
             return True
 
-    except Exception:
+    except Exception as e:
+        logger.exception(f"Ошибка при сохранении нового пользотвателя в БД | user_id: {user_data.user_id} | Ошибка: {str(e)}")
         return False
 
 
 async def change_avatar_id_db(user_id: int, new_avatar_id: int):
+    logger.info(f"Смена аватарки пользователя | user_id: {user_id}")
+
     query = text(
         """
         UPDATE accounts
         SET avatar_filename = :avatar_filename
-        WHERE user_id = :user_id;
+        WHERE user_id = :user_id
         """
     )
     try:
@@ -73,24 +83,50 @@ async def change_avatar_id_db(user_id: int, new_avatar_id: int):
             await session.commit()
             return True
 
-    except Exception:
+    except Exception as e:
+        logger.exception(f"Ошибка при смене аватарки пользователя | user_id: {user_id} | Ошибка: {str(e)}")
         return False
 
 
 async def change_name_db(user_id: int, new_name: str):
-    """
-    меняем имя юзера, возвращаем успешность
-    :param user_id:
-    :param new_name:
-    :return:
-    """
-    return True
+    logger.info(f"Смена имени пользователя | user_id: {user_id}")
+
+    query = text(
+        """
+        UPDATE accounts
+        SET name = :name
+        WHERE user_id = :user_id
+        """
+    )
+
+    try:
+        async with new_session() as session:
+            await session.execute(query, {"user_id": user_id, "name": new_name})
+            await session.commit()
+            return True
+
+    except Exception as e:
+        logger.exception(f"Ошибка при смене имени пользователя | user_id: {user_id} | Ошибка: {str(e)}")
+        return False
+
 
 async def change_username_db(user_id: int, new_username: str):
-    """
-    меняем юзернейм юзера, возвращаем успешность
-    :param user_id:
-    :param new_username:
-    :return:
-    """
-    return True
+    logger.info(f"Смена юзернейма пользователя | user_id: {user_id}")
+
+    query = text(
+        """
+        UPDATE accounts
+        SET username = :username
+        WHERE user_id = :user_id
+        """
+    )
+
+    try:
+        async with new_session() as session:
+            await session.execute(query, {"user_id": user_id, "username": new_username})
+            await session.commit()
+            return True
+
+    except Exception as e:
+        logger.exception(f"Ошибка при смене юзернейма пользователя | user_id: {user_id} | Ошибка: {str(e)}")
+        return False

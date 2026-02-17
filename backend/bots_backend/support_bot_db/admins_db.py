@@ -14,6 +14,14 @@ def msg_from_support(user_id, text):
     :return:
     """
 
+def get_last_msg(appeal_id):
+    """
+
+    :param appeal_id:
+    :return:
+    """
+    return "abc", "nigga", True
+
 
 def config_tp_bot_buttons(user_id: int, status: str = None, circle: int = 0):
     """

@@ -1,5 +1,29 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+
+
+def admin_choice_menu():
+    """Только для админов, выбор от лица кого запускать бота"""
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Админ", callback_data="choice:admin"),
+                InlineKeyboardButton(text="Юзер", callback_data="choice:user"),
+            ],
+        ]
+    )
+
+def CEO_choice_menu():
+    """Только для админов, выбор от лица кого запускать бота"""
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="CEO", callback_data="choice:CEO"),
+                InlineKeyboardButton(text="Юзер", callback_data="choice:user"),
+            ],
+        ]
+    )
+
 def admins_start_menu():
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -9,6 +33,24 @@ def admins_start_menu():
             [
                 InlineKeyboardButton(text="Ответить на самый старый вопрос", callback_data="get_latest_dialog"),
             ]
+        ]
+    )
+
+def CEO_start_menu():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Посмотреть споры по заказам", callback_data="adm_get_dialogs"),
+            ],
+            [
+                InlineKeyboardButton(text="Ответить на самый старый вопрос", callback_data="get_latest_dialog"),
+            ]
+            [
+                InlineKeyboardButton(text="Посмотреть список админов", callback_data="adm_list"),
+            ],
+            [
+                InlineKeyboardButton(text="Добавить админа", callback_data="new_adm"),
+            ],
         ]
     )
 

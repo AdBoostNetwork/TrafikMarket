@@ -37,7 +37,7 @@ async def get_profile(user_id: int):
             success_deals_percent=success_deals_percent,
             free_balance=free_balance,
             frozen_balance=data["frozen_balance"],
-            avatar_filename=data["avatar_filename"],
+            avatar_filename=f'{str(data["avatar_filename"])}.jpg',
             deps_list=deps_list,
         )
 

@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import Message, MenuButtonWebApp, WebAppInfo
 from pathlib import Path
 
 from backend.bots_backend.roles import is_admin, is_ceo
@@ -31,7 +31,7 @@ async def start_handler(message: Message, state: FSMContext):
         )
         db_save_scs = save_new_user_db(new_user)
         avatar_save_scs = _update_avatar(message, user_id, current_avatar_id)
-        if not db_save_scs and avatar_save_scs:
+        if not (db_save_scs and avatar_save_scs):
             await message.answer("Наша платформа сейчас временно недоступна. Приносим извинения за неудобства")
 
     else:
@@ -42,6 +42,14 @@ async def start_handler(message: Message, state: FSMContext):
         if current_avatar_id != saved_avatar_id:
             db_save_scs = await change_avatar_id_db(user_id, current_avatar_id)
             avatar_save_scs = _update_avatar(message, user_id, current_avatar_id)
+
+    await message.bot.set_chat_menu_button(
+        chat_id=message.chat.id,
+        menu_button=MenuButtonWebApp(
+            text="OPEN",
+            web_app=WebAppInfo(url="https://pornhub.com")
+        )
+    )
 
     if is_admin(user_id):
         if is_ceo(user_id):

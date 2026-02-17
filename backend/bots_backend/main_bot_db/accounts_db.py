@@ -27,7 +27,8 @@ async def is_new_user_db(user_id: int):
         if row is None:
             return False, None
 
-        return True, row["avatar_filename"]
+        #тут вернуть еще имя и юз
+        return True, name, username, row["avatar_filename"]
 
 
 async def save_new_user_db(user_data: UserCreateSchema):
@@ -57,3 +58,31 @@ async def save_new_user_db(user_data: UserCreateSchema):
     except Exception as e:
         print(str(e))
         return False
+
+async def change_avatar_id_db(user_id: int, new_avatar_id: int):
+    """
+    меняем id аватарки юзера, возвращаем успешность
+    :param user_id:
+    :param new_avatar_id:
+    :return:
+    """
+    return True
+
+
+async def change_name_db(user_id: int, new_name: str):
+    """
+    меняем имя юзера, возвращаем успешность
+    :param user_id:
+    :param new_name:
+    :return:
+    """
+    return True
+
+async def change_username_db(user_id: int, new_username: str):
+    """
+    меняем юзернейм юзера, возвращаем успешность
+    :param user_id:
+    :param new_username:
+    :return:
+    """
+    return True

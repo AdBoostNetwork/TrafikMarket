@@ -11,13 +11,12 @@ engine = create_async_engine(
 new_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
-
 async def is_new_user_db(user_id: int):
     query = text(
         """
         SELECT avatar_filename
         FROM accounts
-        WHERE user_id = :user_id;
+        WHERE user_id = :user_id
         """
     )
 
@@ -28,16 +27,33 @@ async def is_new_user_db(user_id: int):
         if row is None:
             return False, None
 
-        return True, int(row["avatar_filename"])
+        return True, row["avatar_filename"]
 
 
-def save_new_user_db(user_id, name, tg_username, avatar_id) -> bool:
-    """
-    Сохраняет новый акк в БД, возвращает False в смлучае ошибки, True если все норм
-    :param user_id:
-    :param name:
-    :param tg_username:
-    :param avatar_id:
-    :return:
-    """
-    return True
+async def save_new_user_db(user_data: UserCreateSchema):
+    query = text(
+        """
+        INSERT INTO accounts (user_id, name, username, avatar_filename, ref_link, referrer_id)
+        VALUES (:user_id, :name, :username, :avatar_filename, :ref_link, :referrer_id)
+        """
+    )
+
+    try:
+        async with new_session() as session:
+            await session.execute(
+                query,
+                {
+                    "user_id": user_data.user_id,
+                    "name": user_data.name,
+                    "username": user_data.tg_username,
+                    "avatar_filename": user_data.avatar_id,
+                    "ref_link": user_data.ref_link,
+                    "referrer_id": user_data.referi_if,
+                },
+            )
+            await session.commit()
+            return True
+
+    except Exception as e:
+        print(str(e))
+        return False

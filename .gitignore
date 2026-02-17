@@ -5,4 +5,3 @@ backend/.env
 .vscode/
 bots/Support_bot/config.py
 data
-frontend/announs_media

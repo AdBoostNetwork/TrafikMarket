@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 
 
-@dataclass()
+@dataclass(frozen=True)
 class DbConfig:
+    """Класс конфигурации данных БД"""
     admin: str
     password: str
     host: str
@@ -10,9 +11,11 @@ class DbConfig:
     db_name: str
 
 
-@dataclass()
-class Appeal:
-    user_from_id: int
-    last_msg: str
-    chat: str
-    status: str
+@dataclass(frozen=True)
+class UserCreateSchema:
+    """Класс данных пользователя при создании аккаунта"""
+    user_id: int
+    name: str
+    tg_username: str | None
+    avatar_id: int | None
+    referi_if: int | None

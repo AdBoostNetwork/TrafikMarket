@@ -8,6 +8,30 @@ from ..keyboards.admins_inline import admin_dialog_menu, admin_dialogs_list_menu
 
 router = Router()
 
+@router.callback_query(F.data.startswith("choice:"))
+async def get_dialog(callback: CallbackQuery):
+    """Обработчик выбора"""
+    key = callback.data.split(":")[1]
+    if key == "user":
+        await callback.message.edit_text(
+            "хай",
+            reply_markup=user_start_menu()
+        )
+        await callback.answer()
+        return
+    elif key == "admin":
+        await callback.message.edit_text(
+            "хай",
+            reply_markup=admins_start_menu()
+        )
+        await callback.answer()
+        return
+    elif key == "CEO":
+        await callback.message.edit_text(
+            "Новый текст сообщения",
+            reply_markup=admins_start_menu()
+        )
+        await callback.answer()
 
 @router.callback_query(F.data == "adm_get_dialogs")
 async def adm_get_dialogs(callback: CallbackQuery, state: FSMContext):

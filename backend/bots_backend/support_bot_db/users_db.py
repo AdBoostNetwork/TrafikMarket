@@ -53,7 +53,7 @@ def config_tp_bot_buttons(user_id: int) -> dict:
     :return: config
     """
     return {
-        "Почему Артур огузок?": 1234
+        "Вопрос по разделу 'Вывод'": 1234
     }
 
 
@@ -63,7 +63,7 @@ def get_last_msg(appeal_id):
     :param appeal_id:
     :return:
     """
-    return "По жизни", ["my_files/dick_pick.jpg"], False
+    return 'Напишите свой вопрос подробнее', ["my_files/photo.jpg"], False
 
 def close_appeal(appeal_id):
     """

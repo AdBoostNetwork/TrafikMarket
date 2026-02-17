@@ -2,112 +2,156 @@ import json
 from pathlib import Path
 from functools import lru_cache
 
-DATA_DIR = Path(__file__).resolve().parents[1] / "data"
-ADMINS_PATH = DATA_DIR / "admins.json"
-TMP_PATH = DATA_DIR / "admins.json.tmp"
+# roles.py лежит в .../backend/bots_backend/roles.py
+# корень проекта = parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+ADMINS_PATH = PROJECT_ROOT / "data" / "admins.json"
+TMP_PATH = PROJECT_ROOT / "data" / "admins.json.tmp"
 
 
 @lru_cache(maxsize=1)
-def load_roles() -> dict[str, list[int]]:
+def _load_roles() -> dict:
     """
-    Контракт файла data/admins.json:
+    Читает и валидирует data/admins.json.
+
+    Формат:
     {
-      "admins": [int, ...],
-      "CEO": [int, ...]
+      "CEO": [int, ...],
+      "admins": {
+        "<admin_id>": {"adm_name": "<русский текст>"}
+      }
     }
     """
-    with ADMINS_PATH.open("r", encoding="utf-8") as f:
+    with ADMINS_PATH.open("r", encoding="utf-8-sig") as f:
         data = json.load(f)
 
     if not isinstance(data, dict):
-        raise ValueError("admins.json must be an object")
+        raise ValueError("admins.json must be a JSON object")
 
-    admins = data.get("admins", [])
-    ceo = data.get("CEO", [])
-
-    if not isinstance(admins, list) or not all(isinstance(x, int) for x in admins):
-        raise ValueError('"admins" must be list[int]')
+    ceo = data.get("CEO")
+    admins = data.get("admins")
 
     if not isinstance(ceo, list) or not all(isinstance(x, int) for x in ceo):
         raise ValueError('"CEO" must be list[int]')
 
-    return {"admins": admins, "CEO": ceo}
+    if not isinstance(admins, dict):
+        raise ValueError('"admins" must be an object: { "<id>": {"adm_name": "..."} }')
+
+    norm_admins: dict[str, dict] = {}
+    for k, v in admins.items():
+        if not isinstance(k, str) or not k.isdigit():
+            raise ValueError('admin ids must be digit-strings, e.g. "123456789"')
+        if not isinstance(v, dict):
+            raise ValueError('each admin must be an object: {"adm_name": "..."}')
+
+        adm_name = v.get("adm_name")
+        if not isinstance(adm_name, str) or not adm_name.strip():
+            raise ValueError('admin "adm_name" must be a non-empty string')
+
+        norm_admins[k] = {"adm_name": adm_name.strip()}
+
+    return {"CEO": ceo, "admins": norm_admins}
 
 
-def reload_roles_cache() -> None:
-    """
-    Гарантия: после вызова следующий load_roles() перечитает файл с диска.
-    """
-    load_roles.cache_clear()
+def _reload_roles_cache() -> None:
+    """Сбрасывает lru_cache, чтобы следующее чтение взяло свежий файл."""
+    _load_roles.cache_clear()
 
 
-def _write_roles(data: dict[str, list[int]]) -> None:
-    """
-    Атомарная запись: сначала во временный файл, затем replace().
-    """
-    DATA_DIR.mkdir(parents=True, exist_ok=True)
+def _write_roles(data: dict) -> None:
+    """Атомарная запись admins.json через временный файл."""
+    ADMINS_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-    with TMP_PATH.open("w", encoding="utf-8") as f:
+    with TMP_PATH.open("w", encoding="utf-8-sig") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     TMP_PATH.replace(ADMINS_PATH)
 
 
 def is_ceo(user_id: int) -> bool:
-    roles = load_roles()
+    roles = _load_roles()
     return user_id in roles["CEO"]
 
 
 def is_admin(user_id: int) -> bool:
-    roles = load_roles()
-    # CEO считается админом автоматически
-    return (user_id in roles["admins"]) or (user_id in roles["CEO"])
+    roles = _load_roles()
+    return (user_id in roles["CEO"]) or (str(user_id) in roles["admins"])
 
 
-def add_admin(admin_id: int) -> bool:
+def get_admin_name(user_id: int) -> str | None:
+    roles = _load_roles()
+    if user_id in roles["CEO"]:
+        return "CEO"
+    record = roles["admins"].get(str(user_id))
+    return record["adm_name"] if record else None
+
+
+def list_admins() -> dict[int, str]:
+    roles = _load_roles()
+    return {int(k): v["adm_name"] for k, v in roles["admins"].items()}
+
+
+def add_admin(admin_id: int, adm_name: str) -> bool:
     """
     Добавляет админа по id.
-    Меняет JSON и сбрасывает кеш.
-    Возвращает False, если такой id уже есть в admins (или в CEO).
+    Возвращает False, если admin_id уже существует или является CEO.
     """
-    if not isinstance(admin_id, int):
-        raise TypeError("admin_id must be int")
+    roles = _load_roles()
+    admin_key = str(admin_id)
+    name = adm_name.strip()
 
-    current = load_roles()
-
-    # не даём добавлять CEO повторно как админа (по смыслу он и так админ)
-    if admin_id in current["CEO"] or admin_id in current["admins"]:
+    if admin_id in roles["CEO"]:
+        return False
+    if admin_key in roles["admins"]:
         return False
 
-    # НЕ мутируем current (он может быть кешированным объектом!)
-    new_admins = list(current["admins"])
-    new_admins.append(admin_id)
-    new_admins.sort()
+    new_admins = dict(roles["admins"])
+    new_admins[admin_key] = {"adm_name": name}
 
-    new_data = {"admins": new_admins, "CEO": list(current["CEO"])}
+    new_data = {"CEO": list(roles["CEO"]), "admins": new_admins}
 
     _write_roles(new_data)
-    reload_roles_cache()
+    _reload_roles_cache()
     return True
 
 
 def remove_admin(admin_id: int) -> bool:
     """
     Удаляет админа по id.
-    Меняет JSON и сбрасывает кеш.
-    Возвращает False, если id не найден в admins.
+    Возвращает False, если admin_id не найден.
     """
-    if not isinstance(admin_id, int):
-        raise TypeError("admin_id must be int")
+    roles = _load_roles()
+    admin_key = str(admin_id)
 
-    current = load_roles()
-
-    if admin_id not in current["admins"]:
+    if admin_key not in roles["admins"]:
         return False
 
-    new_admins = [x for x in current["admins"] if x != admin_id]
-    new_data = {"admins": new_admins, "CEO": list(current["CEO"])}
+    new_admins = dict(roles["admins"])
+    del new_admins[admin_key]
+
+    new_data = {"CEO": list(roles["CEO"]), "admins": new_admins}
 
     _write_roles(new_data)
-    reload_roles_cache()
+    _reload_roles_cache()
+    return True
+
+
+def update_admin_name(admin_id: int, adm_name: str) -> bool:
+    """
+    Меняет adm_name админа по id.
+    Возвращает False, если admin_id не найден.
+    """
+    roles = _load_roles()
+    admin_key = str(admin_id)
+
+    if admin_key not in roles["admins"]:
+        return False
+
+    new_admins = dict(roles["admins"])
+    new_admins[admin_key] = {"adm_name": adm_name.strip()}
+
+    new_data = {"CEO": list(roles["CEO"]), "admins": new_admins}
+
+    _write_roles(new_data)
+    _reload_roles_cache()
     return True

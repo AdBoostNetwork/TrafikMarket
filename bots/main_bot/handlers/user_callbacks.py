@@ -13,10 +13,9 @@ async def create_new_dialog(callback: CallbackQuery, state: FSMContext):
     """Обработчик создания нового обращения"""
     user_id = callback.message.from_user.id
     if not can_user_make_appeal(user_id):
-        await callback.message.edit_text("Вы достигли максимального количества обращений в ТП. Чтобы создать новое обращение, закончите диалог по одному из предыдущих"
+        await callback.message.answer("Вы достигли максимального количества обращений в ТП. Чтобы создать новое обращение, закончите диалог по одному из предыдущих"
                                       "Чтобы это сделать, следуйте инструкции:\n"
-                                      "/start -> 'Мои активные диалоги💬' -> Выберете одно из ваших обращений -> 'Закончить диалог🔴'",
-                                         reply_markup=return_button())
+                                      "/start -> 'Мои активные диалоги💬' -> Выберете одно из ваших обращений -> 'Закончить диалог🔴'")
         await callback.answer()
         return None
 
@@ -26,9 +25,10 @@ async def create_new_dialog(callback: CallbackQuery, state: FSMContext):
     await state.update_data(appeal_id=appeal_id)
     await state.set_state(SupportState.waiting_for_question)
 
-    await callback.message.edit_text(
-        "Введите свой вопрос"
+    await callback.message.answer(
+        f"Задайте свой вопрос"
     )
+
     await callback.answer()
 
 
@@ -39,13 +39,11 @@ async def get_dialog(callback: CallbackQuery, state: FSMContext):
     await state.update_data(appeal_id=appeal_id)
     text, filenames, is_last_msg_from_user = get_last_msg(appeal_id)
     if is_last_msg_from_user:
-        await callback.message.edit_text('Простите, наша администрация еще не успела вам ответить. Как только вам ответят, вам придет уведомление',
+        await callback.message.answer('Простите, наша администрация еще не успела вам ответить. Как только вам ответят, вам придет уведомление',
                                       reply_markup=user_dialog_menu())
         await callback.answer()
         return
-    await callback.message.edit_text("Вот последний ответ от поддержки вам:")
-    msg_id = callback.message.message_id
-    await state.update_data(msg_to_delete=msg_id)
+    await callback.message.answer("Вот последний ответ от поддержки вам:")
     await callback.message.answer(
         f"<pre><code class=\"language-Админ\">{text}</code></pre>",
         parse_mode="HTML",
@@ -58,14 +56,6 @@ async def get_dialog(callback: CallbackQuery, state: FSMContext):
 async def dialog(callback: CallbackQuery, state: FSMContext):
     """Обработчик команд взаимодействия с обращением"""
     data = await state.get_data()
-    msg_to_delete = data.get("msg_to_delete")
-    if msg_to_delete:
-        chat_id = callback.message.chat.id
-        try:
-            await callback.bot.delete_message(chat_id=chat_id, message_id=msg_to_delete)
-        except:
-            pass
-        await state.update_data(msg_to_delete=None)
     appeal_id = data["appeal_id"]
     func_key = callback.data.split(":")[1]
     if func_key == "get_history":
@@ -73,12 +63,12 @@ async def dialog(callback: CallbackQuery, state: FSMContext):
         return
     elif func_key == "finish_dialog":
         close_appeal(appeal_id)
-        await callback.message.edit_text("Ваше обращение успешно закрыто", reply_markup=return_button())
+        await callback.message.answer("Ваше обращение успешно закрыто", reply_markup=return_button())
         await callback.answer()
         return
     elif func_key == "answer":
         await state.set_state(SupportState.waiting_for_question)
-        await callback.message.edit_text('Напишите свой следующий вопрос')
+        await callback.message.answer('Напишите свой следующий вопрос')
         await callback.answer()
         return
 
@@ -90,10 +80,10 @@ async def my_dialogs(callback: CallbackQuery):
     user_id = callback.message.from_user.id
     dialog_list = config_tp_bot_buttons(user_id)
     if not dialog_list:
-        await callback.message.edit_text("У вас нет текущих активных обращений", reply_markup = return_button())
+        await callback.message.answer("У вас нет текущих активных обращений", reply_markup = return_button())
         await callback.answer()
         return
-    await callback.message.edit_text("Выберите обращение, которое вы хотите посмотреть:", reply_markup=user_dialogs_list_menu(dialog_list))
+    await callback.message.answer("Выберите обращение, которое вы хотите посмотреть:", reply_markup=user_dialogs_list_menu(dialog_list))
     await callback.answer()
 
 
@@ -103,5 +93,5 @@ async def my_dialogs(callback: CallbackQuery):
 async def return_to_start(callback: CallbackQuery, state: FSMContext):
     """Обработчик кнопки возврата"""
     await state.clear()
-    await callback.message.edit_text("Выберите тему для нового обращения, или перейдите к списку предыдущих.", reply_markup=user_start_menu())
+    await callback.message.answer("Выберите тему для нового обращения, или перейдите к списку предыдущих.", reply_markup=user_start_menu())
     await callback.answer()

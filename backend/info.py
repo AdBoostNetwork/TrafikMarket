@@ -288,9 +288,7 @@ class Appeal_chat():
     4) last_msg (str)
     5) last_msg_files (list[str]) список имен файлов, прикрепленный к ласт сообщению
     6) is_last_msg_from_user (bool)
-    6) chat_filename (str) имя txt файла с чатом, лежащего на сервере
-    7) files_folder_filename (str) имя папки в файлами к обращению
-    8) status (open/closed)
+    7) status (open/closed)
     """
 
 

@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
@@ -10,7 +10,7 @@ from ..keyboards.admins_inline import admins_start_menu
 router = Router()
 
 
-@router.message(CommandStart())
+@router.message(CommandStart(), F.chat.type == "private")
 async def start_handler(message: Message, state: FSMContext):
     await state.clear()
     user_id = message.from_user.id

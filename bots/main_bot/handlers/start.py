@@ -19,8 +19,8 @@ router = Router()
 async def start_handler(message: Message, state: FSMContext):
     await state.clear()
     user_id = message.from_user.id
-    current_name, current_username, current_avatar_id = _get_tg_params(message)
-    is_new, saved_name, saved_username, saved_avatar_id = is_new_user_db(user_id)
+    current_name, current_username, current_avatar_id = await _get_tg_params(message)
+    is_new, saved_name, saved_username, saved_avatar_id = await is_new_user_db(user_id)
     if is_new:
         new_user = UserCreateSchema(
             user_id = user_id,
@@ -30,7 +30,7 @@ async def start_handler(message: Message, state: FSMContext):
             ref_link = f"https://t.me/botnigger_testerbot?ref:{user_id}",
             referi_id = None
         )
-        db_save_scs = save_new_user_db(new_user)
+        db_save_scs = await save_new_user_db(new_user)
         avatar_save_scs = await _update_avatar(message, user_id, current_avatar_id)
         if not (db_save_scs and avatar_save_scs):
             await message.answer("Наша платформа сейчас временно недоступна. Приносим извинения за неудобства")

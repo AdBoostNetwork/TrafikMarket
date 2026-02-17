@@ -60,7 +60,7 @@
 
     .profile-meta {
     font-size: 16px;
-    font-weight: 300;
+    font-weight: 400;
     margin-top: -25px;
     }
 
@@ -76,9 +76,9 @@
     .balance-card {
       width: 100%;
       background: var(--card);
-      border-radius: 25px;
-      padding: 22px 14px 10px;
-      min-height: 84px;     /* компактнее */
+      padding: 8px 14px;
+      border-radius: 26px;
+      min-height: 84px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -87,27 +87,43 @@
     }
 
     .balance-row {
+      position: relative;
+      width: 100%;
       display: flex;
-      align-items: baseline;
-      gap: 5px;
-      line-height: 1;
+      align-items: center;
+      justify-content: center;
+      height: 40px;
+      margin-bottom: 2px;
     }
 
+
     .balance-currency {
-      font-size: 30px;
+      position: absolute;
+      left: 69px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 38px;
       font-weight: 600;
-      color: var(--accent);
+      line-height: 1;
+      opacity: 0.9;
+      color: #fff;
     }
 
     .balance-value {
-      font-size: 38px;
+      font-size: 44px;
       font-weight: 600;
+      line-height: 1;
+      transform: none;
       color: var(--accent);
       letter-spacing: 0.1px;
     }
 
+
     .balance-sub {
+      margin-top: 0;
       font-size: 14px;
+      line-height: 1.2;
+      opacity: 1;
       color: var(--muted);
       font-weight: 600;
     }
@@ -130,7 +146,7 @@
       color: var(--white);
       padding: 14px 12px;
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 550;
       cursor: pointer;
       letter-spacing: 0.3px;
     }
@@ -140,7 +156,7 @@
       border-radius: 15px;
       padding: 14px 12px;
       font-size: 18px;
-      font-weight: 700;
+      font-weight: 550;
       letter-spacing: 0.5px;
     }
 
@@ -196,6 +212,10 @@
       white-space: nowrap;
     }
 
+    .op-summ.out {
+      color: #E66E68;
+    }
+
     .op-date {
       color: var(--muted);
       font-size: 16px;
@@ -218,6 +238,8 @@
       padding-top: 14px;
       padding-bottom: 18px;
       min-height: 92px;
+      background: rgba(30, 30, 30, 1) !important;
+      box-shadow: 0 -1px 0 rgba(255,255,255,0.08) !important;
     }
 
     .bottom-nav .nav-item img {
@@ -229,6 +251,12 @@
       font-size: 14px;
       font-weight: 600;
     }
+    .balance-card:first-of-type .balance-currency{
+      color: var(--accent) !important;
+    }
+    .balance-card.frozen .usdt{ color: #fff !important; }
+    .balance-card.frozen .balance-value{ color: #fff !important; }
+    .balance-card.frozen .balance-currency{ color: #fff !important; }
   </style>
 </head>
 
@@ -253,10 +281,18 @@
         <div class="balance-card">
           <div class="balance-row">
             <div class="balance-currency">$</div>
-            <div class="balance-value" id="balance">0</div>
+            <div class="balance-value" id="freeBalance">0</div>
           </div>
-          <div class="balance-sub">Общий баланс в <span class="usdt">USDT</span></div>
+          <div class="balance-sub">Свободный баланс в <span class="usdt">USDT</span></div>
         </div>
+
+<div class="balance-card frozen">
+  <div class="balance-row">
+    <div class="balance-currency">$</div>
+    <div class="balance-value" id="frozenBalance">0</div>
+  </div>
+  <div class="balance-sub">Замороженный баланс в <span class="usdt">USDT</span></div>
+</div>
 
         <div class="actions-row">
           <button class="action-btn" id="depositBtn">Пополнить</button>
@@ -342,7 +378,8 @@
     function renderProfile(data) {
       document.getElementById("name").textContent = data.name ?? "—";
       document.getElementById("dealsCount").textContent = data.deals_count ?? 0;
-      document.getElementById("balance").textContent = data.balance ?? 0;
+      document.getElementById("freeBalance").textContent = data.free_balance ?? 0;
+      document.getElementById("frozenBalance").textContent = data.frozen_balance ?? 0;
       document.getElementById("successPct").textContent = data.success_deals_percent ?? 0;
 
       setAvatar(data.name, data.avatar_filename);
@@ -353,10 +390,10 @@
       const ops = document.getElementById("ops");
       ops.innerHTML = "";
 
-      if (!depsList) {
+      if (!Array.isArray(depsList) || depsList.length === 0) {
         const empty = document.createElement("div");
         empty.className = "empty";
-        empty.textContent = "Пока нет операций";
+        empty.textContent = "У вас ещё нет завершенных транзакций";
         ops.appendChild(empty);
         return;
       }
@@ -371,6 +408,7 @@
 
         const summ = document.createElement("div");
         summ.className = "op-summ";
+        if (trn.trn_type === "out") summ.classList.add("out");
         summ.textContent = `${trn.trn_summ} USDT`;
 
         const date = document.createElement("div");

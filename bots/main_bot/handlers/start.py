@@ -1,4 +1,4 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, MenuButtonWebApp, WebAppInfo
@@ -14,7 +14,8 @@ AVAS_DIR = Path("frontend") / "users_avas"
 router = Router()
 
 
-@router.message(CommandStart())
+
+@router.message(CommandStart(), F.chat.type == "private")
 async def start_handler(message: Message, state: FSMContext):
     await state.clear()
     user_id = message.from_user.id
@@ -26,7 +27,7 @@ async def start_handler(message: Message, state: FSMContext):
             name = current_name,
             tg_username = f"https://t.me/{current_username}",
             avatar_id = current_avatar_id,
-            ref_link = f"https://t.me/{current_username}",
+            ref_link = f"https://t.me/botnigger_testerbot?ref:{user_id}",
             referi_id = None
         )
         db_save_scs = save_new_user_db(new_user)
@@ -36,7 +37,7 @@ async def start_handler(message: Message, state: FSMContext):
 
     else:
         if current_name != saved_name:
-            scs = await change_name_db(user_id, current_name)# тут потом сделать обработку ошибки
+            scs = await change_name_db(user_id, current_name)
         if current_username != saved_username:
             scs = await change_username_db(user_id, current_username)
         if current_avatar_id != saved_avatar_id:

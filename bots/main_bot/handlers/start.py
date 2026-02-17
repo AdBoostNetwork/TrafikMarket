@@ -31,7 +31,7 @@ async def start_handler(message: Message, state: FSMContext):
         )
         db_save_scs = save_new_user_db(new_user)
         avatar_save_scs = _update_avatar(message, user_id, current_avatar_id)
-        if not db_save_scs and avatar_save_scs:
+        if not (db_save_scs and avatar_save_scs):
             await message.answer("Наша платформа сейчас временно недоступна. Приносим извинения за неудобства")
 
     else:

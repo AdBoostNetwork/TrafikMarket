@@ -1,35 +1,40 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 from aiogram.fsm.context import FSMContext
-from ..keyboards.user_inline import user_dialogs_list_menu, user_dialog_menu, return_button, user_start_menu
+
+from backend.app_backend.pages.announs import announs_page
+from ..keyboards.user_inline import user_dialogs_list_menu, return_button, user_start_menu
 from backend.bots_backend.support_bot_db.users_db import can_user_make_appeal, create_new_appeal, close_appeal, get_last_msg, config_tp_bot_buttons
 
 from ..states.support import SupportState
 
 router = Router()
 
-@router.callback_query(lambda c: c.data.startswith("support:"))
-async def create_new_dialog(callback: CallbackQuery, state: FSMContext):
-    """Обработчик создания нового обращения"""
+@router.callback_query(F.data.startswith("my:"))
+async def create_new_dialog(callback: CallbackQuery):
     user_id = callback.message.from_user.id
-    if not can_user_make_appeal(user_id):
-        await callback.message.answer("Вы достигли максимального количества обращений в ТП. Чтобы создать новое обращение, закончите диалог по одному из предыдущих"
-                                      "Чтобы это сделать, следуйте инструкции:\n"
-                                      "/start -> 'Мои активные диалоги💬' -> Выберете одно из ваших обращений -> 'Закончить диалог🔴'")
+    key = callback.data.split(":")[1]
+    if key == "deals":
+        deals_list = config_tp_bot_buttons(user_id)
+        if not deals_list:
+            await callback.message.answer("У вас нет текущих активных обращений",
+                                          reply_markup=return_button())
+            await callback.answer()
+            return
+        await callback.message.answer("Выберите обращение, которое вы хотите посмотреть:",
+                                      reply_markup=user_dialogs_list_menu(deals_list))
         await callback.answer()
-        return None
+    elif key == "announs":
+        announs_list = config_tp_bot_buttons(user_id)
+        if not announs_list:
+            await callback.message.answer("У вас нет текущих активных обращений",
+                                          reply_markup=return_button())
+            await callback.answer()
+            return
+        await callback.message.answer("Выберите обращение, которое вы хотите посмотреть:",
+                                      reply_markup=user_dialogs_list_menu(announs_list))
+        await callback.answer()
 
-    section_key = callback.data.split(":")[1]
-    appeal_id = create_new_appeal(user_id, section_key)
-
-    await state.update_data(appeal_id=appeal_id)
-    await state.set_state(SupportState.waiting_for_question)
-
-    await callback.message.answer(
-        f"Задайте свой вопрос"
-    )
-
-    await callback.answer()
 
 
 @router.callback_query(lambda c: c.data.startswith("get_dialog:"))

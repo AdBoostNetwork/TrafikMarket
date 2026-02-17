@@ -2,11 +2,15 @@ from aiogram import Router
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
+from pathlib import Path
 
-from backend.bots_backend.roles import is_admin
+from backend.bots_backend.roles import is_admin, is_ceo
+from backend.bots_backend.main_bot_db.accounts_db import is_new_user_db, save_new_user_db, change_name_db, change_username_db, change_avatar_id_db
+from backend.classes import UserCreateSchema
 from ..keyboards.user_inline import user_start_menu
-from ..keyboards.admins_inline import admins_start_menu
+from ..keyboards.admins_inline import  admin_choice_menu, CEO_choice_menu
 
+AVAS_DIR = Path("frontend") / "users_avas"
 router = Router()
 
 
@@ -14,10 +18,41 @@ router = Router()
 async def start_handler(message: Message, state: FSMContext):
     await state.clear()
     user_id = message.from_user.id
+    current_name, current_username, current_avatar_id = _get_tg_params(message)
+    is_new, saved_name, saved_username, saved_avatar_id = is_new_user_db(user_id)
+    if is_new:
+        new_user = UserCreateSchema(
+            user_id = user_id,
+            name = current_name,
+            tg_username = f"https://t.me/{current_username}",
+            avatar_id = current_avatar_id,
+            ref_link = f"https://t.me/{current_username}",
+            referi_id = None
+        )
+        db_save_scs = save_new_user_db(new_user)
+        avatar_save_scs = _update_avatar(message, user_id, current_avatar_id)
+        if not db_save_scs and avatar_save_scs:
+            await message.answer("Наша платформа сейчас временно недоступна. Приносим извинения за неудобства")
+
+    else:
+        if current_name != saved_name:
+            scs = await change_name_db(user_id, current_name)# тут потом сделать обработку ошибки
+        if current_username != saved_username:
+            scs = await change_username_db(user_id, current_username)
+        if current_avatar_id != saved_avatar_id:
+            db_save_scs = await change_avatar_id_db(user_id, current_avatar_id)
+            avatar_save_scs = _update_avatar(message, user_id, current_avatar_id)
+
     if is_admin(user_id):
+        if is_ceo(user_id):
+            await message.answer(
+                "От лица кого вы хотите войти?",
+                reply_markup=CEO_choice_menu()
+            )
+            return
         await message.answer(
             "Здравствуйте! Выберите раздел:",
-            reply_markup=admins_start_menu(),
+            reply_markup=admin_choice_menu(),
         )
         return
     await message.answer(
@@ -25,3 +60,29 @@ async def start_handler(message: Message, state: FSMContext):
         reply_markup=user_start_menu(),
     )
 
+async def _get_tg_params(message: Message)-> {str, str | None, str| None}:
+    user = message.from_user
+    name = " ".join(filter(None, [user.first_name, user.last_name])).strip()
+    tg_username = user.username
+    photos = await message.bot.get_user_profile_photos(user_id=user.id, limit=1)
+    if photos.total_count == 0:
+        return name, tg_username, None
+    else:
+        photo = photos.photos[0][-1]
+        return name, tg_username, photo.file_id
+
+async def _update_avatar(message: Message, user_id, avatar_id: int | None):
+    target = AVAS_DIR / f"{user_id}.jpg"
+    if avatar_id:
+        try:
+            tg_file = await message.bot.get_file(avatar_id)
+            target = AVAS_DIR / f"{user_id}.jpg"
+            await message.bot.download_file(tg_file.file_path, destination=target)
+            return True
+        except:
+            return False
+    else:
+        try:
+            target.unlink()
+        except FileNotFoundError:
+            pass

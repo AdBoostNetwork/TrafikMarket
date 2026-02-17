@@ -339,6 +339,24 @@
       return v ? v.trim() : null;
     }
 
+    function withUserId(url) {
+      const userId = getUserIdFromQuery();
+      if (!userId) return url;
+
+      const u = new URL(url, window.location.href);
+      u.searchParams.set("user_id", userId);
+      return u.pathname + u.search;
+    }
+
+    function patchBottomNavLinks() {
+      document.querySelectorAll(".bottom-nav a.nav-item").forEach(a => {
+        const href = a.getAttribute("href");
+        if (href) a.setAttribute("href", withUserId(href));
+      });
+    }
+
+  patchBottomNavLinks();
+
     function opTypeRu(trnType) {
       if (trnType === "in") return "Пополнение";
       if (trnType === "out") return "Вывод";

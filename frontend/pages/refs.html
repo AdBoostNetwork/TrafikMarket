@@ -138,6 +138,7 @@
 
       </div>
     </div>
+  </div>
 
   <nav class="bottom-nav">
     <a class="nav-item" href="./menu.html">
@@ -169,6 +170,25 @@
       const v = params.get("user_id");
       return v ? v.trim() : null;
     }
+
+
+    function withUserId(url) {
+      const userId = getUserIdFromQuery();
+      if (!userId) return url;
+
+      const u = new URL(url, window.location.href);
+      u.searchParams.set("user_id", userId);
+      return u.href;
+    }
+
+    function patchBottomNavLinks() {
+      document.querySelectorAll(".bottom-nav a.nav-item").forEach(a => {
+        const href = a.getAttribute("href");
+        if (href) a.setAttribute("href", withUserId(href));
+      });
+    }
+
+    patchBottomNavLinks();
 
     function setHint(text) {
       document.getElementById("copyHint").textContent = text;
@@ -242,6 +262,5 @@
 
     loadRefLink();
   </script>
-  </div>
 </body>
 </html>

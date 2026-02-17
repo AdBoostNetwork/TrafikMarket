@@ -19,4 +19,4 @@ class UserCreateSchema:
     tg_username: str | None
     avatar_id: int | None
     ref_link: str
-    referi_if: int | None
+    referi_id: int | None

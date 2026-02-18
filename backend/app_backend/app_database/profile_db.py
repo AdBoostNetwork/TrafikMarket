@@ -37,7 +37,7 @@ async def get_profile_info_db(user_id: int):
     logger.info("Запрос данных профиля | user_id: %s", user_id)
 
     query = text("""
-                 SELECT a.name, a.avatar_filename, a.current_balance, a.frozen_balance, a.success_count,
+                 SELECT a.name, a.user_id, a.current_balance, a.frozen_balance, a.success_count,
                         (SELECT COUNT(*)
                          FROM deals d
                          WHERE d.seller_id = :user_id OR d.buyer_id = :user_id) AS deals_count

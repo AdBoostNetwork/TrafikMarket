@@ -30,9 +30,9 @@ async def is_new_user_db(user_id: int):
         row = result.mappings().one_or_none()
 
         if row is None:
-            return False, None, None, None
+            return True, None, None, None
 
-        return True, row["name"], row["username"], row["avatar_filename"]
+        return False, row["name"], row["username"], row["avatar_filename"]
 
 
 async def save_new_user_db(user_data: UserCreateSchema):

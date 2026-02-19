@@ -58,12 +58,6 @@
     font-weight: 600;
     }
 
-    .profile-meta {
-    font-size: 16px;
-    font-weight: 400;
-    margin-top: -25px;
-    }
-
     .center-wrap {
       width: 84%;
       max-width: 360px;
@@ -94,19 +88,6 @@
       justify-content: center;
       height: 40px;
       margin-bottom: 2px;
-    }
-
-
-    .balance-currency {
-      position: absolute;
-      left: 69px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 38px;
-      font-weight: 600;
-      line-height: 1;
-      opacity: 0.9;
-      color: #fff;
     }
 
     .balance-value {
@@ -212,9 +193,6 @@
       white-space: nowrap;
     }
 
-    .op-summ.out {
-      color: #E66E68;
-    }
 
     .op-date {
       color: var(--muted);
@@ -251,12 +229,36 @@
       font-size: 14px;
       font-weight: 600;
     }
-    .balance-card:first-of-type .balance-currency{
-      color: var(--accent) !important;
+
+    .profile-badges{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-top:-10px;
     }
-    .balance-card.frozen .usdt{ color: #fff !important; }
-    .balance-card.frozen .balance-value{ color: #fff !important; }
-    .balance-card.frozen .balance-currency{ color: #fff !important; }
+
+    .badge{
+      background: var(--card);
+      border-radius: 14px;
+      padding: 6px 14px;
+      color: var(--white);
+      font-weight: 550;
+      font-size: 16px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      opacity: 1;
+    }
+
+
+    .profile-turnover{
+      margin-top: -10px;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
   </style>
 </head>
 
@@ -272,27 +274,25 @@
 
         <div class="profile-name" id="name">—</div>
 
-        <div class="profile-meta">
-          сделок: <span id="dealsCount">0</span> ∙ <span id="successPct">0</span>%
+        <div class="profile-badges">
+          <div class="badge"><span class="star">☆</span> <span id="rating">0</span></div>
+          <div class="badge"><span id="dealsCount">0</span> сделок</div>
+          <div class="badge"><span id="successPct">0</span>%</div>
+        </div>
+
+        <div class="profile-turnover">
+          Сделок на сумму: <span id="dealsSumm">0</span> $
         </div>
       </div>
 
       <div class="center-wrap">
         <div class="balance-card">
           <div class="balance-row">
-            <div class="balance-currency">$</div>
             <div class="balance-value" id="freeBalance">0</div>
           </div>
           <div class="balance-sub">Свободный баланс в <span class="usdt">USDT</span></div>
         </div>
 
-<div class="balance-card frozen">
-  <div class="balance-row">
-    <div class="balance-currency">$</div>
-    <div class="balance-value" id="frozenBalance">0</div>
-  </div>
-  <div class="balance-sub">Замороженный баланс в <span class="usdt">USDT</span></div>
-</div>
 
         <div class="actions-row">
           <button class="action-btn" id="depositBtn">Пополнить</button>
@@ -345,7 +345,7 @@
 
       const u = new URL(url, window.location.href);
       u.searchParams.set("user_id", userId);
-      return u.pathname + u.search;
+      return u.href;
     }
 
     function patchBottomNavLinks() {
@@ -360,8 +360,12 @@
     function opTypeRu(trnType) {
       if (trnType === "in") return "Пополнение";
       if (trnType === "out") return "Вывод";
+      if (trnType === "buy") return "Покупка";
+      if (trnType === "sell") return "Продажа";
+      if (trnType === "fee") return "Комиссия";
       return String(trnType ?? "");
     }
+
 
     function setAvatar(name, avatarFilename) {
       const img = document.getElementById("avatarImg");
@@ -394,11 +398,15 @@
     }
 
     function renderProfile(data) {
-      document.getElementById("name").textContent = data.name ?? "—";
+      lastProfileData = data;
+      renderBalance(data);
       document.getElementById("dealsCount").textContent = data.deals_count ?? 0;
-      document.getElementById("freeBalance").textContent = data.free_balance ?? 0;
-      document.getElementById("frozenBalance").textContent = data.frozen_balance ?? 0;
       document.getElementById("successPct").textContent = data.success_deals_percent ?? 0;
+      document.getElementById("rating").textContent = data.rating ?? 0;
+      document.getElementById("dealsSumm").textContent = data.deals_summ ?? 0;
+      document.getElementById("name").textContent = data.name ?? "—";
+
+
 
       setAvatar(data.name, data.avatar_filename);
       renderOps(data.deps_list);
@@ -422,12 +430,18 @@
 
         const type = document.createElement("div");
         type.className = "op-type";
-        type.textContent = opTypeRu(trn.trn_type);
+        const ru = opTypeRu(trn.trn_type);
+        const hasArticle = trn.article_id && String(trn.article_id).trim().length > 0;
+
+        type.textContent = hasArticle ? `${ru} #${trn.article_id}` : ru;
 
         const summ = document.createElement("div");
         summ.className = "op-summ";
-        if (trn.trn_type === "out") summ.classList.add("out");
-        summ.textContent = `${trn.trn_summ} USDT`;
+        const t = trn.trn_type;
+        const plus = (t === "in" || t === "sell");
+        const sign = plus ? "+" : "-";
+        summ.textContent = `${sign}${trn.trn_summ} USDT`;
+
 
         const date = document.createElement("div");
         date.className = "op-date";
@@ -461,6 +475,49 @@
       const data = await res.json();
       renderProfile(data);
     }
+
+    document.querySelector(".balance-card").addEventListener("click", () => {
+      if (!lastProfileData) return;
+      balanceMode = (balanceMode === "usdt") ? "rub" : "usdt";
+      renderBalance(lastProfileData);
+    });
+
+    let lastProfileData = null;
+    let balanceMode = "usdt";
+
+    function formatAmount(value, decimals) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return "0";
+
+      let s = new Intl.NumberFormat("ru-RU", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }).format(n);
+
+      s = s.replace(",", ".");
+
+      s = s.replace(/[\u00A0\u0020]/g, "\u202F");
+
+      return s;
+    }
+
+
+    function renderBalance(data) {
+      const val = document.getElementById("freeBalance");
+      const sub = document.querySelector(".balance-sub");
+
+      const usdt = data.free_balance ?? 0;
+      const rub  = data.free_balance_rub ?? 0;
+
+      if (balanceMode === "usdt") {
+        val.textContent = `$ ${formatAmount(usdt, 2)}`;
+        sub.innerHTML = 'Свободный баланс в <span class="usdt">USDT</span>';
+      } else {
+        val.textContent = `₽ ${formatAmount(rub, 0)}`;
+        sub.innerHTML = 'Свободный баланс в <span class="usdt">RUB</span>';
+      }
+    }
+
 
     // заглушки
     document.getElementById("depositBtn").addEventListener("click", () => alert("Пополнение — скоро"));

@@ -36,7 +36,10 @@ class MyProfile:
     deals_count: int
     success_deals_percent: int
     free_balance: float
-    frozen_balance: float
+    free_balance_rub: float
+    rating: float
+    deals_summ: float
+
     deps_list: list[Transaction]
 
 

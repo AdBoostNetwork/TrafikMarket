@@ -30,13 +30,23 @@ async def get_profile(user_id: int):
         success_deals_percent = int(data["success_count"] * 100 / data["deals_count"]) if data["deals_count"] else 0
 
         free_balance = float(data["current_balance"]) - float(data["frozen_balance"])
+        free_balance_rub = free_balance * 80
+
+        marks_count = int(data["good_marks"] + data["bad_marks"])
+
+        if marks_count == 0:
+            rating = 0.0
+        else:
+            rating = round((data["good_marks"] / marks_count) * 5, 1)
 
         profile_info = MyProfile(
             name=data["name"],
             deals_count=data["deals_count"],
             success_deals_percent=success_deals_percent,
             free_balance=free_balance,
-            frozen_balance=data["frozen_balance"],
+            free_balance_rub=free_balance_rub,
+            rating=rating,
+            deals_summ=0,
             avatar_filename=f'{str(data["user_id"])}.jpg',
             deps_list=deps_list,
         )

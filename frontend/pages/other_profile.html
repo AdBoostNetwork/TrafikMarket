@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Другой профиль</title>
+
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    .app { padding-top: 18px; }
+
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 8px;
+    }
+
+    .profile-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+      padding: 6px 0 2px;
+    }
+
+    .avatar {
+      width: 104px;
+      height: 104px;
+      border-radius: 999px;
+      background: #7fe06b;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .avatar .letter {
+      font-size: 60px;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1;
+      user-select: none;
+      display: none;
+    }
+
+    .profile-name {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .bottom-nav {
+      padding-top: 14px;
+      padding-bottom: 18px;
+      min-height: 92px;
+      background: rgba(30, 30, 30, 1) !important;
+      box-shadow: 0 -1px 0 rgba(255,255,255,0.08) !important;
+    }
+
+    .bottom-nav .nav-item img {
+      width: 30px;
+      height: 30px;
+    }
+
+    .bottom-nav .nav-item span {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .profile-badges{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-top:-10px;
+    }
+
+    .badge{
+      background: var(--card);
+      border-radius: 14px;
+      padding: 6px 14px;
+      color: var(--white);
+      font-weight: 550;
+      font-size: 16px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      opacity: 1;
+    }
+
+    .profile-badges + .badge{
+      margin-top: -10px;
+    }
+
+    .profile-turnover{
+      margin-top: -10px;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 500;
+      opacity: 0.9;
+    }
+
+    .profile-online{
+      margin-top: -18px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .announs-wrap{
+      width: 94%;
+      max-width: 520px;
+      margin: 10px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-bottom: 6px;
+    }
+
+    .ad-card{
+      background: var(--card);
+      border-radius: 18px;
+      padding: 14px 14px 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ad-top{
+      display:flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .ad-title{
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .ad-price{
+      color: var(--accent);
+      font-size: 20px;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .ad-desc{
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.35;
+      opacity: 0.85;
+    }
+
+    .ad-divider{
+      height: 1px;
+      background: rgba(255,255,255,0.10);
+      margin: 10px -14px 10px -14px;
+    }
+
+    .ad-bottom{
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto;
+      column-gap: 14px;
+      row-gap: 10px;
+      align-items: start;
+    }
+
+    .ad-seller{
+      display: contents;
+      min-width: 0;
+    }
+
+    .ad-seller-top{
+      grid-column: 1;
+      grid-row: 1;
+      display: flex;
+      align-items:center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .ad-seller-ava{
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: #7fe06b;
+      overflow: hidden;
+      display:grid;
+      place-items:center;
+      flex: 0 0 auto;
+    }
+
+    .ad-seller-ava img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:none;
+    }
+
+    .ad-seller-ava .letter{
+      color:#fff;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .ad-seller-name{
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    .ad-seller-meta-row{
+      grid-column: 1;
+      grid-row: 2;
+      display: flex;
+      align-items:center;
+      gap: 10px;
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 500;
+      opacity: 1;
+    }
+
+    .ad-seller-meta-row img{
+      width: 26px;
+      height: 26px;
+      opacity: 0.8;
+    }
+
+    .ad-topic{
+      grid-column: 2;
+      grid-row: 1 / 3;
+      align-self: center;
+      display: inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 22px;
+      border-radius: 999px;
+      border: 3px solid rgba(255,255,255,0.22);
+      color: var(--white);
+      font-weight: 500;
+      font-size: 18px;
+      white-space: nowrap;
+    }
+
+    .empty{
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      padding: 18px 0;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="content">
+
+      <div class="profile-head">
+        <div class="avatar" id="avatar">
+          <img id="avatarImg" alt="avatar" />
+          <div class="letter" id="avatarLetter">A</div>
+        </div>
+
+        <div class="profile-name" id="name">—</div>
+        <div class="profile-online" id="wasOnline">—</div>
+
+        <div class="profile-badges">
+          <div class="badge"><span class="star">☆</span> <span id="rating">0</span></div>
+          <div class="badge"><span id="dealsCount">0</span> сделок</div>
+          <div class="badge"><span id="successPct">0</span>%</div>
+        </div>
+
+        <div class="badge"><span id="registration_date">Зарегистрирован(а) —</span></div>
+
+        <div class="profile-turnover">
+          Сделок на сумму: <span id="dealsSumm">0</span> $
+        </div>
+      </div>
+
+      <div class="announs-wrap" id="announs"></div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a class="nav-item" href="./menu.html">
+      <img src="../icons/menu.svg" alt="" />
+      <span>Меню</span>
+    </a>
+    <a class="nav-item" href="./orders.html">
+      <img src="../icons/orders.svg" alt="" />
+      <span>Заказы</span>
+    </a>
+    <a class="nav-item" href="./refs.html">
+      <img src="../icons/refs.svg" alt="" />
+      <span>Пригласить</span>
+    </a>
+    <a class="nav-item active" href="./profile.html">
+      <img src="../icons/profile.svg" alt="" />
+      <span>Профиль</span>
+    </a>
+  </nav>
+
+  <script>
+    const API_BASE = "http://127.0.0.1:8000";
+    const OTHER_PROFILE_ENDPOINT = "/other_profile";
+    const AVA_BASE = "../users_avas/";
+
+    function getUserIdFromQuery() {
+      const params = new URLSearchParams(window.location.search);
+      const v = params.get("user_id");
+      return v ? v.trim() : null;
+    }
+
+    function withUserId(url) {
+      const userId = getUserIdFromQuery();
+      if (!userId) return url;
+
+      const u = new URL(url, window.location.href);
+      u.searchParams.set("user_id", userId);
+      return u.href;
+    }
+
+    function patchBottomNavLinks() {
+      document.querySelectorAll(".bottom-nav a.nav-item").forEach(a => {
+        const href = a.getAttribute("href");
+        if (href) a.setAttribute("href", withUserId(href));
+      });
+    }
+
+    function formatRuDate(iso) {
+      if (!iso) return "—";
+      const parts = String(iso).split(".");
+      if (parts.length !== 3) return iso;
+
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+
+      const months = [
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+      ];
+
+      if ([day, month, year].some(n => Number.isNaN(n)) || month < 0 || month > 11) return iso;
+      return `${day} ${months[month]} ${year}`;
+    }
+
+    function pluralRu(n, one, few, many) {
+      const x = Math.abs(n) % 100;
+      const y = x % 10;
+      if (x > 10 && x < 20) return many;
+      if (y > 1 && y < 5) return few;
+      if (y === 1) return one;
+      return many;
+    }
+
+    function formatWasOnline(value) {
+      if (!value) return "—";
+      const parts = String(value).split(":").map(x => parseInt(x, 10));
+      if (parts.length !== 3 || parts.some(n => Number.isNaN(n))) return "—";
+
+      const [days, hours, minutes] = parts;
+
+      if (days > 0) return `был(а) в сети ${days} ${pluralRu(days, "день", "дня", "дней")} назад`;
+      if (hours > 0) return `был(а) в сети ${hours} ${pluralRu(hours, "час", "часа", "часов")} назад`;
+      return `был(а) в сети ${minutes} ${pluralRu(minutes, "минуту", "минуты", "минут")} назад`;
+    }
+
+    function formatAmount(value, decimals) {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return "0";
+
+      let s = new Intl.NumberFormat("ru-RU", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }).format(n);
+
+      s = s.replace(",", ".");
+      s = s.replace(/[\u00A0\u0020]/g, "\u202F");
+      return s;
+    }
+
+    function setAvatar(name, avatarFilename) {
+      const img = document.getElementById("avatarImg");
+      const letter = document.getElementById("avatarLetter");
+
+      const first = (String(name || "").trim()[0] || "?").toUpperCase();
+      letter.textContent = first;
+
+      if (avatarFilename) {
+        img.src = `${AVA_BASE}${avatarFilename}`;
+        img.style.display = "block";
+        letter.style.display = "none";
+        img.onerror = () => {
+          img.style.display = "none";
+          letter.style.display = "block";
+        };
+      } else {
+        img.style.display = "none";
+        letter.style.display = "block";
+      }
+    }
+
+    function renderUser(u) {
+      document.getElementById("name").textContent = u?.name ?? "—";
+      setAvatar(u?.name, u?.avatar_filename);
+
+      document.getElementById("rating").textContent = (u?.rating ?? 0);
+      document.getElementById("dealsCount").textContent = (u?.deals_count ?? 0);
+      document.getElementById("successPct").textContent = (u?.success_deals_percent ?? 0);
+      document.getElementById("dealsSumm").textContent = (u?.deals_summ ?? 0);
+
+      const regEl = document.getElementById("registration_date");
+      regEl.textContent = `Зарегистрирован(а) ${formatRuDate(u?.registration_date)}`;
+
+      document.getElementById("wasOnline").textContent = formatWasOnline(u?.was_online);
+    }
+
+    function makeSellerAva(container, name, filename) {
+      const img = container.querySelector("img");
+      const letter = container.querySelector(".letter");
+
+      const first = (String(name || "").trim()[0] || "?").toUpperCase();
+      if (letter) letter.textContent = first;
+
+      if (filename) {
+        img.src = `${AVA_BASE}${filename}`;
+        img.style.display = "block";
+        letter.style.display = "none";
+        img.onerror = () => {
+          img.style.display = "none";
+          letter.style.display = "block";
+        };
+      } else {
+        img.style.display = "none";
+        letter.style.display = "block";
+      }
+    }
+
+    function renderAnnouns(list) {
+      const box = document.getElementById("announs");
+      box.innerHTML = "";
+
+      if (!Array.isArray(list) || list.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "У пользователя пока нет объявлений";
+        box.appendChild(empty);
+        return;
+      }
+
+      list.forEach((a) => {
+        const card = document.createElement("div");
+        card.className = "ad-card";
+
+        const top = document.createElement("div");
+        top.className = "ad-top";
+
+        const title = document.createElement("div");
+        title.className = "ad-title";
+        title.textContent = a?.title ?? "—";
+
+        const price = document.createElement("div");
+        price.className = "ad-price";
+
+        let mode = "usdt";
+        const renderPrice = () => {
+          if (mode === "usdt") price.textContent = `${formatAmount(a?.price ?? 0, 0)} USDT`;
+          else price.textContent = `${formatAmount(a?.price_rub ?? 0, 0)} ₽`;
+        };
+        renderPrice();
+
+        price.addEventListener("click", () => {
+          mode = (mode === "usdt") ? "rub" : "usdt";
+          renderPrice();
+        });
+
+        top.appendChild(title);
+        top.appendChild(price);
+
+        const desc = document.createElement("div");
+        desc.className = "ad-desc";
+        desc.textContent = "Поле для текста. Поле для текста. Поле для текста. Поле для текста. Поле для текста.";
+
+        const divider = document.createElement("div");
+        divider.className = "ad-divider";
+
+        const bottom = document.createElement("div");
+        bottom.className = "ad-bottom";
+
+        const seller = document.createElement("div");
+        seller.className = "ad-seller";
+
+        const sellerTop = document.createElement("div");
+        sellerTop.className = "ad-seller-top";
+
+        const ava = document.createElement("div");
+        ava.className = "ad-seller-ava";
+        ava.innerHTML = `<img alt=""><div class="letter">?</div>`;
+        makeSellerAva(ava, a?.seller?.name, a?.seller?.avatar_filename);
+
+        const sellerName = document.createElement("div");
+        sellerName.className = "ad-seller-name";
+        sellerName.textContent = a?.seller?.name ?? "—";
+
+        sellerTop.appendChild(ava);
+        sellerTop.appendChild(sellerName);
+
+        const metaRow = document.createElement("div");
+        metaRow.className = "ad-seller-meta-row";
+
+        const metaIcon = document.createElement("img");
+        metaIcon.src = "../icons/orders.svg";
+        metaIcon.alt = "";
+
+        const dealsCount = a?.seller?.deals_count ?? 0;
+        const successPct = a?.seller?.success_deals_percent ?? 0;
+
+        const metaText = document.createElement("div");
+        metaText.textContent = `Сделок: ${dealsCount} • ${successPct}%`;
+
+        metaRow.appendChild(metaIcon);
+        metaRow.appendChild(metaText);
+
+        seller.appendChild(sellerTop);
+        seller.appendChild(metaRow);
+
+        const topic = document.createElement("div");
+        topic.className = "ad-topic";
+        topic.textContent = a?.topic ?? "Тематика";
+
+        bottom.appendChild(seller);
+        bottom.appendChild(topic);
+
+        card.appendChild(top);
+        card.appendChild(desc);
+        card.appendChild(divider);
+        card.appendChild(bottom);
+
+        box.appendChild(card);
+      });
+    }
+
+    async function loadOtherProfile() {
+      const userId = getUserIdFromQuery();
+
+      if (!userId) {
+        renderUser({
+          name: "---",
+          avatar_filename: "",
+          rating: 0.0,
+          deals_count: 0,
+          success_deals_percent: 0,
+          deals_summ: 0,
+          registration_date: "01.01.1901",
+          was_online: "00:00:00",
+        });
+
+        renderAnnouns([{
+          title: "Название",
+          price: 0,
+          price_rub: 0,
+          topic: "Тематика",
+          seller: {
+            name: "---",
+            avatar_filename: "",
+            deals_count: 0,
+            success_deals_percent: 0,
+          }
+        }]);
+
+        return;
+      }
+
+      try {
+        const url = `${API_BASE}${OTHER_PROFILE_ENDPOINT}?user_id=${encodeURIComponent(userId)}`;
+        const res = await fetch(url);
+        if (!res.ok) {
+          document.getElementById("name").textContent = "Ошибка загрузки";
+          return;
+        }
+
+        const data = await res.json();
+        renderUser(data.user);
+        renderAnnouns(data.announs);
+      } catch (e) {
+        document.getElementById("name").textContent = "Ошибка сети";
+      }
+    }
+
+    patchBottomNavLinks();
+    loadOtherProfile();
+  </script>
+</body>
+</html>

@@ -19,7 +19,7 @@ async def is_new_user_db(user_id: int):
 
     query = text(
         """
-        SELECT name, username, avatar_filename
+        SELECT name, avatar_filename
         FROM accounts
         WHERE user_id = :user_id
         """
@@ -40,8 +40,8 @@ async def save_new_user_db(user_data: UserCreateSchema):
 
     query = text(
         """
-        INSERT INTO accounts (user_id, name, username, avatar_filename, ref_link, referrer_id)
-        VALUES (:user_id, :name, :username, :avatar_filename, :ref_link, :referrer_id)
+        INSERT INTO accounts (user_id, name, reg_date, avatar_filename, ref_link, referrer_id)
+        VALUES (:user_id, :name, :reg_date, :avatar_filename, :ref_link, :referrer_id)
         """
     )
 
@@ -52,7 +52,7 @@ async def save_new_user_db(user_data: UserCreateSchema):
                 {
                     "user_id": user_data.user_id,
                     "name": user_data.name,
-                    "username": user_data.tg_username,
+                    "reg_date": user_data.registration_date,
                     "avatar_filename": user_data.avatar_id,
                     "ref_link": user_data.ref_link,
                     "referrer_id": user_data.referi_id,
@@ -107,26 +107,4 @@ async def change_name_db(user_id: int, new_name: str):
 
     except Exception as e:
         logger.exception(f"Ошибка при смене имени пользователя | user_id: {user_id} | Ошибка: {str(e)}")
-        return False
-
-
-async def change_username_db(user_id: int, new_username: str):
-    logger.info(f"Смена юзернейма пользователя | user_id: {user_id}")
-
-    query = text(
-        """
-        UPDATE accounts
-        SET username = :username
-        WHERE user_id = :user_id
-        """
-    )
-
-    try:
-        async with new_session() as session:
-            await session.execute(query, {"user_id": user_id, "username": new_username})
-            await session.commit()
-            return True
-
-    except Exception as e:
-        logger.exception(f"Ошибка при смене юзернейма пользователя | user_id: {user_id} | Ошибка: {str(e)}")
         return False

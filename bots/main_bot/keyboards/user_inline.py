@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
 def user_start_menu():
     """
@@ -8,7 +8,7 @@ def user_start_menu():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Открыть биржу", url="pornhub.com"),
+                InlineKeyboardButton(text="Открыть биржу", web_app=WebAppInfo(url="pornhub.com")),
             ],
             [
                 InlineKeyboardButton(text="Профиль👤", callback_data="profile"),
@@ -16,7 +16,7 @@ def user_start_menu():
             ],
             [
                 InlineKeyboardButton(text="Вывод⤴️", callback_data="finance:undep"),
-                InlineKeyboardButton(text="Пополнение⤵️", callback_data="finance:undep"),
+                InlineKeyboardButton(text="Пополнение⤵️", callback_data="finance:dep"),
             ],
             [
                 InlineKeyboardButton(text="Мои объявления 🗣", callback_data="my:announs"),

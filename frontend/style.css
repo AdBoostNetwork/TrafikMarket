@@ -15,6 +15,9 @@ body {
     font-family: "Avenir Next", "SF Pro Display", "Segoe UI", sans-serif;
     background: var(--bg);
     color: var(--white);
+
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
 }
 
 .app {
@@ -24,7 +27,8 @@ body {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    padding: 20px 18px 112px;
+
+    padding: 12px 18px calc(92px + 20px + env(safe-area-inset-bottom));
 }
 
 .top-bar {
@@ -215,4 +219,12 @@ body {
   max-width: 70%;
   max-height: 70%;
   object-fit: contain;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .tile:hover,
+    .create-btn:hover {
+        transform: none;
+        box-shadow: none;
+    }
 }

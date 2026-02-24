@@ -6,7 +6,7 @@ from pathlib import Path
 import datetime
 
 from backend.bots_backend.roles import is_admin, is_ceo
-from backend.bots_backend.main_bot_db.accounts_db import is_new_user_db, save_new_user_db, change_name_db, change_username_db, change_avatar_id_db
+from backend.bots_backend.main_bot_db.accounts_db import is_new_user_db, save_new_user_db, change_name_db, change_avatar_id_db
 from backend.classes import UserCreateSchema
 from ..keyboards.other_buttons import user_mini_app_button
 from ..keyboards.user_inline import user_start_menu
@@ -123,4 +123,3 @@ async def _update_avatar(message: Message, user_id, avatar_id: str | None):
             return True
         except:
             return False
-

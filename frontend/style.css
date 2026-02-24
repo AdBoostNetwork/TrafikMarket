@@ -220,6 +220,7 @@ body {
   max-height: 70%;
   object-fit: contain;
 }
+
 @media (hover: none) and (pointer: coarse) {
     .tile:hover,
     .create-btn:hover {

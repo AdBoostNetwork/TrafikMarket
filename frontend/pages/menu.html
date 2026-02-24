@@ -1,10 +1,9 @@
 <!doctype html>
 <html lang="ru">
-
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />  <title>Меню</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Меню</title>
 
   <link rel="stylesheet" href="../style.css" />
 
@@ -132,6 +131,7 @@
     .bottom-nav {
       padding-top: 14px;
       padding-bottom: 18px;
+      min-height: 10px;
     }
     .bottom-nav .nav-item img { width: 30px; height: 30px; }
     .bottom-nav .nav-item span { font-size: 14px; font-weight: 600; }
@@ -214,7 +214,7 @@
 
       const u = new URL(url, window.location.href);
       u.searchParams.set("user_id", userId);
-      return u.href;
+      return u.pathname + u.search;
     }
 
     function setLink(id, url) {

@@ -30,9 +30,11 @@ async def is_new_user_db(user_id: int):
         row = result.mappings().one_or_none()
 
         if row is None:
-            return True, None, None, None
+            logger.info(f"Пользователя нет в БД | user_id: {user_id}")
+            return True, None, None
 
-        return False, row["name"], row["username"], row["avatar_filename"]
+        logger.info(f"Пользователь есть в бд | user_id: {user_id}, name: {row.name}")
+        return False, row["name"], row["avatar_filename"]
 
 
 async def save_new_user_db(user_data: UserCreateSchema):
@@ -59,6 +61,7 @@ async def save_new_user_db(user_data: UserCreateSchema):
                 },
             )
             await session.commit()
+            logger.info(f"Пользователь успешно сохранен в БД | user_id: {user_data.user_id}")
             return True
 
     except Exception as e:
@@ -81,6 +84,7 @@ async def change_avatar_id_db(user_id: int, new_avatar_id: int):
 
             await session.execute(query,{"user_id": user_id, "avatar_filename": new_avatar_id})
             await session.commit()
+            logger.info(f"Аватарка успешно обновлена | user_id: {user_id}")
             return True
 
     except Exception as e:
@@ -103,6 +107,7 @@ async def change_name_db(user_id: int, new_name: str):
         async with new_session() as session:
             await session.execute(query, {"user_id": user_id, "name": new_name})
             await session.commit()
+            logger.info(f"Имя успешно обновлено | user_id: {user_id}")
             return True
 
     except Exception as e:

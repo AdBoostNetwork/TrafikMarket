@@ -9,13 +9,15 @@
 
   <style>
     html, body {
-      height: 100%;
-      overflow: hidden;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
 
-    .app {
-      height: 100dvh;
-      overflow: hidden;
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
     }
 
     .content {

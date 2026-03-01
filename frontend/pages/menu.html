@@ -8,6 +8,18 @@
   <link rel="stylesheet" href="../style.css" />
 
   <style>
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     html, body {
       -ms-overflow-style: none;
       scrollbar-width: none;
@@ -72,6 +84,7 @@
     .logo-card {
       width: 90%;
       margin: 0 auto;
+      display: block;
       background: var(--card);
       border-radius: 25px;
       min-height: 0;
@@ -165,13 +178,14 @@
       <div class="center-wrap">
 
         <div class="search-wrap">
+          <label class="sr-only" for="searchInput">Поиск</label>
           <input id="searchInput" type="text" placeholder="Поиск" />
           <img class="search-ico" src="../icons/search.svg" alt="" />
         </div>
 
-        <div class="logo-card">
+        <a class="logo-card" href="https://example.com" target="_blank" rel="noopener noreferrer">
             <img class="logo-svg" src="../icons/logo.svg" alt="TrafficMarket">
-        </div>
+        </a>
 
         <div class="tiles">
           <a class="tile" id="tileChannels" href="./watch_ad.html">

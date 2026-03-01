@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 :root {
     --bg: #1c1c1c;
     --card: #313133;
@@ -12,7 +14,7 @@
 
 body {
     margin: 0;
-    font-family: "Avenir Next", "SF Pro Display", "Segoe UI", sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: var(--bg);
     color: var(--white);
 

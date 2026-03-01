@@ -81,7 +81,9 @@
     .tiles {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 14px 14px;
+      gap: 16px 16px;
+      width: calc(100% - 4px);
+      margin: 0 auto;
     }
 
     .tile {
@@ -118,7 +120,8 @@
     }
 
     .create-btn {
-      width: 100%;
+      width: calc(100% - 4px);
+      margin: 0 auto;
       background: var(--card);
       border-radius: 25px;
       min-height: 80px;

@@ -176,7 +176,7 @@ body {
 .bottom-nav {
     position: fixed;
     left: 50%;
-    bottom: calc(7px + env(safe-area-inset-bottom));
+    bottom: calc(14px + env(safe-area-inset-bottom));
     transform: translateX(-50%);
     height: 66px;
     background: rgba(41, 41, 42, 0.63);

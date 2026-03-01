@@ -204,7 +204,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 53px;
+    min-height: 13px;
     border-radius: 100px;
     color: var(--muted);
     text-decoration: none;

@@ -27,13 +27,26 @@
     }
 
     .logo-card {
-      width: 100%;
+      width: 90%;
+      margin: 0 auto;
+      display: block;
       background: var(--card);
       border-radius: 25px;
-      min-height: 120px;
-      display: grid;
-      place-items: center;
+      min-height: 0;
+      height: 140px;
+      position: relative;
+      overflow: hidden;
       user-select: none;
+    }
+
+    .logo-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
     }
 
     .section-title {
@@ -41,13 +54,16 @@
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.05px;
-      margin-top: 4px;
+      margin-top: 12px;
+      margin-bottom: -8px;
+      margin-left: 38px;
     }
 
     .ref-input {
-      width: 100%;
+      width: 90%;
+      margin: 0 auto;
       background: var(--card);
-      border-radius: 18px;
+      border-radius: 28px;
       padding: 12px 12px;
       display: flex;
       align-items: center;
@@ -91,11 +107,100 @@
     .hint {
       color: var(--muted);
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
       line-height: 1.35;
       margin-top: 2px;
+      margin-bottom: -10px;
     }
 
+    .refs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 8px;
+    }
+
+    .ref-user {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      background: var(--card);
+      border-radius: 40px;
+      padding: 10px 14px;
+    }
+
+    .ref-user__avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      background: #4a4a4d;
+    }
+
+    .ref-user__avatar-fallback {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      background: #6fcf97;
+    }
+
+    .ref-user__main {
+      min-width: 0;
+    }
+
+    .ref-user__name {
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ref-user__meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      color: white;
+      font-size: 14px;
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ref-user__right {
+      text-align: right;
+      margin-right: 10px;
+      color: var(--accent);
+      font-size: 16px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .ref-user__vip {
+      color: var(--vip-color, var(--muted));
+      font-weight: 400;
+    }
+
+
+    .refs-empty {
+      text-align: left;
+      margin-left: 38px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 2px 0;
+    }
   </style>
 </head>
 
@@ -104,9 +209,9 @@
     <div class="content">
       <div class="center-wrap">
 
-        <div class="logo-card">
-          <img class="logo-img" src="../icons/logo.jpg" alt="TrafficMarket">
-        </div>
+        <a class="logo-card" href="https://example.com" target="_blank" rel="noopener noreferrer">
+            <img class="logo-svg" src="../icons/logo.svg" alt="TrafficMarket">
+        </a>
 
         <div class="section-title">Реферальная ссылка</div>
 
@@ -116,10 +221,10 @@
             <img src="../icons/copy_link.svg" alt="" />
           </button>
         </div>
-
         <div class="hint" id="copyHint">
-          Поделись ссылкой — если пользователь зарегистрируется по ней, он будет закреплён за тобой.
         </div>
+        <div class="section-title">Приглашённые пользователи</div>
+        <div class="refs-list" id="refsList"></div>
 
       </div>
     </div>
@@ -150,12 +255,16 @@
     const DEFAULT_LINK = "https://t.me/...";
     const DEFAULT_HINT = "";
 
+    const VIP_STATUS = {
+      1: { name: "Silver", color: "#C0C0C0" },
+      2: { name: "Gold", color: "#FFBD1B" },
+    };
+
     function getUserIdFromQuery() {
       const params = new URLSearchParams(window.location.search);
       const v = params.get("user_id");
       return v ? v.trim() : null;
     }
-
 
     function withUserId(url) {
       const userId = getUserIdFromQuery();
@@ -197,6 +306,73 @@
       document.body.removeChild(ta);
     }
 
+    function getVipInfo(status) {
+      return VIP_STATUS[Number(status)] || { name: "Unknown", color: "" };
+    }
+
+    function formatDealsSum(value) {
+      const num = Number(value || 0);
+      return `$${num}`;
+    }
+
+    function formatProfit(value) {
+      const num = Number(value || 0);
+      return `$${num.toFixed(2)}`;
+    }
+
+    function getInitial(name) {
+      const s = String(name || "").trim();
+      return s ? s[0].toUpperCase() : "?";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function renderReferrals(referrals) {
+      const list = document.getElementById("refsList");
+
+      if (!Array.isArray(referrals) || referrals.length === 0) {
+        list.innerHTML = `<div class="refs-empty">У вас пока нет ни одного <br>приглашённого пользователя</div>`;
+        return;
+      }
+
+      list.innerHTML = referrals.map(user => {
+        const vipStatus = Number(user.vip_status || 0);
+        const vip = getVipInfo(user.vip_status);
+        const safeName = escapeHtml(user.name || "Без имени");
+
+        const avatar = user.avatar_filename
+          ? `<img class="ref-user__avatar" src="../avatars/${encodeURIComponent(user.avatar_filename)}" alt="${safeName}">`
+          : `<div class="ref-user__avatar-fallback">${escapeHtml(getInitial(user.name))}</div>`;
+
+        const vipClass = vip.label === "Unknown" ? "is-unknown" : "";
+
+        return `
+          <div class="ref-user">
+            ${avatar}
+
+            <div class="ref-user__main">
+              <div class="ref-user__name">${safeName}</div>
+
+              <div class="ref-user__meta">
+                <span class="ref-user__vip" style="--vip-color: ${vip.color};">${vip.name}</span>
+                <span>•</span>
+                <span>${formatDealsSum(user.deals_summ)}</span>
+              </div>
+            </div>
+
+            <div class="ref-user__right">${formatProfit(user.profit)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
     async function loadRefLink() {
       const userId = getUserIdFromQuery();
 
@@ -230,6 +406,29 @@
         setHint("Ошибка сети: не удалось загрузить ссылку.");
       }
     }
+    async function loadReferrals() {
+      const userId = getUserIdFromQuery();
+
+      if (!userId) {
+        renderReferrals([]);
+        return;
+      }
+
+      try {
+        const url = `${API_BASE}/referals?user_id=${encodeURIComponent(userId)}`;
+        const res = await fetch(url);
+        const data = await res.json().catch(() => ({}));
+
+        if (Array.isArray(data.referals)) {
+          renderReferrals(data.referals);
+          return;
+        }
+
+        renderReferrals([]);
+      } catch (e) {
+        renderReferrals([]);
+      }
+    }
 
     document.getElementById("copyBtn").addEventListener("click", async () => {
       const input = document.getElementById("refLink");
@@ -246,6 +445,8 @@
     });
 
     loadRefLink();
+    loadReferrals();
+
   </script>
 </body>
 </html>

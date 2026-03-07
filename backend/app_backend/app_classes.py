@@ -44,6 +44,23 @@ class MyProfile:
 
 
 @dataclass(frozen=True)
+class RefSchema:
+    """Список рефералов"""
+    name: str
+    avatar_filename: str
+    vip_status: int
+    deals_summ: float
+    profit: float
+
+
+@dataclass(frozen=True)
+class RefAnswerSchema:
+    """Ответ ручки реферальной страницы"""
+    ref_link: str
+    refs_list: list[RefSchema]
+
+
+@dataclass(frozen=True)
 class AnnounPageSchema:
     """Ответ единой страницы объявления"""
     type: str

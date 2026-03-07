@@ -59,6 +59,18 @@
       margin-left: 38px;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     .ref-input {
       width: 90%;
       margin: 0 auto;
@@ -72,6 +84,7 @@
 
     .ref-input input {
       width: 100%;
+      min-width: 0;
       border: 0;
       outline: none;
       background: transparent;
@@ -79,6 +92,9 @@
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .copy-btn {
@@ -147,8 +163,8 @@
       place-items: center;
       font-size: 24px;
       font-weight: 700;
-      color: #fff;
-      background: #6fcf97;
+      color: #ffffff;
+      background: #7ED574;
     }
 
     .ref-user__main {
@@ -188,7 +204,8 @@
     }
 
     .ref-user__vip {
-      color: var(--vip-color, var(--muted));
+      --vip-color: var(--muted);
+      color: var(--vip-color);
       font-weight: 400;
     }
 
@@ -215,6 +232,7 @@
 
         <div class="section-title">Реферальная ссылка</div>
 
+        <label class="sr-only" for="refLink">Реферальная ссылка</label>
         <div class="ref-input">
           <input id="refLink" type="text" value="https://t.me/..." readonly />
           <button class="copy-btn" id="copyBtn" aria-label="Скопировать">
@@ -254,6 +272,9 @@
 
     const DEFAULT_LINK = "https://t.me/...";
     const DEFAULT_HINT = "";
+    const COPY_SUCCESS_TEXT = "Ссылка успешно скопирована";
+    let currentRefLink = DEFAULT_LINK;
+    let copyFeedbackTimer = null;
 
     const VIP_STATUS = {
       1: { name: "Silver", color: "#C0C0C0" },
@@ -334,6 +355,24 @@
         .replace(/'/g, "&#039;");
     }
 
+    function bindAvatarFallback(root) {
+      root.querySelectorAll("img.ref-user__avatar").forEach(img => {
+        const applyFallback = () => {
+          const fallback = document.createElement("div");
+          fallback.className = "ref-user__avatar-fallback";
+          fallback.textContent = img.dataset.initial || "?";
+          img.replaceWith(fallback);
+        };
+
+        if (img.complete && img.naturalWidth === 0) {
+          applyFallback();
+          return;
+        }
+
+        img.addEventListener("error", applyFallback, { once: true });
+      });
+    }
+
     function renderReferrals(referrals) {
       const list = document.getElementById("refsList");
 
@@ -343,15 +382,13 @@
       }
 
       list.innerHTML = referrals.map(user => {
-        const vipStatus = Number(user.vip_status || 0);
         const vip = getVipInfo(user.vip_status);
         const safeName = escapeHtml(user.name || "Без имени");
+        const safeInitial = escapeHtml(getInitial(user.name));
 
         const avatar = user.avatar_filename
-          ? `<img class="ref-user__avatar" src="../avatars/${encodeURIComponent(user.avatar_filename)}" alt="${safeName}">`
-          : `<div class="ref-user__avatar-fallback">${escapeHtml(getInitial(user.name))}</div>`;
-
-        const vipClass = vip.label === "Unknown" ? "is-unknown" : "";
+          ? `<img class="ref-user__avatar" src="../avatars/${encodeURIComponent(user.avatar_filename)}" alt="${safeName}" data-initial="${safeInitial}">`
+          : `<div class="ref-user__avatar-fallback">${safeInitial}</div>`;
 
         return `
           <div class="ref-user">
@@ -371,14 +408,17 @@
           </div>
         `;
       }).join("");
+      bindAvatarFallback(list);
     }
 
     async function loadRefLink() {
       const userId = getUserIdFromQuery();
 
       if (!userId) {
-        document.getElementById("refLink").value = DEFAULT_LINK;
+        currentRefLink = DEFAULT_LINK;
+        document.getElementById("refLink").value = currentRefLink;
         setHint(DEFAULT_HINT);
+        renderReferrals([]);
         return;
       }
 
@@ -387,65 +427,49 @@
         const res = await fetch(url);
         const data = await res.json().catch(() => ({}));
 
-        if (data && typeof data.success === "string" && data.success.trim()) {
-          document.getElementById("refLink").value = data.success.trim();
+        if (data && typeof data.ref_link === "string" && data.ref_link.trim()) {
+          currentRefLink = data.ref_link.trim();
+          document.getElementById("refLink").value = currentRefLink;
           setHint(DEFAULT_HINT);
-          return;
+        } else {
+          currentRefLink = DEFAULT_LINK;
+          document.getElementById("refLink").value = currentRefLink;
+          setHint("Неожиданный ответ сервера.");
         }
 
-        if (data && typeof data.error === "string" && data.error.trim()) {
-          document.getElementById("refLink").value = DEFAULT_LINK;
-          setHint(data.error.trim());
-          return;
+        if (Array.isArray(data.refs_list)) {
+          renderReferrals(data.refs_list);
+        } else {
+          renderReferrals([]);
         }
-
-        document.getElementById("refLink").value = DEFAULT_LINK;
-        setHint("Неожиданный ответ сервера.");
       } catch (e) {
-        document.getElementById("refLink").value = DEFAULT_LINK;
+        currentRefLink = DEFAULT_LINK;
+        document.getElementById("refLink").value = currentRefLink;
         setHint("Ошибка сети: не удалось загрузить ссылку.");
-      }
-    }
-    async function loadReferrals() {
-      const userId = getUserIdFromQuery();
-
-      if (!userId) {
-        renderReferrals([]);
-        return;
-      }
-
-      try {
-        const url = `${API_BASE}/referals?user_id=${encodeURIComponent(userId)}`;
-        const res = await fetch(url);
-        const data = await res.json().catch(() => ({}));
-
-        if (Array.isArray(data.referals)) {
-          renderReferrals(data.referals);
-          return;
-        }
-
-        renderReferrals([]);
-      } catch (e) {
         renderReferrals([]);
       }
     }
 
     document.getElementById("copyBtn").addEventListener("click", async () => {
       const input = document.getElementById("refLink");
-      const val = (input.value || "").trim();
+      const val = (currentRefLink || "").trim();
       if (!val) return;
 
       try {
         await safeCopyToClipboard(val);
-        setHint("Ссылка успешно скопирована.");
-        setTimeout(() => setHint(DEFAULT_HINT), 1400);
+        if (copyFeedbackTimer) clearTimeout(copyFeedbackTimer);
+        input.value = COPY_SUCCESS_TEXT;
+        setHint(DEFAULT_HINT);
+        copyFeedbackTimer = setTimeout(() => {
+          input.value = currentRefLink;
+          copyFeedbackTimer = null;
+        }, 1400);
       } catch (e) {
         setHint("Не получилось скопировать ссылку.");
       }
     });
 
     loadRefLink();
-    loadReferrals();
 
   </script>
 </body>

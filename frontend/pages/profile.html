@@ -348,26 +348,49 @@
       return String(trnType ?? "");
     }
 
+    function getInitial(name) {
+      const s = String(name || "").trim();
+      if (!s) return "?";
+
+      if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
+        const segmenter = new Intl.Segmenter("ru", { granularity: "grapheme" });
+        const first = segmenter.segment(s)[Symbol.iterator]().next().value?.segment;
+        return first ? first.toLocaleUpperCase() : "?";
+      }
+
+      const first = Array.from(s)[0];
+      return first ? first.toLocaleUpperCase() : "?";
+    }
+
 
     function setAvatar(name, avatarFilename) {
       const img = document.getElementById("avatarImg");
       const letter = document.getElementById("avatarLetter");
 
-      const first = (name && name.length) ? name[0].toUpperCase() : "?";
+      const first = getInitial(name);
       letter.textContent = first;
-
-      if (avatarFilename) {
-        img.src = `../users_avas/${avatarFilename}`;
-        img.style.display = "block";
-        letter.style.display = "none";
-
-        img.onerror = () => {
-          img.style.display = "none";
-          letter.style.display = "block";
-        };
-      } else {
+      const showFallback = () => {
         img.style.display = "none";
         letter.style.display = "block";
+      };
+      const showImage = () => {
+        img.style.display = "block";
+        letter.style.display = "none";
+      };
+
+      img.onerror = null;
+
+      if (avatarFilename) {
+        img.src = `../users_avas/${encodeURIComponent(avatarFilename)}`;
+        showImage();
+        img.onerror = showFallback;
+
+        if (img.complete && img.naturalWidth === 0) {
+          showFallback();
+        }
+      } else {
+        img.removeAttribute("src");
+        showFallback();
       }
     }
 

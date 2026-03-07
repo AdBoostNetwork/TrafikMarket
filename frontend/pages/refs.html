@@ -343,7 +343,16 @@
 
     function getInitial(name) {
       const s = String(name || "").trim();
-      return s ? s[0].toUpperCase() : "?";
+      if (!s) return "?";
+
+      if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
+        const segmenter = new Intl.Segmenter("ru", { granularity: "grapheme" });
+        const first = segmenter.segment(s)[Symbol.iterator]().next().value?.segment;
+        return first ? first.toLocaleUpperCase() : "?";
+      }
+
+      const first = Array.from(s)[0];
+      return first ? first.toLocaleUpperCase() : "?";
     }
 
     function escapeHtml(value) {

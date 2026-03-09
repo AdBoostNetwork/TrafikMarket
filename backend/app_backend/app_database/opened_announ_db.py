@@ -1,7 +1,7 @@
 from sqlalchemy import text
 
 from .db_engine import new_session
-from ..app_classes import SellerInfo, ChannelSchema, AdSchema, TrafficSchema, AccSchema
+from ..app_classes import SellerInfo, ChannelSchema, AdSchema, TrafficSchema
 from ..logger import get_logger
 
 
@@ -44,59 +44,6 @@ async def get_announ_imgs_db(session, announ_id: int):
     rows = result.scalars().all()
 
     return list(rows) if rows else []
-
-
-
-async def get_account_announ_db(session, announ_id: int):
-    logger.info("Получение объявления (Аккаунты) | Announ id: %s", announ_id)
-
-    query = text(
-        """
-        SELECT a.seller_id,
-               a.title,
-               a.price,
-               a.long_text,
-
-               ac.country,
-               ac.log_type,
-               ac.idle_time,
-               ac.acc_type,
-               ac.premium,
-               ac.stars_count,
-               ac.gifts,
-               ac.tg_level
-        FROM announs a
-                 JOIN accs_announs ac
-                      ON ac.acc_announ_id = a.announ_id
-        WHERE a.announ_id = :announ_id;
-        """
-    )
-
-    result = await session.execute(query, {"announ_id": announ_id})
-    row = result.mappings().one_or_none()
-
-    if row is None:
-        logger.warning("Объявление (Аккаунты) не найдено | announ_id=%s", announ_id)
-        raise Exception(f"account_announ_not_found announ_id={announ_id}")
-
-    seller = await get_seller_info_db(session, int(row["seller_id"]))
-    imgs = await get_announ_imgs_db(session, announ_id)
-
-    return AccSchema(
-        seller=seller,
-        title=row["title"],
-        price=int(row["price"]),
-        long_text=row["long_text"],
-        imgs=imgs,
-        country=row["country"],
-        log_type=row["log_type"],
-        idle_time=row["idle_time"],
-        acc_type=row["acc_type"],
-        premium=row["premium"],
-        stars_count=row["stars_count"],
-        gifts=bool(row["gifts"]),
-        tg_level=int(row["tg_level"]),
-    )
 
 
 async def get_traffic_announ_db(session, announ_id: int):
@@ -266,8 +213,6 @@ async def get_announ_info_db(session, announ_id: int, announ_type: str):
         return await get_ad_announ_db(session, announ_id)
     if announ_type == "traffic":
         return await get_traffic_announ_db(session, announ_id)
-    if announ_type == "account":
-        return await get_account_announ_db(session, announ_id)
 
     raise Exception(f"unknown_announ_type type: {announ_type}")
 

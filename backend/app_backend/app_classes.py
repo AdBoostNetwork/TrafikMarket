@@ -115,19 +115,6 @@ class TrafficSchema(AnnounBaseSchema):
     country: str
 
 
-@dataclass(frozen=True)
-class AccSchema(AnnounBaseSchema):
-    """Класс параметров объявления тематики Аккаунты"""
-    country: str
-    log_type: str
-    idle_time: str
-    acc_type: str
-    premium: str
-    stars_count: str
-    gifts: bool
-    tg_level: int
-
-
 class AnnounCreateSchema(BaseModel):
     type: str
     announ_info: dict

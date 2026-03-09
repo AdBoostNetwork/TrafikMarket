@@ -1,11 +1,8 @@
-#Точка входа в сайт. Запуск fastapi
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import html
 
-from .pages.profile import profile_page
+from.endpoints import endpoints
 from .pages.ref_link import ref_link_page
 from .pages.opened_announ import opened_announ_page
 from .pages.announs import announs_page
@@ -23,9 +20,7 @@ def app_run():
         uvicorn.run(app, host=AppConfig.host, port=AppConfig.port)
 
     except Exception as e:
-        short_error = html.escape(str(e))
-        logger.error("Ошибка при запуске FastAPI app: %s", short_error)
-
+        logger.error(f"Ошибка при запуске FastAPI app: {str(e)}")
 
 
 app = FastAPI()
@@ -38,7 +33,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(profile_page)
+app.include_router(endpoints)
 app.include_router(ref_link_page)
 app.include_router(opened_announ_page)
 app.include_router(announs_page)

@@ -8,48 +8,74 @@ def user_start_menu():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Открыть биржу", web_app=WebAppInfo(url="pornhub.com")),
+                InlineKeyboardButton(text="Открыть в приложении", web_app=WebAppInfo(url="https://example.com/")),
             ],
             [
-                InlineKeyboardButton(text="Профиль👤", callback_data="profile"),
-                InlineKeyboardButton(text="Поддержка", url = "pornhub.com"),
+                InlineKeyboardButton(text="Кошелек", callback_data="start:wallet"),
+                InlineKeyboardButton(text="Биржа", callback_data="start:market"),
             ],
             [
-                InlineKeyboardButton(text="Вывод⤴️", callback_data="finance:undep"),
-                InlineKeyboardButton(text="Пополнение⤵️", callback_data="finance:dep"),
+                InlineKeyboardButton(text="Офферы", callback_data="start:offers"),
+                InlineKeyboardButton(text="Поиск", callback_data="start:find"),
+            ],
+            [
+                InlineKeyboardButton(text="Чаты", callback_data="start:chats"),
+                InlineKeyboardButton(text="VIP статус", callback_data="start:VIP_status"),
+            ],
+            [
+                InlineKeyboardButton(text="Инструкции", callback_data="start:instructions"),
+                InlineKeyboardButton(text="Настройки", callback_data="start:settings"),
+            ]
+        ]
+    )
+
+def wallet_menu():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="🚀 Открыть в приложении", web_app=WebAppInfo(url="https://example.com/")),
+            ],
+            [
+                InlineKeyboardButton(text="Вывод⤴️", web_app=WebAppInfo(url="https://example.com/")),
+                InlineKeyboardButton(text="Пополнение⤵️", web_app=WebAppInfo(url="https://example.com/")),
+            ],
+            [
+                InlineKeyboardButton(text="Комиссии и лимиты", callback_data="limits"),
+            ],
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+            ]
+        ]
+    )
+
+def market_menu():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Купить", callback_data="buy"),
+                InlineKeyboardButton(text="Продать", callback_data="sell"),
             ],
             [
                 InlineKeyboardButton(text="Мои объявления 🗣", callback_data="my:announs"),
             ],
             [
                 InlineKeyboardButton(text="Мои сделки 🤝", callback_data="my:deals"),
+            ],
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
             ]
+
         ]
     )
 
-
-def user_dialogs_list_menu(dialog_list):
-    """
-    Меню с выбором активных диалогов
-    :param dialog_list: конфигурационный словарь, ключ - название кнопки, значение - айди диалога
-    :return:
-    """
-    menu=list([InlineKeyboardButton(text=dialog_name, callback_data=f"get_dialog:{dialog_list[dialog_name]}")] for dialog_name in dialog_list)
-    menu.append([InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),])
-    return InlineKeyboardMarkup(
-        inline_keyboard=menu
-    )
-
-
-def user_announ_menu():
-    """Меню для управления объявлением"""
+def offers_menu():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Посмотреть объявление", url="pornhub.com"),
+                InlineKeyboardButton(text="Мои офферы", callback_data="my:offers"),
             ],
             [
-                InlineKeyboardButton(text="Закрыть объявление🔴", callback_data="announ:end"),
+                InlineKeyboardButton(text="Создать оффер", callback_data="make_offer"),
             ],
             [
                 InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
@@ -57,55 +83,14 @@ def user_announ_menu():
         ]
     )
 
-def user_deal_menu(is_buyer: bool):
-    """Меню для управления сделкой"""
-    if is_buyer:
-        return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Посмотреть объявление", url="pornhub.com"),
-            ],
-            [
-                InlineKeyboardButton(text="Чат сделки", callback_data="deal:chat"),
-            ],
-            [
-                InlineKeyboardButton(text="Подтвердить выполнение", callback_data="deal:finish"),
-            ],
-            [
-                InlineKeyboardButton(text="Вызвать поддержку", callback_data="deal:help"),
-            ],
-            [
-                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
-            ]
-        ]
-    )
-    else:
-        return InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(text="Посмотреть объявление", url="pornhub.com"),
-                ],
-                [
-                    InlineKeyboardButton(text="Чат сделки", callback_data="deal:chat"),
-                ],
-                [
-                    InlineKeyboardButton(text="Вызвать поддержку", callback_data="deal:help"),
-                ],
-                [
-                    InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
-                ]
-            ]
-        )
-
-def dialog_chat_menu():
-    """Меню для чата сделки"""
+def push_menu():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="История диалога⏮️", callback_data="deal_chat:history"),
+                InlineKeyboardButton(text="Текущие настройки Push", callback_data="my:push"),
             ],
             [
-                InlineKeyboardButton(text="Ответить✍️", callback_data="deal:answer"),
+                InlineKeyboardButton(text="Добавить раздел, для получения Push", callback_data="make_push"),
             ],
             [
                 InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
@@ -113,37 +98,177 @@ def dialog_chat_menu():
         ]
     )
 
-
-def deal_help_confirm_menu():
-    """Подтверждение вызова поддержки"""
+def instructions_menu():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Да, вызвать поддержку", callback_data="deal:confirm_help"),
+                InlineKeyboardButton(text="Раздел 1", callback_data="instr1"),
             ],
             [
-                InlineKeyboardButton(text="Отмена", callback_data="return_to_start"),
+                InlineKeyboardButton(text="Раздел 2", callback_data="instr2"),
+            ],
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
             ]
         ]
     )
 
-def deal_finish_confirm_menu():
-    """Подтверждение выполнения заказа для покупателя"""
+def sections_menu(action: str):
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Подтвердить выполнение", callback_data="deal:confirm_finish"),
+                InlineKeyboardButton(text="Каналы", callback_data=f"{action}:channels"),
+                InlineKeyboardButton(text="Реклама", callback_data=f"{action}:ad"),
             ],
             [
-                InlineKeyboardButton(text="Отмена", callback_data="return_to_start"),
+                InlineKeyboardButton(text="Траффик", callback_data=f"{action}:traffic"),
+                InlineKeyboardButton(text="Аккаунты", callback_data=f"{action}:accounts"),
+            ],
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
             ]
         ]
     )
+
+def channels_announs_menu(channels_list: list, current_index: int, max_index: int):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="фильтры и сортировка", callback_data="filtrs"),
+            ],
+            [
+                InlineKeyboardButton(text="Канал по крипте, 10к пдп", callback_data="buy_channel"),
+            ],
+            [
+                InlineKeyboardButton(text="Канал по крипте, 10к пдп", callback_data="buy_channel"),
+            ],
+            [
+                InlineKeyboardButton(text="Канал по крипте, 10к пдп", callback_data="buy_channel"),
+            ],
+            [
+                InlineKeyboardButton(text="Канал по крипте, 10к пдп", callback_data="buy_channel"),
+            ],
+            [
+                InlineKeyboardButton(text="Канал по крипте, 10к пдп", callback_data="buy_channel"),
+            ],
+            *_enumerate_config(current_index, max_index),
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+            ]
+        ]
+    )
+
+def announ_menu():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Посмотреть в приложении", web_app=WebAppInfo(url="https://example.com/")),
+            ],
+            [
+                InlineKeyboardButton(text="Купить", callback_data="buy_it"),
+            ],
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+            ]
+
+        ]
+    )
+
 
 def return_button():
-    """ Тут даже огузок поймет"""
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),]
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+            ]
         ]
     )
+
+def settings_menu():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Отправить сообщение", callback_data="sent_smth"),
+            ],
+            [
+                InlineKeyboardButton(text="Получить сообщение", callback_data="get_msg"),
+            ],
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+            ]
+        ]
+    )
+
+
+
+def _enumerate_config(current_index: int, max_index: int):
+    if max_index < 1:
+        max_index = 1
+    current_index = max(0, min(current_index, max_index - 1))
+    current_page = current_index + 1  # 1-based
+
+    def make_button(text: str, page: int) -> InlineKeyboardButton:
+        return InlineKeyboardButton(
+            text=text,
+            callback_data=f"channels_list:{page}:{max_index}"
+        )
+
+    # <= 5 страниц — просто показать все
+    if max_index <= 5:
+        visible_pages = list(range(1, max_index + 1))
+        row = [
+            make_button(f"•{p}•" if p == current_page else f"{p}", p)
+            for p in visible_pages
+        ]
+        return [row]
+
+    # > 5 — всегда 5 кнопок
+    if current_page <= 3:
+        visible_pages = [1, 2, 3, 4, max_index]
+    elif current_page >= max_index - 2:
+        visible_pages = [1, max_index - 3, max_index - 2, max_index - 1, max_index]
+    else:
+        visible_pages = [1, current_page - 1, current_page, current_page + 1, max_index]
+
+    # флаги крайних зон
+    is_near_start = current_page in (1, 2)
+    is_near_end = current_page in (max_index, max_index - 1)
+
+    row: list[InlineKeyboardButton] = []
+
+    for page in visible_pages:
+        # текущая
+        if page == current_page:
+            text = f"•{page}•"
+
+        # первая
+        elif page == 1:
+            text = "<<1" if current_page >= 4 else "1"
+
+        # последняя
+        elif page == max_index:
+            text = f"{max_index}>>" if (max_index - current_page) >= 3 else f"{max_index}"
+
+        else:
+            text = f"{page}"
+
+            # спец-правило старта: ">" только у 4
+            if is_near_start:
+                if page == 4:
+                    text = f"{page}>"
+
+            # спец-правило конца: "<" только у (max-3)
+            elif is_near_end:
+                if page == (max_index - 3):
+                    text = f"<{page}"
+
+            # обычные правила середины
+            else:
+                if page == current_page - 1 and page not in (1, 2):
+                    text = f"<{page}"
+                elif page == current_page + 1 and page not in (max_index, max_index - 1):
+                    text = f"{page}>"
+
+        row.append(make_button(text, page))
+
+    return [row]

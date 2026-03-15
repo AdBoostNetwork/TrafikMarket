@@ -27,13 +27,26 @@
     }
 
     .logo-card {
-      width: 100%;
+      width: 90%;
+      margin: 0 auto;
+      display: block;
       background: var(--card);
       border-radius: 25px;
-      min-height: 120px;
-      display: grid;
-      place-items: center;
+      min-height: 0;
+      height: 140px;
+      position: relative;
+      overflow: hidden;
       user-select: none;
+    }
+
+    .logo-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: center center;
     }
 
     .section-title {
@@ -41,13 +54,28 @@
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.05px;
-      margin-top: 4px;
+      margin-top: 12px;
+      margin-bottom: -8px;
+      margin-left: 38px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .ref-input {
-      width: 100%;
+      width: 90%;
+      margin: 0 auto;
       background: var(--card);
-      border-radius: 18px;
+      border-radius: 28px;
       padding: 12px 12px;
       display: flex;
       align-items: center;
@@ -56,6 +84,7 @@
 
     .ref-input input {
       width: 100%;
+      min-width: 0;
       border: 0;
       outline: none;
       background: transparent;
@@ -63,6 +92,9 @@
       font-size: 16px;
       font-weight: 600;
       letter-spacing: 0.1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .copy-btn {
@@ -91,11 +123,101 @@
     .hint {
       color: var(--muted);
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
       line-height: 1.35;
       margin-top: 2px;
+      margin-bottom: -10px;
     }
 
+    .refs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 8px;
+    }
+
+    .ref-user {
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      background: var(--card);
+      border-radius: 40px;
+      padding: 10px 14px;
+    }
+
+    .ref-user__avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      background: #4a4a4d;
+    }
+
+    .ref-user__avatar-fallback {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: #ffffff;
+      background: #7ED574;
+    }
+
+    .ref-user__main {
+      min-width: 0;
+    }
+
+    .ref-user__name {
+      color: var(--white);
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ref-user__meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+      color: white;
+      font-size: 14px;
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .ref-user__right {
+      text-align: right;
+      margin-right: 10px;
+      color: var(--accent);
+      font-size: 16px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .ref-user__vip {
+      --vip-color: var(--muted);
+      color: var(--vip-color);
+      font-weight: 400;
+    }
+
+
+    .refs-empty {
+      text-align: left;
+      margin-left: 38px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 2px 0;
+    }
   </style>
 </head>
 
@@ -104,22 +226,23 @@
     <div class="content">
       <div class="center-wrap">
 
-        <div class="logo-card">
-          <img class="logo-img" src="../icons/logo.jpg" alt="TrafficMarket">
-        </div>
+        <a class="logo-card" href="https://example.com" target="_blank" rel="noopener noreferrer">
+            <img class="logo-svg" src="../icons/logo.svg" alt="TrafficMarket">
+        </a>
 
         <div class="section-title">Реферальная ссылка</div>
 
+        <label class="sr-only" for="refLink">Реферальная ссылка</label>
         <div class="ref-input">
           <input id="refLink" type="text" value="https://t.me/..." readonly />
           <button class="copy-btn" id="copyBtn" aria-label="Скопировать">
             <img src="../icons/copy_link.svg" alt="" />
           </button>
         </div>
-
         <div class="hint" id="copyHint">
-          Поделись ссылкой — если пользователь зарегистрируется по ней, он будет закреплён за тобой.
         </div>
+        <div class="section-title">Приглашённые пользователи</div>
+        <div class="refs-list" id="refsList"></div>
 
       </div>
     </div>
@@ -149,13 +272,20 @@
 
     const DEFAULT_LINK = "https://t.me/...";
     const DEFAULT_HINT = "";
+    const COPY_SUCCESS_TEXT = "Ссылка успешно скопирована";
+    let currentRefLink = DEFAULT_LINK;
+    let copyFeedbackTimer = null;
+
+    const VIP_STATUS = {
+      1: { name: "Silver", color: "#C0C0C0" },
+      2: { name: "Gold", color: "#FFBD1B" },
+    };
 
     function getUserIdFromQuery() {
       const params = new URLSearchParams(window.location.search);
       const v = params.get("user_id");
       return v ? v.trim() : null;
     }
-
 
     function withUserId(url) {
       const userId = getUserIdFromQuery();
@@ -197,12 +327,107 @@
       document.body.removeChild(ta);
     }
 
+    function getVipInfo(status) {
+      return VIP_STATUS[Number(status)] || { name: "Unknown", color: "" };
+    }
+
+    function formatDealsSum(value) {
+      const num = Number(value || 0);
+      return `$${num}`;
+    }
+
+    function formatProfit(value) {
+      const num = Number(value || 0);
+      return `$${num.toFixed(2)}`;
+    }
+
+    function getInitial(name) {
+      const s = String(name || "").trim();
+      if (!s) return "?";
+
+      if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
+        const segmenter = new Intl.Segmenter("ru", { granularity: "grapheme" });
+        const first = segmenter.segment(s)[Symbol.iterator]().next().value?.segment;
+        return first ? first.toLocaleUpperCase() : "?";
+      }
+
+      const first = Array.from(s)[0];
+      return first ? first.toLocaleUpperCase() : "?";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function bindAvatarFallback(root) {
+      root.querySelectorAll("img.ref-user__avatar").forEach(img => {
+        const applyFallback = () => {
+          const fallback = document.createElement("div");
+          fallback.className = "ref-user__avatar-fallback";
+          fallback.textContent = img.dataset.initial || "?";
+          img.replaceWith(fallback);
+        };
+
+        if (img.complete && img.naturalWidth === 0) {
+          applyFallback();
+          return;
+        }
+
+        img.addEventListener("error", applyFallback, { once: true });
+      });
+    }
+
+    function renderReferrals(referrals) {
+      const list = document.getElementById("refsList");
+
+      if (!Array.isArray(referrals) || referrals.length === 0) {
+        list.innerHTML = `<div class="refs-empty">У вас пока нет ни одного <br>приглашённого пользователя</div>`;
+        return;
+      }
+
+      list.innerHTML = referrals.map(user => {
+        const vip = getVipInfo(user.vip_status);
+        const safeName = escapeHtml(user.name || "Без имени");
+        const safeInitial = escapeHtml(getInitial(user.name));
+
+        const avatar = user.avatar_filename
+          ? `<img class="ref-user__avatar" src="../avatars/${encodeURIComponent(user.avatar_filename)}" alt="${safeName}" data-initial="${safeInitial}">`
+          : `<div class="ref-user__avatar-fallback">${safeInitial}</div>`;
+
+        return `
+          <div class="ref-user">
+            ${avatar}
+
+            <div class="ref-user__main">
+              <div class="ref-user__name">${safeName}</div>
+
+              <div class="ref-user__meta">
+                <span class="ref-user__vip" style="--vip-color: ${vip.color};">${vip.name}</span>
+                <span>•</span>
+                <span>${formatDealsSum(user.deals_summ)}</span>
+              </div>
+            </div>
+
+            <div class="ref-user__right">${formatProfit(user.profit)}</div>
+          </div>
+        `;
+      }).join("");
+      bindAvatarFallback(list);
+    }
+
     async function loadRefLink() {
       const userId = getUserIdFromQuery();
 
       if (!userId) {
-        document.getElementById("refLink").value = DEFAULT_LINK;
+        currentRefLink = DEFAULT_LINK;
+        document.getElementById("refLink").value = currentRefLink;
         setHint(DEFAULT_HINT);
+        renderReferrals([]);
         return;
       }
 
@@ -211,41 +436,50 @@
         const res = await fetch(url);
         const data = await res.json().catch(() => ({}));
 
-        if (data && typeof data.success === "string" && data.success.trim()) {
-          document.getElementById("refLink").value = data.success.trim();
+        if (data && typeof data.ref_link === "string" && data.ref_link.trim()) {
+          currentRefLink = data.ref_link.trim();
+          document.getElementById("refLink").value = currentRefLink;
           setHint(DEFAULT_HINT);
-          return;
+        } else {
+          currentRefLink = DEFAULT_LINK;
+          document.getElementById("refLink").value = currentRefLink;
+          setHint("Неожиданный ответ сервера.");
         }
 
-        if (data && typeof data.error === "string" && data.error.trim()) {
-          document.getElementById("refLink").value = DEFAULT_LINK;
-          setHint(data.error.trim());
-          return;
+        if (Array.isArray(data.refs_list)) {
+          renderReferrals(data.refs_list);
+        } else {
+          renderReferrals([]);
         }
-
-        document.getElementById("refLink").value = DEFAULT_LINK;
-        setHint("Неожиданный ответ сервера.");
       } catch (e) {
-        document.getElementById("refLink").value = DEFAULT_LINK;
+        currentRefLink = DEFAULT_LINK;
+        document.getElementById("refLink").value = currentRefLink;
         setHint("Ошибка сети: не удалось загрузить ссылку.");
+        renderReferrals([]);
       }
     }
 
     document.getElementById("copyBtn").addEventListener("click", async () => {
       const input = document.getElementById("refLink");
-      const val = (input.value || "").trim();
+      const val = (currentRefLink || "").trim();
       if (!val) return;
 
       try {
         await safeCopyToClipboard(val);
-        setHint("Ссылка успешно скопирована.");
-        setTimeout(() => setHint(DEFAULT_HINT), 1400);
+        if (copyFeedbackTimer) clearTimeout(copyFeedbackTimer);
+        input.value = COPY_SUCCESS_TEXT;
+        setHint(DEFAULT_HINT);
+        copyFeedbackTimer = setTimeout(() => {
+          input.value = currentRefLink;
+          copyFeedbackTimer = null;
+        }, 1400);
       } catch (e) {
         setHint("Не получилось скопировать ссылку.");
       }
     });
 
     loadRefLink();
+
   </script>
 </body>
 </html>

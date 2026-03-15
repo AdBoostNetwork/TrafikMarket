@@ -44,6 +44,23 @@ class MyProfile:
 
 
 @dataclass(frozen=True)
+class RefSchema:
+    """Список рефералов"""
+    name: str
+    avatar_filename: str
+    vip_status: int
+    deals_summ: float
+    profit: float
+
+
+@dataclass(frozen=True)
+class RefAnswerSchema:
+    """Ответ ручки реферальной страницы"""
+    ref_link: str
+    refs_list: list[RefSchema]
+
+
+@dataclass(frozen=True)
 class AnnounPageSchema:
     """Ответ единой страницы объявления"""
     type: str
@@ -96,19 +113,6 @@ class TrafficSchema(AnnounBaseSchema):
     traffic_type: str
     audience_type: str
     country: str
-
-
-@dataclass(frozen=True)
-class AccSchema(AnnounBaseSchema):
-    """Класс параметров объявления тематики Аккаунты"""
-    country: str
-    log_type: str
-    idle_time: str
-    acc_type: str
-    premium: str
-    stars_count: str
-    gifts: bool
-    tg_level: int
 
 
 class AnnounCreateSchema(BaseModel):

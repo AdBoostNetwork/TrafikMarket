@@ -1,5 +1,8 @@
 from dataclasses import dataclass
 
+
+
+"""Классы для ответов на кнопки из /start"""
 @dataclass(frozen=True)
 class Wallet:
     """ Данные для раздела кошелька в боте"""
@@ -7,6 +10,9 @@ class Wallet:
     frozen_ballance: float
 
 
+
+
+"""Классы для раздела маркета"""
 @dataclass(frozen=True)
 class Announs_list:
     """ Объявления для n-ной страницы в боте. Содержит конфиги кнопок для объявлений с 10*(n-1)
@@ -18,11 +24,39 @@ class Announs_list:
 
 
 @dataclass(frozen=True)
+class Announ:
+    """ДАнные конкретного объявления"""
+    #все, что есть в объявлении
+
+
+#TODO: тут нужны классы для откликов и их списка
+
+@dataclass(frozen=True)
+class My_deals_list:
+    """Список сделок пользователя, формат, аналогичный формату списка объявлений"""
+    deals_list: set  # {"Покупка/продажа/отклик deal_name: deal_id}
+    max_index: int
+    current_index: int
+
+@dataclass(frozen=True)
+class My_deal:
+    """Класс для конкретной сделки"""
+    #все, что есть в сделке
+
+
+@dataclass(frozen=True)
 class Chats_list:
     """ Xfns для n-ной страницы в боте. Содержит конфиги кнопок для чатов с 10*(n-1)
-         по 10*n-1.Также содержит n (current_index) и индекс максимально возможной страницы (max_index)
+         по 10*n-1. Также содержит n (current_index) и индекс максимально возможной страницы (max_index)
          (Не ласт странице может быть менее 10 значений)"""
     chats_list: set  # {"Чат с user_to_name": chat_id}
     max_index: int
     current_index: int
+
+@dataclass(frozen=True)
+class Chat:
+    """Класс для конкретного чата"""
+    
+
+
 

@@ -12,18 +12,18 @@ def user_start_menu():
             ],
             [
                 InlineKeyboardButton(text="Кошелек", callback_data="start:wallet"),
-                InlineKeyboardButton(text="Биржа", callback_data="start:market"),
+                InlineKeyboardButton(text="Маркет", callback_data="start:market"),
             ],
             [
-                InlineKeyboardButton(text="Офферы", callback_data="start:offers"),
+                InlineKeyboardButton(text="Аукционы", callback_data="start:auction"),
+                InlineKeyboardButton(text="Индекс цен", callback_data="start:price_index"),
+            ],
+            [
+                InlineKeyboardButton(text="Траффы", callback_data="start:traffs"),
                 InlineKeyboardButton(text="Поиск", callback_data="start:find"),
             ],
             [
-                InlineKeyboardButton(text="Чаты", callback_data="start:chats"),
-                InlineKeyboardButton(text="VIP статус", callback_data="start:VIP_status"),
-            ],
-            [
-                InlineKeyboardButton(text="Инструкции", callback_data="start:instructions"),
+                InlineKeyboardButton(text="PUSH", callback_data="start:pushs"),
                 InlineKeyboardButton(text="Настройки", callback_data="start:settings"),
             ]
         ]

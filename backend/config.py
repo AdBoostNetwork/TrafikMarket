@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from backend.app_backend.app_classes import AppDbConfig, FastApiConfig
+from .app_backend.app_classes import AppDbConfig, FastApiConfig
 
 
 DB_SECRETS_PATH = Path(__file__).resolve().parents[1] / "data" / "db_secrets.json"
@@ -28,3 +28,5 @@ AppConfig = FastApiConfig(
     host = app_data["host"],
     port = app_data["port"]
 )
+
+tgstat_token = app_data["tgstat_token"]

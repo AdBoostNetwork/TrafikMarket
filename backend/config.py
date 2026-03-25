@@ -1,17 +1,32 @@
-import os
-from dotenv import load_dotenv
-from .classes import DbConfig
+import json
+from pathlib import Path
+
+from .app_backend.app_classes import AppDbConfig, FastApiConfig
 
 
-load_dotenv()
+DB_SECRETS_PATH = Path(__file__).resolve().parents[1] / "data" / "db_secrets.json"
+APP_SECRETS_PATH = Path(__file__).resolve().parents[1] / "data" / "app_secrets.json"
 
-MAIN_BOT_TOKEN = os.getenv("MAIN_BOT_TOKEN")
-SUPP_BOT_TOKEN = os.getenv("SUPPORT_BOT_TOKEN")
 
-DB_CONFIG = DbConfig(
-    admin=os.getenv("DB_ADMIN"),
-    password=os.getenv("DB_PASS"),
-    host=os.getenv("DB_HOST"),
-    port=int(os.getenv("DB_PORT")),
-    db_name=os.getenv("DB_NAME"),
+def load_json(file_path):
+    with open(file_path, "r") as f:
+        return json.load(f)
+
+
+db_data = load_json(DB_SECRETS_PATH)
+app_data = load_json(APP_SECRETS_PATH)
+
+DbConfig = AppDbConfig(
+    admin = db_data["admin"],
+    password = db_data["password"],
+    host = db_data["host"],
+    port = db_data["port"],
+    db_name = db_data["db_name"]
 )
+
+AppConfig = FastApiConfig(
+    host = app_data["host"],
+    port = app_data["port"]
+)
+
+tgstat_token = app_data["tgstat_token"]

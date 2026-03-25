@@ -5,7 +5,7 @@ import uvicorn
 from.endpoints import endpoints
 from .pages.announs import announs_page
 from .pages.announ_creator import announ_creator
-from .app_config import AppConfig
+from backend.config import AppConfig
 from .logger import get_logger
 
 

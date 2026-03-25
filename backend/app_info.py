@@ -390,7 +390,7 @@ class ChannelSchema(AnnounBaseSchema):
     :param topic — Тематика
     :param chn_type — Тип канала
     :param country — Страна
-    :param subs_count — Количество подписичков
+    :param subs_count — Количество подписчиков
     :param cover_count — Охват
     :param profit — Доходность
     """

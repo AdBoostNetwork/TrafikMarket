@@ -124,13 +124,14 @@ class AdSchema(OpenedAnnoun):
 
 
 @dataclass(frozen=True)
-class TrafficSchema(AnnounBaseSchema):
+class TrafficSchema(OpenedAnnoun):
     """Класс параметров объявления тематики Трафик"""
     topic: str
     platform: str
     traffic_type: str
     audience_type: str
     country: str
+    price: float
 
 
 class AnnounCreateSchema(BaseModel):

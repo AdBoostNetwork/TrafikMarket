@@ -1,13 +1,29 @@
-import asyncio
+from sqlalchemy import text
+
 from .main_bot_classes import Wallet, Announs_list, Announ
+from backend.db_engine import new_session
+from backend.logger import get_logger
+
+
+logger = get_logger(__name__)
+
 
 """ Раздел кошелька"""
 async def get_wallet_info(user_id) -> Wallet:
-    """
-    Получает информацию о балике юзера, для кнопки "Кошелек"
-    :param user_id:
-    :return:
-    """
+    '''logger.info("Запрос баланса пользователя | user_id: %s", user_id)
+
+    query = text("SELECT current_balance, frozen_balance FROM accounts WHERE user_id = :user_id")
+
+    result = await new_session().execute(query, {"user_id": user_id})
+    data = result.mappings().first()
+
+    active_balance = float(data["current_balance"]) - float(data["frozen_balance"])
+
+    return Wallet(
+        active_ballance=active_balance,
+        frozen_ballance=data["frozen_balance"]
+    )'''
+
     return Wallet(active_ballance=100, frozen_ballance=100)
 
 

@@ -24,7 +24,7 @@ async def get_wallet_info(user_id) -> Wallet:
         frozen_ballance=data["frozen_balance"]
     )'''
 
-    return Wallet(active_ballance=100, frozen_ballance=100)
+    return Wallet(active_balance=100, frozen_balance=100)
 
 
 """Рездел маркета"""

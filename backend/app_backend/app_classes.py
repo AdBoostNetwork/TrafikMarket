@@ -78,15 +78,25 @@ class SellerInfo:
 @dataclass(frozen=True)
 class ClosedAnnoun:
     """Класс с данными объявления на странице просмотра объявлений"""
+    announ_id: int
     seller: SellerInfo
     title: str
     price: float
-    short_text: str
+    description: str
     imgs: list[str]
 
 
 @dataclass(frozen=True)
-class ChannelSchema(AnnounBaseSchema):
+class OpenedAnnoun:
+    article: int
+    seller: SellerInfo
+    title: str
+    description: str
+    imgs: list[str]
+
+
+@dataclass(frozen=True)
+class ChannelSchema(OpenedAnnoun):
     """Класс параметров объявления тематики Каналы"""
     topic: str
     chn_type: str

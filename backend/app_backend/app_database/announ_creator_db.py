@@ -23,34 +23,6 @@ async def post_announ_imgs_db(session, announ_id: int, imgs: list[str]):
         await session.execute(query, {"announ_id": announ_id, "img_filename": img_filename})
 
 
-async def post_account_announ_db(session, announ_id: int, data: dict):
-    logger.info("Создание данных объявления Аккаунта | announ_id = %s", announ_id)
-
-    query = text(
-        """
-        INSERT INTO accs_announs
-            (acc_announ_id, country, log_type, idle_time, acc_type, premium, stars_count, gifts, tg_level)
-        VALUES
-            (:announ_id, :country, :log_type, :idle_time, :acc_type, :premium, :stars_count, :gifts, :tg_level);
-        """
-    )
-
-    await session.execute(
-        query,
-        {
-            "announ_id": announ_id,
-            "country": data["country"],
-            "log_type": data["log_type"],
-            "idle_time": data["idle_time"],
-            "acc_type": data["acc_type"],
-            "premium": data["premium"],
-            "stars_count": data["stars_count"],
-            "gifts": data["gifts"],
-            "tg_level": data["tg_level"],
-        },
-    )
-
-
 async def post_traffic_announ_db(session, announ_id: int, data: dict):
     logger.info("Создание данных объявления Трафика | announ_id = %s", announ_id)
 
@@ -179,10 +151,6 @@ async def post_announ_db(data: AnnounCreateSchema):
             await post_ad_announ_db(session, announ_id, announ_info)
         elif announ_type == "traffic":
             await post_traffic_announ_db(session, announ_id, announ_info)
-        elif announ_type == "account":
-            await post_account_announ_db(session, announ_id, announ_info)
-        else:
-            raise Exception("unknown_announ_type")
 
         imgs = announ_info.get("imgs")
         await post_announ_imgs_db(session, announ_id, imgs)

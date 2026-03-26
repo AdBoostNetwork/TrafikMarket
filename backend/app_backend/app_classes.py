@@ -111,13 +111,17 @@ class ChannelSchema(OpenedAnnoun):
 
 
 @dataclass(frozen=True)
-class AdSchema(AnnounBaseSchema):
+class AdSchema(OpenedAnnoun):
     """Класс параметров объявления тематики Реклама"""
+    channel_link: str
+    prices: dict[str, float]
     topic: str
     country: str
+    subs_count: int
     cover: int
     cpm: int
     er: int
+
 
 @dataclass(frozen=True)
 class TrafficSchema(AnnounBaseSchema):

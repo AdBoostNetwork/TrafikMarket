@@ -76,12 +76,12 @@ class SellerInfo:
 
 
 @dataclass(frozen=True)
-class AnnounBaseSchema:
-    """Класс с общими данными объявления для всех типов объявлений"""
+class ClosedAnnoun:
+    """Класс с данными объявления на странице просмотра объявлений"""
     seller: SellerInfo
     title: str
-    price: int
-    long_text: str
+    price: float
+    short_text: str
     imgs: list[str]
 
 

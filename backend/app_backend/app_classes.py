@@ -98,12 +98,16 @@ class OpenedAnnoun:
 @dataclass(frozen=True)
 class ChannelSchema(OpenedAnnoun):
     """Класс параметров объявления тематики Каналы"""
+    channel_link: str
+    price: float
     topic: str
     chn_type: str
     country: str
     subs_count: int
     cover_count: float
     profit: float
+    on_requests: bool
+    author: bool
 
 
 @dataclass(frozen=True)

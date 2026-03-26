@@ -1,6 +1,6 @@
 from sqlalchemy import text
 
-from .db_engine import new_session
+from backend.db_engine import new_session
 from ..app_classes import SellerInfo, ChannelSchema, AdSchema, TrafficSchema
 from ..logger import get_logger
 

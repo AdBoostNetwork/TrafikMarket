@@ -1,12 +1,44 @@
 import requests
 
 from .config import tgstat_token
+from backend.app_backend.app_classes import Chart
 from .logger import get_logger
 
 
 logger = get_logger(__name__)
 
 base_api_url = "https://api.tgstat.ru/channels"
+
+
+class ChartsData:
+    endpoints = ("subs", "views", "avg-posts-reach", "er", "err", "err24")
+
+    def __init__(self, channel: str):
+        self.channel = channel
+
+    @staticmethod
+    def get_chart_data(endpoint: str, params):
+        url = f"{base_api_url}/{endpoint}"
+
+        response = requests.get(url, params=params, timeout=10)
+        payload = response.json()
+        return Chart(
+            title=endpoint,
+            data=payload["response"],
+        )
+
+
+    def get_charts_data(self):
+        params = {
+            "token": tgstat_token,
+            "channelId": self.channel
+        }
+
+        charts_list = []
+
+        for endpoint in self.endpoints:
+            charts_list.append(self.get_chart_data(endpoint, params))
+        return charts_list
 
 
 def get_channel_info(channel: str):
@@ -26,8 +58,4 @@ def get_last_posts(channel: str, posts_count: int):
         "token": tgstat_token,
         "channelId": channel,
     }
-    ...
-
-
-def get_charts(channel: str):
     ...

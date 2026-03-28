@@ -137,3 +137,9 @@ class TrafficSchema(OpenedAnnoun):
 class AnnounCreateSchema(BaseModel):
     type: str
     announ_info: dict
+
+
+@dataclass(frozen=True)
+class Chart:
+    title: str
+    data: list[dict]

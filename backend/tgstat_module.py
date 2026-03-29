@@ -16,7 +16,6 @@ class ChartsData:
     def __init__(self, channel: str):
         self.channel = channel
 
-
     @staticmethod
     def get_chart_data(endpoint: str, params):
         url = f"{base_api_url}/{endpoint}"

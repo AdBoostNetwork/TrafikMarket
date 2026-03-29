@@ -16,17 +16,22 @@ class ChartsData:
     def __init__(self, channel: str):
         self.channel = channel
 
+
     @staticmethod
     def get_chart_data(endpoint: str, params):
         url = f"{base_api_url}/{endpoint}"
 
         response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
         payload = response.json()
+
+        if payload.get("status") != "ok":
+            raise ValueError(f"Ошибка при получении данных")
+
         return Chart(
             title=endpoint,
             data=payload["response"],
         )
-
 
     def get_charts_data(self):
         params = {

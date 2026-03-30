@@ -6,8 +6,8 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class Wallet:
     """ Данные для раздела кошелька в боте"""
-    active_ballance: float
-    frozen_ballance: float
+    active_balance: float
+    frozen_balance: float
 
 
 

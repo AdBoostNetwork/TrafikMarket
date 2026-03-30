@@ -1,12 +1,11 @@
 from sqlalchemy import text
 
-from .db_engine import new_session
-from ..app_classes import SellerInfo, ChannelSchema, AdSchema, TrafficSchema
-from ..logger import get_logger
+from backend.db_engine import new_session
+from backend.app_backend.app_classes import SellerInfo, ChannelSchema, AdSchema, TrafficSchema, AnnounPageSchema
+from backend.logger import get_logger
 
 
 logger = get_logger(__name__)
-
 
 
 async def get_seller_info_db(session, seller_id: int):
@@ -224,7 +223,7 @@ async def get_announ_page_db(announ_id: int):
         announ_type = await get_announ_type_db(session, announ_id)
         announ_info = await get_announ_info_db(session, announ_id, announ_type)
 
-    return {
-        "type": announ_type,
-        "announ_info": announ_info,
-    }
+    return AnnounPageSchema(
+        type=announ_type,
+        announ_info=announ_info,
+    )

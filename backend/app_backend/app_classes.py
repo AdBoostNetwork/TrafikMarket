@@ -143,3 +143,9 @@ class AnnounCreateSchema(BaseModel):
 class Chart:
     title: str
     data: list[dict]
+
+
+@dataclass(frozen=True)
+class ChannelPost:
+    text: str | None
+    media: str | None

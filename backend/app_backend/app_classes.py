@@ -146,6 +146,15 @@ class Chart:
 
 
 @dataclass(frozen=True)
+class TgStatChannel:
+    title: str
+    topic: str
+    country: str
+    subs_count: int
+    cover_count: float
+
+
+@dataclass(frozen=True)
 class ChannelPost:
     text: str | None
     media: str | None

@@ -155,6 +155,11 @@ class TgStatChannel:
 
 
 @dataclass(frozen=True)
+class TgStatAd(TgStatChannel):
+    er: float
+
+
+@dataclass(frozen=True)
 class ChannelPost:
     text: str | None
     media: str | None

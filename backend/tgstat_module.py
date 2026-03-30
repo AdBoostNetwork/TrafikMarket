@@ -1,7 +1,7 @@
 import requests
 
 from .config import tgstat_token
-from backend.app_backend.app_classes import Chart, TgStatChannel, ChannelPost
+from backend.app_backend.app_classes import Chart, TgStatChannel, TgStatAd, ChannelPost
 from .logger import get_logger
 
 
@@ -99,6 +99,25 @@ def get_channel(channel: str):
         country=channel_info["country"],
         subs_count=channel_stat["participants_count"],
         cover_count=channel_stat["avg_post_reach"],
+    )
+
+
+def get_ad(channel: str):
+    params = {
+        "token": tgstat_token,
+        "channelId": channel,
+    }
+
+    channel_info = get_channel_info(params)
+    channel_stat = get_channel_stat(params)
+
+    return TgStatAd(
+        title=channel_info["title"],
+        topic=channel_info["category"],
+        country=channel_info["country"],
+        subs_count=channel_stat["participants_count"],
+        cover_count=channel_stat["avg_post_reach"],
+        er=channel_stat["er_percent"],
     )
 
 

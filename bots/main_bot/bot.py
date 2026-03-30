@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 
 from .config import BOT_TOKEN
-from .handlers import start, user_callbacks, admin_callbacks, question
+from .handlers import start, user_callbacks, user_market_callbacks, admin_callbacks, question
 
 async def main():
     bot = Bot(token=BOT_TOKEN)
@@ -12,6 +12,7 @@ async def main():
     dp.include_router(user_callbacks.router)
     dp.include_router(admin_callbacks.router)
     dp.include_router(question.router)
+    dp.include_router(user_market_callbacks.router)
 
     await dp.start_polling(bot)
 

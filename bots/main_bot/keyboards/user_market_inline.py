@@ -1,46 +1,89 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-def user_start_menu():
-    """
-    Стартовая менюшка
-    :return:
-    """
+
+def market_menu():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Открыть в приложении", web_app=WebAppInfo(url="https://example.com/")),
+                InlineKeyboardButton(text="Купить", callback_data="buy"),
+                InlineKeyboardButton(text="Продать", callback_data="sell"),
             ],
             [
-                InlineKeyboardButton(text="Кошелек", callback_data="start:wallet"),
-                InlineKeyboardButton(text="Маркет", callback_data="start:market"),
+                InlineKeyboardButton(text="Мои объявления 🗣", callback_data="my:announs"),
             ],
             [
-                InlineKeyboardButton(text="Аукционы", callback_data="start:auction"),
-                InlineKeyboardButton(text="Индекс цен", callback_data="start:price_index"),
+                InlineKeyboardButton(text="Мои сделки 🤝", callback_data="my:deals"),
             ],
             [
-                InlineKeyboardButton(text="Траффы", callback_data="start:traffs"),
-                InlineKeyboardButton(text="Поиск", callback_data="start:find"),
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+            ]
+
+        ]
+    )
+
+def sections_menu(action: str):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Каналы", callback_data=f"{action}:channels"),
             ],
             [
-                InlineKeyboardButton(text="PUSH", callback_data="start:pushs"),
-                InlineKeyboardButton(text="Настройки", callback_data="start:settings"),
+                InlineKeyboardButton(text="Реклама", callback_data=f"{action}:ad"),
+            ],
+            [
+                InlineKeyboardButton(text="Траффик", callback_data=f"{action}:traffic"),
+            ],
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
             ]
         ]
     )
 
-def wallet_menu():
+def channels_announs_menu(announs_list: set, current_index: int, max_index: int):
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="🚀 Открыть в приложении", web_app=WebAppInfo(url="https://example.com/")),
+                InlineKeyboardButton(text="фильтры и сортировка", callback_data="filtrs"),
+            ],
+            list([InlineKeyboardButton(text=dialog_name, callback_data=f"get_announ:{announs_list[dialog_name]}")] for dialog_name in announs_list),
+            *_enumerate_config(current_index, max_index),
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+            ]
+        ]
+    )
+
+def not_my_announ_menu(article: int):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Посмотреть в приложении", web_app=WebAppInfo(url="https://example.com/")),
             ],
             [
-                InlineKeyboardButton(text="Вывод⤴️", web_app=WebAppInfo(url="https://example.com/")),
-                InlineKeyboardButton(text="Пополнение⤵️", web_app=WebAppInfo(url="https://example.com/")),
+                InlineKeyboardButton(text="Купить", callback_data=f"buy_it:{article}"),
             ],
             [
-                InlineKeyboardButton(text="Комиссии и лимиты", callback_data="limits"),
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+            ]
+
+        ]
+    )
+
+
+def my_announ_menu(article: int):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Посмотреть в приложении", web_app=WebAppInfo(url="https://example.com/")),
+            ],
+            [
+                InlineKeyboardButton(text="Посмотреть отклики", callback_data=f"get_responses:{article}"),
+            ],
+            [
+                InlineKeyboardButton(text="Редактировать объявление", callback_data=f"change_it:{article}"),
+            ],
+            [
+                InlineKeyboardButton(text="Закрыть объявление", callback_data=f"finish_announ{article}"),
             ],
             [
                 InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
@@ -49,67 +92,23 @@ def wallet_menu():
     )
 
 
-def offers_menu():
+def return_to_announs_button():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Мои офферы", callback_data="my:offers"),
-            ],
-            [
-                InlineKeyboardButton(text="Создать оффер", callback_data="make_offer"),
-            ],
+                InlineKeyboardButton(text="<UNK>", callback_data="return_to_announs"),
+            ]
+        ]
+    )
+
+def return_button():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
             [
                 InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
             ]
         ]
     )
-
-def push_menu():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Текущие настройки Push", callback_data="my:push"),
-            ],
-            [
-                InlineKeyboardButton(text="Добавить раздел, для получения Push", callback_data="make_push"),
-            ],
-            [
-                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
-            ]
-        ]
-    )
-
-def instructions_menu():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Раздел 1", callback_data="instr1"),
-            ],
-            [
-                InlineKeyboardButton(text="Раздел 2", callback_data="instr2"),
-            ],
-            [
-                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
-            ]
-        ]
-    )
-
-def settings_menu():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Отправить сообщение", callback_data="sent_smth"),
-            ],
-            [
-                InlineKeyboardButton(text="Получить сообщение", callback_data="get_msg"),
-            ],
-            [
-                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
-            ]
-        ]
-    )
-
-
 
 def _enumerate_config(current_index: int, max_index: int):
     if max_index < 1:

@@ -158,3 +158,4 @@ class TgStatChannel:
 class ChannelPost:
     text: str | None
     media: str | None
+    views: int

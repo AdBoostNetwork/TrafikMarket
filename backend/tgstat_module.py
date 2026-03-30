@@ -1,7 +1,7 @@
 import requests
 
 from .config import tgstat_token
-from backend.app_backend.app_classes import Chart, ChannelPost
+from backend.app_backend.app_classes import Chart, TgStatChannel, ChannelPost
 from .logger import get_logger
 
 
@@ -50,27 +50,56 @@ class ChartsData:
         return charts_list
 
 
-def get_channel_info(channel: str):
-    url = f"{base_api_url}/stat"
-    params = {
-        "token": tgstat_token,
-        "channelId": channel,
-    }
+def get_channel_info(params):
+    url = f"{base_api_url}/get"
 
     try:
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         payload = response.json()
     except Exception as e:
-        logger.error("Ошибка получения данных канала с TgStat | error=%s", str(e))
-        raise ValueError("Ошибка получения данных канала с TgStat") from e
+        logger.error("Ошибка получения channel info с TgStat | error=%s", str(e))
+        raise ValueError("Ошибка получения channel info с TgStat") from e
 
     if payload.get("status") != "ok":
         raise ValueError("Ошибка при получении данных")
 
-    channel_info = ...
+    return payload["response"]
 
-    return channel_info
+
+def get_channel_stat(params):
+    url = f"{base_api_url}/stat"
+
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        payload = response.json()
+    except Exception as e:
+        logger.error("Ошибка получения channel stat с TgStat | error=%s", str(e))
+        raise ValueError("Ошибка получения channel stat с TgStat") from e
+
+    if payload.get("status") != "ok":
+        raise ValueError("Ошибка при получении данных")
+
+    return payload["response"]
+
+
+def get_channel(channel: str):
+    params = {
+        "token": tgstat_token,
+        "channelId": channel,
+    }
+
+    channel_info = get_channel_info(params)
+    channel_stat = get_channel_stat(params)
+
+    return TgStatChannel(
+        title=channel_info["title"],
+        topic=channel_info["category"],
+        country=channel_info["country"],
+        subs_count=channel_stat["participants_count"],
+        cover_count=channel_stat["avg_post_reach"],
+    )
 
 
 def get_last_posts(channel: str, posts_count: int):
@@ -98,6 +127,7 @@ def get_last_posts(channel: str, posts_count: int):
             ChannelPost(
                 text=item["text"],
                 media=item["media"],
+                views=item["views"],
             )
         )
 

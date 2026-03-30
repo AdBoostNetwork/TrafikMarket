@@ -66,6 +66,7 @@ def get_last_posts(channel: str, posts_count: int):
     params = {
         "token": tgstat_token,
         "channelId": channel,
+        "limit": posts_count,
     }
 
     posts_list = []

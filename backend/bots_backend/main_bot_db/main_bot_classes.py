@@ -18,7 +18,7 @@ class AnnounsList:
     """ Объявления для n-ной страницы в боте. Содержит конфиги кнопок для объявлений с 10*(n-1)
      по 10*n-1.Также содержит n (current_index) и индекс максимально возможной страницы (max_index)
      (Не ласт странице может быть менее 10 значений)"""
-    announs_list: set #{"Announ_name - price$": announ_id}
+    announs_list: dict #{"Announ_name - price$": announ_id}
     max_index: int
     current_index: int
 
@@ -29,6 +29,9 @@ class AnnounOfChannel:
     article: int
     title: str
     seller_id: int
+    seller_name: str
+    seller_deals_number: int
+    seller_scs_deals_percent: float
     short_about: str
     long_about: str
     channel_link: str
@@ -55,7 +58,7 @@ class AnnounOfAd:
     coverage: int
     cpm: int
     er: int
-    ad_format: set
+    ad_format: dict
 
     
     #все, что есть в объявлении
@@ -76,7 +79,44 @@ class AnnounOfTraff:
 
 
 
-#TODO: тут нужны классы для откликов и их списка
+
+@dataclass(frozen=True)
+class ResponsesList:
+    """Список откликов на объявление"""
+    responses_list: dict #{"User_from_name - cost$": response_id}
+    max_index: int
+    current_index: int
+
+
+@dataclass(frozen=True)
+class ResponseToChannel:
+    """Класс для передачи информации об отдельном отклике на продажу канала"""
+    response_id: int
+    user_from_name: str
+    user_from_deals_number: int
+    user_from_scs_deals_percent: float
+    cost: float
+
+@dataclass(frozen=True)
+class ResponseToAd:
+    """Класс для передачи информации об отдельном отклике на рекламу"""
+    response_id: int
+    user_from_name: str
+    user_from_deals_number: int
+    user_from_scs_deals_percent: float
+    format: str
+    cost: float
+
+@dataclass(frozen=True)
+class ResponseToTraff:
+    """Класс для передачи информации об отдельном отклике на траффик"""
+    response_id: int
+    user_from_name: str
+    user_from_deals_number: int
+    user_from_scs_deals_percent: float
+    sub_number: int
+    cost: float
+
 
 @dataclass(frozen=True)
 class MyDealsList:

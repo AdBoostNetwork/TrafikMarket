@@ -39,12 +39,23 @@ def sections_menu(action: str):
         ]
     )
 
-def channels_announs_menu(announs_list: set, current_index: int, max_index: int):
+def announs_list_menu(announs_list: set, current_index: int, max_index: int, announs_type: str):
+    """
+    :param announs_type: channel/ad/traff, нужен для фильтров
+
+    """
+    if announs_type == "channel":
+        filtr_button = [InlineKeyboardButton(text="Фильтры и сортировка", callback_data="channel_filtrs")]
+    elif announs_type == "ad":
+        filtr_button = [InlineKeyboardButton(text="Фильтры и сортировка", callback_data="ad_filtrs")]
+    elif announs_type == "traffic":
+        filtr_button = [InlineKeyboardButton(text="Фильтры и сортировка", callback_data="traff_filtrs")]
+    else:
+        filtr_button = None
+
     return InlineKeyboardMarkup(
         inline_keyboard=[
-            [
-                InlineKeyboardButton(text="фильтры и сортировка", callback_data="filtrs"),
-            ],
+            filtr_button,
             list([InlineKeyboardButton(text=dialog_name, callback_data=f"get_announ:{announs_list[dialog_name]}")] for dialog_name in announs_list),
             *_enumerate_config(current_index, max_index),
             [
@@ -63,9 +74,22 @@ def not_my_announ_menu(article: int):
                 InlineKeyboardButton(text="Купить", callback_data=f"buy_it:{article}"),
             ],
             [
-                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="buy"),
             ]
 
+        ]
+    )
+
+def not_my_announ_of_traff_menu(article: int, ad_format: dict):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Посмотреть в приложении", web_app=WebAppInfo(url="https://example.com/")),
+            ],
+            #TODO: тут нужно реализовать список форатов рекламы
+            [
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="buy"),
+            ]
         ]
     )
 
@@ -83,10 +107,10 @@ def my_announ_menu(article: int):
                 InlineKeyboardButton(text="Редактировать объявление", callback_data=f"change_it:{article}"),
             ],
             [
-                InlineKeyboardButton(text="Закрыть объявление", callback_data=f"finish_announ{article}"),
+                InlineKeyboardButton(text="Закрыть объявление", callback_data=f"finish_announ:{article}"),
             ],
             [
-                InlineKeyboardButton(text="Вернуться🔙", callback_data="return_to_start"),
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="start:market"),
             ]
         ]
     )
@@ -96,7 +120,7 @@ def return_to_announs_button():
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="<UNK>", callback_data="return_to_announs"),
+                InlineKeyboardButton(text="Вернуться🔙", callback_data="buy"),
             ]
         ]
     )

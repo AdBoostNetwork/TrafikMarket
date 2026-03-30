@@ -20,17 +20,22 @@ class ChartsData:
     def get_chart_data(endpoint: str, params):
         url = f"{base_api_url}/{endpoint}"
 
-        response = requests.get(url, params=params, timeout=10)
-        response.raise_for_status()
-        payload = response.json()
+        try:
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            payload = response.json()
 
-        if payload.get("status") != "ok":
-            raise ValueError(f"Ошибка при получении данных")
+            if payload.get("status") != "ok":
+                raise ValueError(f"Ошибка при получении данных")
 
-        return Chart(
-            title=endpoint,
-            data=payload["response"],
-        )
+            return Chart(
+                title=endpoint,
+                data=payload["response"],
+            )
+
+        except Exception as e:
+            logger.error("Ошибка запроса TGStat | endpoint=%s | error=%s", endpoint, str(e))
+            raise ValueError("Ошибка HTTP-запроса к TGStat") from e
 
     def get_charts_data(self):
         params = {

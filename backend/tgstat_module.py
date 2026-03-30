@@ -1,7 +1,7 @@
 import requests
 
 from .config import tgstat_token
-from backend.app_backend.app_classes import Chart
+from backend.app_backend.app_classes import Chart, ChannelPost
 from .logger import get_logger
 
 
@@ -67,4 +67,26 @@ def get_last_posts(channel: str, posts_count: int):
         "token": tgstat_token,
         "channelId": channel,
     }
-    ...
+
+    posts_list = []
+
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        payload = response.json()
+
+        if payload.get("status") != "ok":
+            raise ValueError(f"Ошибка при получении данных")
+
+        for item in payload["response"]["items"]:
+            posts_list.append(
+                ChannelPost(
+                    text=item["text"],
+                    media=item["media"],
+                )
+            )
+
+        return posts_list
+    except Exception as e:
+        logger.error("Ошибка получения постов канала с TgStat | error: ", str(e))
+        raise ValueError("Ошибка получения постов канала с TgStat") from e

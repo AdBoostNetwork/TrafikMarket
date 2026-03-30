@@ -56,9 +56,21 @@ def get_channel_info(channel: str):
         "token": tgstat_token,
         "channelId": channel,
     }
-    response = requests.get(url, params=params)
 
-    ...
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        payload = response.json()
+    except Exception as e:
+        logger.error("Ошибка получения данных канала с TgStat | error=%s", str(e))
+        raise ValueError("Ошибка получения данных канала с TgStat") from e
+
+    if payload.get("status") != "ok":
+        raise ValueError("Ошибка при получении данных")
+
+    channel_info = ...
+
+    return channel_info
 
 
 def get_last_posts(channel: str, posts_count: int):
@@ -69,25 +81,24 @@ def get_last_posts(channel: str, posts_count: int):
         "limit": posts_count,
     }
 
-    posts_list = []
-
     try:
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         payload = response.json()
-
-        if payload.get("status") != "ok":
-            raise ValueError(f"Ошибка при получении данных")
-
-        for item in payload["response"]["items"]:
-            posts_list.append(
-                ChannelPost(
-                    text=item["text"],
-                    media=item["media"],
-                )
-            )
-
-        return posts_list
     except Exception as e:
-        logger.error("Ошибка получения постов канала с TgStat | error: ", str(e))
+        logger.error("Ошибка получения постов канала с TgStat | error=%s", str(e))
         raise ValueError("Ошибка получения постов канала с TgStat") from e
+
+    if payload.get("status") != "ok":
+        raise ValueError("Ошибка при получении данных")
+
+    posts_list = []
+    for item in payload["response"]["items"]:
+        posts_list.append(
+            ChannelPost(
+                text=item["text"],
+                media=item["media"],
+            )
+        )
+
+    return posts_list

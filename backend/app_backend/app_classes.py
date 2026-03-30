@@ -76,45 +76,96 @@ class SellerInfo:
 
 
 @dataclass(frozen=True)
-class AnnounBaseSchema:
-    """Класс с общими данными объявления для всех типов объявлений"""
+class ClosedAnnoun:
+    """Класс с данными объявления на странице просмотра объявлений"""
+    announ_id: int
     seller: SellerInfo
     title: str
-    price: int
-    long_text: str
+    price: float
+    description: str
     imgs: list[str]
 
 
 @dataclass(frozen=True)
-class ChannelSchema(AnnounBaseSchema):
+class OpenedAnnoun:
+    article: int
+    seller: SellerInfo
+    title: str
+    description: str
+    imgs: list[str]
+
+
+@dataclass(frozen=True)
+class ChannelSchema(OpenedAnnoun):
     """Класс параметров объявления тематики Каналы"""
+    channel_link: str
+    price: float
     topic: str
     chn_type: str
     country: str
     subs_count: int
     cover_count: float
     profit: float
+    on_requests: bool
+    author: bool
 
 
 @dataclass(frozen=True)
-class AdSchema(AnnounBaseSchema):
+class AdSchema(OpenedAnnoun):
     """Класс параметров объявления тематики Реклама"""
+    channel_link: str
+    prices: dict[str, float]
     topic: str
     country: str
+    subs_count: int
     cover: int
     cpm: int
     er: int
 
+
 @dataclass(frozen=True)
-class TrafficSchema(AnnounBaseSchema):
+class TrafficSchema(OpenedAnnoun):
     """Класс параметров объявления тематики Трафик"""
     topic: str
     platform: str
     traffic_type: str
     audience_type: str
     country: str
+    price: float
 
 
 class AnnounCreateSchema(BaseModel):
+    """Схема структуры ответа ручки получения объявления"""
     type: str
     announ_info: dict
+
+
+@dataclass(frozen=True)
+class Chart:
+    """Структура данных графика"""
+    title: str
+    data: list[dict]
+
+
+@dataclass(frozen=True)
+class TgStatChannel:
+    """Класс данных канала, получаемых с TgStat"""
+    title: str
+    topic: str
+    country: str
+    subs_count: int
+    cover_count: float
+
+
+@dataclass(frozen=True)
+class TgStatAd(TgStatChannel):
+    """Класс данных рекламы, получаемых с TgStat"""
+    er: float
+
+
+@dataclass(frozen=True)
+class ChannelPost:
+    """Класс данных поста"""
+    text: str | None
+    media: str | None
+    views: int

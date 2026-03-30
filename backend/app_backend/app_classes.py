@@ -135,18 +135,21 @@ class TrafficSchema(OpenedAnnoun):
 
 
 class AnnounCreateSchema(BaseModel):
+    """Схема структуры ответа ручки получения объявления"""
     type: str
     announ_info: dict
 
 
 @dataclass(frozen=True)
 class Chart:
+    """Структура данных графика"""
     title: str
     data: list[dict]
 
 
 @dataclass(frozen=True)
 class TgStatChannel:
+    """Класс данных канала, получаемых с TgStat"""
     title: str
     topic: str
     country: str
@@ -156,11 +159,13 @@ class TgStatChannel:
 
 @dataclass(frozen=True)
 class TgStatAd(TgStatChannel):
+    """Класс данных рекламы, получаемых с TgStat"""
     er: float
 
 
 @dataclass(frozen=True)
 class ChannelPost:
+    """Класс данных поста"""
     text: str | None
     media: str | None
     views: int

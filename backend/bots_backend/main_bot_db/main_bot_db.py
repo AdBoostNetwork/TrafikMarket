@@ -1,6 +1,6 @@
 from sqlalchemy import text
 
-from .main_bot_classes import Wallet, Announs_list, Announ
+from .main_bot_classes import Wallet
 from backend.db_engine import new_session
 from backend.logger import get_logger
 
@@ -28,24 +28,24 @@ async def get_wallet_info(user_id) -> Wallet:
 
 
 """Рездел маркета"""
-async def get_announs_list() -> Announs_list:
+async def get_announs_list() -> AnnounsList:
     """Получает список объявлений для траницы"""
     #TODO: бсудить как быть с обновлением списка и фильтрами
-    return Announs_list()
+    return AnnounsList()
 
-async def get_my_announs_list(user_id, current_index = 0) -> Announs_list:
+async def get_my_announs_list(user_id, current_index = 0) -> AnnounsList:
     """
     Возвращает n-ную страницу списка объявлений пользователя
     :param user_id: id пользователя
     :param current_index: n
     :return:
     """
-    return Announs_list()
+    return AnnounsList()
 
-async def get_announ(announ_id) -> Announ:
+async def get_announ(announ_id):
     """
     Возвращает данные объявления по айди/артикулу
     :param announ_id: ???
     :return:
     """
-    return Announ()
+    return

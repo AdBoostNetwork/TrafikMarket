@@ -100,7 +100,6 @@ async def get_ad_announ_db(session, announ_id: int):
         """
         SELECT a.seller_id,
                a.title,
-               a.price,
                a.long_text,
 
                ad.topic,
@@ -144,17 +143,20 @@ async def get_channel_announ_db(session, announ_id: int):
 
     query = text(
         """
-        SELECT a.seller_id,
+        SELECT a.article,
+               a.seller_id,
                a.title,
-               a.price,
                a.long_text,
-
+            
+               c.channel_link, 
                c.topic,
                c.chn_type,
                c.country,
                c.subs_count,
                c.cover_count,
-               c.profit
+               c.profit,
+               c.on_requests,
+               c.author
         FROM announs a
                  JOIN channels c
                       ON c.chn_announ_id = a.announ_id
@@ -176,10 +178,12 @@ async def get_channel_announ_db(session, announ_id: int):
     profit = float(row["profit"])
 
     return ChannelSchema(
+        article=row["article"],
         seller=seller,
+        channel_link=row["channel_link"],
         title=row["title"],
         price=int(row["price"]),
-        long_text=row["long_text"],
+        description=row["long_text"],
         imgs=imgs,
         topic=row["topic"],
         chn_type=row["chn_type"],
@@ -187,6 +191,8 @@ async def get_channel_announ_db(session, announ_id: int):
         subs_count=int(row["subs_count"]),
         cover_count=cover_count,
         profit=profit,
+        on_requests=bool(row["on_requests"]),
+        author=bool(row["author"]),
     )
 
 

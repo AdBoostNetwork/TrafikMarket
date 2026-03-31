@@ -1,11 +1,23 @@
-from .main_bot_classes import AnnounsList, AnnounOfAd, AnnounOfTraff, AnnounOfChannel, ResponsesList, Response
+from .main_bot_classes import (AnnounsList, AnnounOfAd, AnnounOfTraff, AnnounOfChannel, ResponsesList)
 
 
 
 """Рездел маркета"""
-async def get_announs_list_db() -> AnnounsList:
-    """Получает список объявлений для траницы"""
-    #TODO: бсудить как быть с обновлением списка и фильтрами
+
+
+"""__________________________________________________"""
+
+"""Действия с объявлениями"""
+
+async def create_announ_db(create_announ_scheme) -> bool:
+    """Определяет класс полученной переменной и создает нужное объявление
+
+    :param create_announ_scheme: схема для создания объявления:
+    :return: успешность действия"""
+    return True
+
+async def get_announs_list_db(filters, current_index = 0) -> AnnounsList:
+    """Определяет класс полученного фильтра, и возвращает n-ную страницу списка объявлений по фильтру"""
     return AnnounsList(
         announs_list={
             "Канал 'Горячие киски' - 300$": 12345,
@@ -17,14 +29,14 @@ async def get_announs_list_db() -> AnnounsList:
         current_index=3
     )
 
-async def get_my_announs_list_db(user_id, current_index = 0) -> AnnounsList:
+async def get_user_announs_list_db(user_id, current_index = 0) -> AnnounsList:
     """
     Возвращает n-ную страницу списка объявлений пользователя
     :param user_id: id пользователя
     :param current_index: n
     :return:
     """
-    AnnounsList(
+    return AnnounsList(
         announs_list={
             "Канал 'Горячие киски' - 300$": 12345,
             "rats  - 100$": 1,
@@ -62,7 +74,15 @@ async def get_announ_db(announ_id):
     )
 
 
-"""Работа с объявлениями пользователя"""
+
+
+
+"""__________________________________________________"""
+
+
+"""Действия с откликами"""
+
+
 async def get_responses_list_db(article: int) -> ResponsesList:
     """
     Возвращает конфиг для кнопок для выбора отклика на объявление(на страницах по 10 откликов,

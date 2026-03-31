@@ -132,6 +132,8 @@ class TrafficSchema(OpenedAnnoun):
     traffic_type: str
     audience_type: str
     country: str
+    min_leads: int
+    max_leads: int
     price: float
 
 

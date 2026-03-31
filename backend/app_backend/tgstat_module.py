@@ -1,8 +1,8 @@
 import requests
 
-from .config import tgstat_token
+from backend.config import tgstat_token
 from backend.app_backend.app_classes import Chart, TgStatChannel, TgStatAd, ChannelPost
-from .logger import get_logger
+from backend.logger import get_logger
 
 
 logger = get_logger(__name__)

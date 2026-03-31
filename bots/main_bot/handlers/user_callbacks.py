@@ -51,18 +51,6 @@ async def stars(callback: CallbackQuery):
     await callback.message.edit_text("Инфа о комсе и лимитах", reply_markup=return_button())
     await callback.answer()
 
-@router.callback_query(F.data == "buy")
-async def stars(callback: CallbackQuery):
-    await callback.message.edit_text("Выберите раздел", reply_markup=sections_menu("buy"))
-    await callback.answer()
-
-@router.callback_query(F.data.startswith("buy:"))
-async def stars(callback: CallbackQuery):
-    key = callback.data.split(":")[1]
-    if key == "channels":
-        await callback.message.edit_text("Здесь вы можете приобрести канал", reply_markup=channels_announs_menu([], 0, 9))
-
-
 
 @router.callback_query(F.data.startswith("channels_list:"))
 async def stars(callback: CallbackQuery):

@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
-from .tgstat_module import ChartsData, get_last_posts
+from backend.tgstat_module import ChartsData, get_last_posts
 from .logger import get_logger
 
 

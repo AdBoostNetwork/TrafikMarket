@@ -88,6 +88,7 @@ class ClosedAnnoun:
 
 @dataclass(frozen=True)
 class OpenedAnnoun:
+    """Класс общих параметров открытого объявления"""
     article: int
     seller: SellerInfo
     title: str

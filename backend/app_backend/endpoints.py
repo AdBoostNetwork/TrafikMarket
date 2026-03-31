@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
-from .tgstat_module import ChartsData
+from .tgstat_module import ChartsData, get_last_posts
 from .logger import get_logger
 
 
@@ -45,5 +45,14 @@ def get_tgstat_charts(channel_link: str):
         charts_data = ChartsData(channel_link)
         return charts_data.get_charts_data()
     except Exception as e:
-        logger.error(f"Ошибка получения графиков TgStat | channel_link = {channel_link} | error = {str(e)}")
+        logger.error(f"Ошибка получения графиков с TgStat | channel_link = {channel_link} | error = {str(e)}")
+        return {"error": str(e)}
+
+
+@endpoints.get("/tgstat_posts", tags=["Страница объявления"], summary="Получение постов канала с TgStat")
+def get_tgstat_posts(channel_link: str):
+    try:
+        return get_last_posts(channel_link, posts_count=10)
+    except Exception as e:
+        logger.error(f"Ошибка получения постов канала с TgStat | channel_link = {channel_link} | error = {str(e)}")
         return {"error": str(e)}

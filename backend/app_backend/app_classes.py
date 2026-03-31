@@ -169,3 +169,11 @@ class ChannelPost:
     text: str | None
     media: str | None
     views: int
+
+
+@dataclass(frozen=True)
+class TopicsConfig:
+    topics: list[str]
+    countries: list[str]
+    audience_types: list[str]
+    platforms: list[str]

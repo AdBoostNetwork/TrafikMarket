@@ -50,11 +50,12 @@ async def get_traffic_announ_db(session, announ_id: int):
 
     query = text(
         """
-        SELECT a.seller_id,
+        SELECT a.article,
+               a.seller_id,
                a.title,
-               a.price,
                a.long_text,
-
+                
+               t.price,
                t.topic,
                t.platform,
                t.traffic_type,
@@ -78,10 +79,11 @@ async def get_traffic_announ_db(session, announ_id: int):
     imgs = await get_announ_imgs_db(session, announ_id)
 
     return TrafficSchema(
+        article = int(row["article"]),
         seller=seller,
         title=row["title"],
         price=int(row["price"]),
-        long_text=row["long_text"],
+        description=row["long_text"],
         imgs=imgs,
         topic=row["topic"],
         platform=row["platform"],

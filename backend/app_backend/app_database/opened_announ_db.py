@@ -56,6 +56,8 @@ async def get_traffic_announ_db(session, announ_id: int):
                a.long_text,
                 
                t.price,
+               t.min_leads,
+               t.max_leads,
                t.topic,
                t.platform,
                t.traffic_type,
@@ -83,6 +85,8 @@ async def get_traffic_announ_db(session, announ_id: int):
         seller=seller,
         title=row["title"],
         price=int(row["price"]),
+        min_leads=int(row["min_leads"]),
+        max_leads=int(row["max_leads"]),
         description=row["long_text"],
         imgs=imgs,
         topic=row["topic"],

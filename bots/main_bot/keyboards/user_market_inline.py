@@ -86,7 +86,7 @@ def not_my_announ_of_traff_menu(article: int, ad_format: dict):
             [
                 InlineKeyboardButton(text="Посмотреть в приложении", web_app=WebAppInfo(url="https://example.com/")),
             ],
-            #TODO: тут нужно реализовать список форатов рекламы
+            #TODO: тут нужно реализовать список форматов рекламы
             [
                 InlineKeyboardButton(text="Вернуться🔙", callback_data="buy"),
             ]

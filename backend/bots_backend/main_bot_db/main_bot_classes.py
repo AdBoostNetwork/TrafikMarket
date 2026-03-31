@@ -1,8 +1,11 @@
 from dataclasses import dataclass
 
+"""Классы для функционирования бота"""
+
+"________________________________"
 
 
-"""Классы для ответов на кнопки из /start"""
+"""Единичные классы"""
 @dataclass(frozen=True)
 class Wallet:
     """ Данные для раздела кошелька в боте"""
@@ -10,18 +13,56 @@ class Wallet:
     frozen_balance: float
 
 
+"_______________________________"
+
+"""Классы для фильтров"""
+
+#TODO: заполнить класссы
+@dataclass(frozen=True)
+class ChannelsFilters:
+    """Класс фильтров под каналы"""
+    smth: str
+
+@dataclass(frozen=True)
+class AdFilters:
+    """Класс фильтров под рекламу"""
+    smth: str
+
+@dataclass(frozen=True)
+class TraffFilters:
+    """Класс фильтров под фильтры"""
+    smth: str
 
 
-"""Классы для раздела маркета"""
+
+"_______________________________"
+
+
+"""Классы объявлений"""
+
+@dataclass(frozen=True)
+class CreateChannelAnnounScheme:
+    """Класс для создания объявлений по каналам"""
+    smth: str
+
+@dataclass(frozen=True)
+class CreateAdAnnounScheme:
+    """Класс для создания объявлений по рекламе"""
+    smth: str
+
+@dataclass(frozen=True)
+class CreateTraffAnnounScheme:
+    """Класс для создания объявлений по траффику"""
+    smth: str
+
 @dataclass(frozen=True)
 class AnnounsList:
     """ Объявления для n-ной страницы в боте. Содержит конфиги кнопок для объявлений с 10*(n-1)
-     по 10*n-1.Также содержит n (current_index) и индекс максимально возможной страницы (max_index)
+     по 10*n-1. Также содержит n (current_index) и индекс максимально возможной страницы (max_index)
      (Не ласт странице может быть менее 10 значений)"""
     announs_list: dict #{"Announ_name - price$": announ_id}
     max_index: int
     current_index: int
-
 
 @dataclass(frozen=True)
 class AnnounOfChannel:
@@ -60,8 +101,6 @@ class AnnounOfAd:
     er: int
     ad_format: dict
 
-    
-    #все, что есть в объявлении
 
 @dataclass(frozen=True)
 class AnnounOfTraff:
@@ -78,8 +117,9 @@ class AnnounOfTraff:
     sub_cost: float
 
 
+"_______________________"
 
-
+"""Классы для откликов"""
 @dataclass(frozen=True)
 class ResponsesList:
     """Список откликов на объявление"""
@@ -118,6 +158,10 @@ class ResponseToTraff:
     cost: float
 
 
+"______________________"
+
+"""Классы для сделок"""
+
 @dataclass(frozen=True)
 class MyDealsList:
     """Список сделок пользователя, формат, аналогичный формату списка объявлений"""
@@ -130,6 +174,10 @@ class MyDeal:
     """Класс для конкретной сделки"""
     #все, что есть в сделке
 
+
+"______________________"
+
+"""Классы для чатов"""
 
 @dataclass(frozen=True)
 class ChatsList:

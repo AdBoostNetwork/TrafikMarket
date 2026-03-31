@@ -1,5 +1,4 @@
 from sqlalchemy import text
-from sqlalchemy.util import await_only
 
 from backend.db_engine import new_session
 from backend.app_backend.app_classes import TopicsConfig
@@ -10,19 +9,31 @@ logger = get_logger(__name__)
 
 
 async def get_topics(session):
-    query = text("SELECT topic FROM topics")
-
+    logger.info("Загрузка списка тематик из БД")
+    query = text("SELECT topic_name FROM topics ORDER BY topic_name")
+    result = await session.execute(query)
+    return list(result.scalars().all())
+        
 
 async def get_countries(session):
-    query = text("SELECT country FROM countries")
+    logger.info("Загрузка списка стран из БД")
+    query = text("SELECT country_name FROM countries ORDER BY country_name")
+    result = await session.execute(query)
+    return list(result.scalars().all())
 
 
 async def get_audience_types(session):
-    query = text("SELECT audience_type FROM audience_types")
+    logger.info("Загрузка списка типов аудитории из БД")
+    query = text("SELECT type_name FROM audience_types ORDER BY type_name")
+    result = await session.execute(query)
+    return list(result.scalars().all())
 
 
 async def get_platforms(session):
-    query = text("SELECT platform FROM platforms")
+    logger.info("Загрузка списка платформ из БД")
+    query = text("SELECT platform_name FROM platforms ORDER BY platform_name")
+    result = await session.execute(query)
+    return list(result.scalars().all())
 
 
 async def build_topic_config():

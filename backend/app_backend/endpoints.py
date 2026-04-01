@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
@@ -23,7 +23,7 @@ async def get_profile(user_id: int):
         return await get_profile_info_db(user_id)
     except Exception as e:
         logger.error(f"Ошибка при получении данных профиля | Пользователь: {user_id} | Ошибка: {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.get("/ref_link", tags=["Реферальная ссылка"], summary="Получение реферальной ссылки пользователя")
@@ -32,7 +32,7 @@ async def get_ref_link(user_id: int):
         return await get_ref_link_db(user_id)
     except Exception as e:
         logger.error(f"Ошибка при получении реферальной ссылки пользователя {user_id} | {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.get("/get_announ_info", tags=["Страница объявления"], summary="Получение данных объявления")
@@ -41,7 +41,7 @@ async def get_announ_info(announ_id: int):
         return await get_announ_page_db(announ_id)
     except Exception as e:
         logger.error(f"Ошибка получения данных объявления | announ_id = {announ_id} | error = {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.get("/tgstat_charts", tags=["Страница объявления"], summary="Получение графиков с TgStat")
@@ -51,7 +51,7 @@ def get_tgstat_charts(channel_link: str):
         return charts_data.get_charts_data()
     except Exception as e:
         logger.error(f"Ошибка получения графиков с TgStat | channel_link = {channel_link} | error = {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.get("/tgstat_posts", tags=["Страница объявления"], summary="Получение постов канала с TgStat")
@@ -60,7 +60,7 @@ def get_tgstat_posts(channel_link: str):
         return get_last_posts(channel_link, posts_count=10)
     except Exception as e:
         logger.error(f"Ошибка получения постов канала с TgStat | channel_link = {channel_link} | error = {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.get("/tgstat_channel", tags=["Страница создания объявления"], summary="Получение информации о канале с TgStat")
@@ -69,7 +69,7 @@ def get_tgstat_channel(channel_link: str):
         return get_channel(channel_link)
     except Exception as e:
         logger.error(f"Ошибка получения информации канала с TgStat | channel_link = {channel_link} | error = {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.get("/tgstat_add", tags=["Страница создания объявления"], summary="Получение информации о канале для рекламы с TgStat")
@@ -78,7 +78,7 @@ def get_tgstat_ad(channel_link: str):
         return get_ad(channel_link)
     except Exception as e:
         logger.error(f"Ошибка получения информации канала для рекламы с TgStat | channel_link = {channel_link} | error = {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.post("/create_announ", tags=["Страница создания объявления"], summary="Создание объявления")
@@ -87,7 +87,7 @@ async def create_announ(announ_data: AnnounCreateSchema):
         return post_announ_db(announ_data)
     except Exception as e:
         logger.error(f"Ошибка при создании объявления: {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.get("/topics", tags=["Страница объявлений"], summary="Загрузка списка топиков")
@@ -96,7 +96,7 @@ async def get_topics():
         return await build_topic_config()
     except Exception as e:
         logger.error("Ошибка при загрузке топиков")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.get("/my_announs", tags=["Страница заказов"], summary="Получение объявлений пользователя")
@@ -105,7 +105,7 @@ async def get_my_announs(user_id: int):
         return await get_my_announs_db(user_id)
     except Exception as e:
         logger.error(f"Ошибка при загрузке объявлений пользователя | user_id = {user_id} | error = {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @endpoints.delete("/announ", tags=["Страница заказов"], summary="Удаление объявления")
@@ -114,4 +114,4 @@ async def delete_announ(announ_id: int, user_id: int):
         return await delete_announ_db(announ_id, user_id)
     except Exception as e:
         logger.error(f"Ошибка при удалении объявления | announ_id = {announ_id} | error = {str(e)}")
-        return {"error": str(e)}
+        raise HTTPException(status_code=500, detail=str(e))

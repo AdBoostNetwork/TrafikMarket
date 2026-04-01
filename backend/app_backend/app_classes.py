@@ -73,6 +73,7 @@ class SellerInfo:
     name: str
     deals_count: int
     success_deals_percent: int
+    rating: float
 
 
 @dataclass(frozen=True)
@@ -83,7 +84,6 @@ class ClosedAnnoun:
     title: str
     price: float
     description: str
-    imgs: list[str]
 
 
 @dataclass(frozen=True)

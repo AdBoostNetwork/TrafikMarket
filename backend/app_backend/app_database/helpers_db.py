@@ -1,6 +1,7 @@
 from sqlalchemy import text
 
 from backend.app_backend.app_classes import SellerInfo
+from backend.db_engine import new_session
 from backend.logger import get_logger
 
 
@@ -43,3 +44,17 @@ async def get_seller_info_db(session, seller_id: int) -> SellerInfo:
         success_deals_percent=success_deals_percent,
         rating=rating,
     )
+
+
+async def delete_announ_db(announ_id: int, user_id: int):
+    query = text("DELETE FROM announs WHERE announ_id = :announ_id AND seller_id = :user_id RETURNING announ_id")
+
+    async with new_session() as session:
+        result = await session.execute(query, {"announ_id": announ_id, "user_id": user_id})
+        deleted_id = result.scalar_one_or_none()
+
+        if deleted_id is None:
+            raise Exception({"error": "not_allowed_or_not_found"})
+
+        await session.commit()
+        return {"success": True}

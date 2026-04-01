@@ -1,17 +1,11 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy import text
 
-from .main_bot_config import db_info
+from backend.db_engine import new_session
 from backend.classes import UserCreateSchema
 from backend.logger import get_logger
 
 
 logger = get_logger(__name__)
-
-engine = create_async_engine(
-    f'postgresql+asyncpg://{db_info.admin}:{db_info.password}@{db_info.host}:{db_info.port}/{db_info.db_name}')
-
-new_session = async_sessionmaker(engine, expire_on_commit=False)
 
 
 async def is_new_user_db(user_id: int):

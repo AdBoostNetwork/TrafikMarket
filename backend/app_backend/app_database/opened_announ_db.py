@@ -50,11 +50,14 @@ async def get_traffic_announ_db(session, announ_id: int):
 
     query = text(
         """
-        SELECT a.seller_id,
+        SELECT a.article,
+               a.seller_id,
                a.title,
-               a.price,
                a.long_text,
-
+                
+               t.price,
+               t.min_leads,
+               t.max_leads,
                t.topic,
                t.platform,
                t.traffic_type,
@@ -78,10 +81,13 @@ async def get_traffic_announ_db(session, announ_id: int):
     imgs = await get_announ_imgs_db(session, announ_id)
 
     return TrafficSchema(
+        article = int(row["article"]),
         seller=seller,
         title=row["title"],
         price=int(row["price"]),
-        long_text=row["long_text"],
+        min_leads=int(row["min_leads"]),
+        max_leads=int(row["max_leads"]),
+        description=row["long_text"],
         imgs=imgs,
         topic=row["topic"],
         platform=row["platform"],
@@ -96,13 +102,15 @@ async def get_ad_announ_db(session, announ_id: int):
 
     query = text(
         """
-        SELECT a.seller_id,
+        SELECT a.article,
+               a.seller_id,
                a.title,
-               a.price,
                a.long_text,
-
+                
+               ad.channel_link,
                ad.topic,
                ad.country,
+               ad.subs_count,
                ad.cover,
                ad.cpm,
                ad.er
@@ -124,13 +132,16 @@ async def get_ad_announ_db(session, announ_id: int):
     imgs = await get_announ_imgs_db(session, announ_id)
 
     return AdSchema(
+        article = int(row["article"]),
         seller=seller,
+        channel_link=row["channel_link"],
         title=row["title"],
-        price=int(row["price"]),
-        long_text=row["long_text"],
+        prices={"price": float(row["price"])},
+        description=row["long_text"],
         imgs=imgs,
         topic=row["topic"],
         country=row["country"],
+        subs_count=row["subs_count"],
         cover=int(row["cover"]),
         cpm=int(row["cpm"]),
         er=int(row["er"]),
@@ -142,17 +153,20 @@ async def get_channel_announ_db(session, announ_id: int):
 
     query = text(
         """
-        SELECT a.seller_id,
+        SELECT a.article,
+               a.seller_id,
                a.title,
-               a.price,
                a.long_text,
-
+            
+               c.channel_link, 
                c.topic,
                c.chn_type,
                c.country,
                c.subs_count,
                c.cover_count,
-               c.profit
+               c.profit,
+               c.on_requests,
+               c.author
         FROM announs a
                  JOIN channels c
                       ON c.chn_announ_id = a.announ_id
@@ -170,21 +184,22 @@ async def get_channel_announ_db(session, announ_id: int):
     seller = await get_seller_info_db(session, int(row["seller_id"]))
     imgs = await get_announ_imgs_db(session, announ_id)
 
-    cover_count = float(row["cover_count"])
-    profit = float(row["profit"])
-
     return ChannelSchema(
+        article=row["article"],
         seller=seller,
+        channel_link=row["channel_link"],
         title=row["title"],
-        price=int(row["price"]),
-        long_text=row["long_text"],
+        price=float(row["price"]),
+        description=row["long_text"],
         imgs=imgs,
         topic=row["topic"],
         chn_type=row["chn_type"],
         country=row["country"],
         subs_count=int(row["subs_count"]),
-        cover_count=cover_count,
-        profit=profit,
+        cover_count=float(row["cover_count"]),
+        profit=float(row["profit"]),
+        on_requests=bool(row["on_requests"]),
+        author=bool(row["author"]),
     )
 
 

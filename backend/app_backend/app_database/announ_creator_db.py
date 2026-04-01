@@ -103,8 +103,8 @@ async def post_channel_announ_db(session, announ_id: int, data: dict):
 async def post_common_info_db(session, announ_type: str, announ_info: dict):
     query = text(
         """
-        INSERT INTO announs (seller_id, type, title, price, short_text, long_text, status)
-        VALUES (:seller_id, :type, :title, :price, :short_text, :long_text, :status) RETURNING announ_id;
+        INSERT INTO announs (seller_id, type, title, short_text, long_text, status)
+        VALUES (:seller_id, :type, :title, :short_text, :long_text, :status) RETURNING announ_id;
         """
     )
 
@@ -136,11 +136,6 @@ async def post_announ_db(data: AnnounCreateSchema):
     announ_type = data.type
     announ_info = data.announ_info
 
-    if not announ_type:
-        raise Exception("type_not_found")
-
-    if not announ_info:
-        raise Exception("announ_info_not_found")
 
     async with new_session() as session:
         announ_id = await post_common_info_db(session, announ_type, announ_info)

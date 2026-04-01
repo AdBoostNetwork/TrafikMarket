@@ -65,3 +65,12 @@ def get_tgstat_channel(channel_link: str):
     except Exception as e:
         logger.error(f"Ошибка получения информации канала с TgStat | channel_link = {channel_link} | error = {str(e)}")
         return {"error": str(e)}
+
+
+@endpoints.get("/tgstat_add", tags=["Страница создания объявления"], summary="Получение информации о канале для рекламы с TgStat")
+def get_tgstat_channel(channel_link: str):
+    try:
+        return get_ad(channel_link)
+    except Exception as e:
+        logger.error(f"Ошибка получения информации канала для рекламы с TgStat | channel_link = {channel_link} | error = {str(e)}")
+        return {"error": str(e)}

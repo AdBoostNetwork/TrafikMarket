@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
-from backend.tgstat_module import ChartsData, get_last_posts
+from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
 from .logger import get_logger
 
 
@@ -55,4 +55,13 @@ def get_tgstat_posts(channel_link: str):
         return get_last_posts(channel_link, posts_count=10)
     except Exception as e:
         logger.error(f"Ошибка получения постов канала с TgStat | channel_link = {channel_link} | error = {str(e)}")
+        return {"error": str(e)}
+
+
+@endpoints.get("/tgstat_channel", tags=["Страница создания объявления"], summary="Получение информации о канале с TgStat")
+def get_tgstat_channel(channel_link: str):
+    try:
+        return get_channel(channel_link)
+    except Exception as e:
+        logger.error(f"Ошибка получения информации канала с TgStat | channel_link = {channel_link} | error = {str(e)}")
         return {"error": str(e)}

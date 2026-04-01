@@ -5,6 +5,7 @@ from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
 from .app_database.announ_creator_db import post_announ_db
 from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
+from backend.topics_reciever import build_topic_config
 from .app_classes import AnnounCreateSchema
 from .logger import get_logger
 
@@ -84,4 +85,13 @@ async def create_announ(announ_data: AnnounCreateSchema):
         return post_announ_db(announ_data)
     except Exception as e:
         logger.error(f"Ошибка при создании объявления: {str(e)}")
+        return {"error": str(e)}
+
+
+@endpoints.get("/topics", tags=["Страница объявлений"], summary="Загрузка списка топиков")
+async def get_topics():
+    try:
+        return await build_topic_config()
+    except Exception as e:
+        logger.error("Ошибка при загрузке топиков")
         return {"error": str(e)}

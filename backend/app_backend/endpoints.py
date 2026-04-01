@@ -5,6 +5,7 @@ from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
 from .app_database.announ_creator_db import post_announ_db
 from .app_database.orders_page_db import get_my_announs_db
+from .app_database.helpers_db import delete_announ_db
 from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
 from backend.topics_reciever import build_topic_config
 from .app_classes import AnnounCreateSchema
@@ -104,4 +105,13 @@ async def get_my_announs(user_id: int):
         return await get_my_announs_db(user_id)
     except Exception as e:
         logger.error(f"Ошибка при загрузке объявлений пользователя | user_id = {user_id} | error = {str(e)}")
+        return {"error": str(e)}
+
+
+@endpoints.delete("/announ", tags=["Страница заказов"], summary="Удаление объявления")
+async def delete_announ(announ_id: int, user_id: int):
+    try:
+        return await delete_announ_db(announ_id, user_id)
+    except Exception as e:
+        logger.error(f"Ошибка при удалении объявления | announ_id = {announ_id} | error = {str(e)}")
         return {"error": str(e)}

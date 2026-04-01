@@ -3,7 +3,9 @@ from fastapi import APIRouter
 from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
+from .app_database.announ_creator_db import post_announ_db
 from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
+from .app_classes import AnnounCreateSchema
 from .logger import get_logger
 
 
@@ -73,4 +75,13 @@ def get_tgstat_channel(channel_link: str):
         return get_ad(channel_link)
     except Exception as e:
         logger.error(f"Ошибка получения информации канала для рекламы с TgStat | channel_link = {channel_link} | error = {str(e)}")
+        return {"error": str(e)}
+
+
+@endpoints.post("/create_announ", tags=["Страница создания объявления"], summary="Создание объявления")
+async def create_announ(announ_data: AnnounCreateSchema):
+    try:
+        return post_announ_db(announ_data)
+    except Exception as e:
+        logger.error(f"Ошибка при создании объявления: {str(e)}")
         return {"error": str(e)}

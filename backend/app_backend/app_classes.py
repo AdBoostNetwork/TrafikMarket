@@ -88,6 +88,7 @@ class ClosedAnnoun:
 
 @dataclass(frozen=True)
 class OpenedAnnoun:
+    """Класс общих параметров открытого объявления"""
     article: int
     seller: SellerInfo
     title: str
@@ -131,6 +132,8 @@ class TrafficSchema(OpenedAnnoun):
     traffic_type: str
     audience_type: str
     country: str
+    min_leads: int
+    max_leads: int
     price: float
 
 
@@ -169,3 +172,11 @@ class ChannelPost:
     text: str | None
     media: str | None
     views: int
+
+
+@dataclass(frozen=True)
+class TopicsConfig:
+    topics: list[str]
+    countries: list[str]
+    audience_types: list[str]
+    platforms: list[str]

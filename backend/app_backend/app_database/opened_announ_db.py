@@ -1,37 +1,12 @@
 from sqlalchemy import text
 
 from backend.db_engine import new_session
-from backend.app_backend.app_classes import SellerInfo, ChannelSchema, AdSchema, TrafficSchema, AnnounPageSchema
+from backend.app_backend.app_classes import ChannelSchema, AdSchema, TrafficSchema, AnnounPageSchema
+from .helpers_db import get_seller_info_db
 from backend.logger import get_logger
 
 
 logger = get_logger(__name__)
-
-
-async def get_seller_info_db(session, seller_id: int):
-    logger.info("Получение данных продавца | seller_id: %s", seller_id)
-
-    query = text(
-        """SELECT a.name, a.success_count,
-            (SELECT COUNT(*) FROM deals d WHERE d.seller_id = :seller_id) AS deals_count
-           FROM accounts a WHERE a.user_id = :seller_id""")
-
-    result = await session.execute(query, {"seller_id": seller_id})
-    row = result.mappings().first()
-
-    if row is None:
-        raise Exception(f"seller_not_found seller_id={seller_id}")
-
-    success_count = int(row["success_count"])
-    deals_count = int(row["deals_count"])
-
-    success_deals_percent = int(success_count * 100 / deals_count) if deals_count else 0
-
-    return SellerInfo(
-        name=row["name"],
-        deals_count=deals_count,
-        success_deals_percent=success_deals_percent,
-    )
 
 
 async def get_announ_imgs_db(session, announ_id: int):
@@ -166,6 +141,7 @@ async def get_channel_announ_db(session, announ_id: int):
                c.cover_count,
                c.profit,
                c.on_requests,
+               c.price,
                c.author
         FROM announs a
                  JOIN channels c

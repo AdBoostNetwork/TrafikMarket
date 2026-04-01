@@ -54,7 +54,7 @@ async def delete_announ_db(announ_id: int, user_id: int):
         deleted_id = result.scalar_one_or_none()
 
         if deleted_id is None:
-            raise Exception({"error": "not_allowed_or_not_found"})
+            raise Exception("not_allowed")
 
         await session.commit()
         return {"success": True}

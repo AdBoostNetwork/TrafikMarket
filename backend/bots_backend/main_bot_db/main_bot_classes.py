@@ -21,18 +21,51 @@ class Wallet:
 @dataclass(frozen=True)
 class ChannelsFilters:
     """Класс фильтров под каналы"""
-    smth: str
+    sort_by: str|None
+    channel_topic: str|None
+    country: str|None
+    applications: bool|None
+    authorial: bool|None
+    min_cost: float|None
+    max_cost: float|None
+    min_subs_number: int|None
+    max_subs_number: int|None
+    min_coverage: int|None
+    max_coverage: int|None
+    min_profitability: int|None
+    max_profitability: int|None
+
+
 
 @dataclass(frozen=True)
 class AdFilters:
     """Класс фильтров под рекламу"""
-    smth: str
+    sort_by: str|None
+    channel_topic: str|None
+    country: str|None
+    min_cost: float|None
+    max_cost: float|None
+    min_subs_number: int|None
+    max_subs_number: int|None
+    min_coverage: int|None
+    max_coverage: int|None
+    min_cpm: int|None
+    max_cpm: int|None
+    min_er: int|None
+    max_er: int|None
 
 @dataclass(frozen=True)
 class TraffFilters:
     """Класс фильтров под фильтры"""
-    smth: str
-
+    sort_by: str|None
+    topic: str|None
+    platform: str|None
+    traff_type: str|None
+    audience_type: str|None
+    country: str|None
+    needed_subs_number: int|None
+    min_cost_per_sub: float|None
+    max_cost_per_sub: float|None
 
 
 "_______________________________"
@@ -43,17 +76,52 @@ class TraffFilters:
 @dataclass(frozen=True)
 class CreateChannelAnnounScheme:
     """Класс для создания объявлений по каналам"""
-    smth: str
+    article: int
+    title: str
+    short_about: str
+    long_about: str
+    channel_link: str
+    channel_topic: str
+    country: str
+    subs_number: int
+    coverage: int
+    profitability: int
+    applications: bool
+    authorial: bool
+    channel_cost: float
+
 
 @dataclass(frozen=True)
 class CreateAdAnnounScheme:
     """Класс для создания объявлений по рекламе"""
-    smth: str
+    article: int
+    title: str
+    short_about: str
+    long_about: str
+    channel_link: str
+    channel_topic: str
+    country: str
+    subs_number: int
+    coverage: int
+    cpm: int
+    er: int
 
 @dataclass(frozen=True)
 class CreateTraffAnnounScheme:
     """Класс для создания объявлений по траффику"""
-    smth: str
+    article: int
+    title: str
+    seller_id: int
+    short_about: str
+    long_about: str
+    platform: str
+    traff_type: str
+    audience_type: str
+    country: str
+    min_subs_number: int
+    max_subs_number: int
+    sub_cost: float
+
 
 @dataclass(frozen=True)
 class AnnounsList:
@@ -94,6 +162,7 @@ class AnnounOfAd:
     short_about: str
     long_about: str
     channel_link: str
+    channel_topic: str
     country: str
     subs_number: int
     coverage: int
@@ -114,6 +183,8 @@ class AnnounOfTraff:
     traff_type: str
     audience_type: str
     country: str
+    min_subs_number: int
+    max_subs_number: int
     sub_cost: float
 
 

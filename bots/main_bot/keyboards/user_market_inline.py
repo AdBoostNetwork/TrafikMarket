@@ -39,23 +39,12 @@ def sections_menu(action: str):
         ]
     )
 
-def announs_list_menu(announs_list: set, current_index: int, max_index: int, announs_type: str):
-    """
-    :param announs_type: channel/ad/traff, нужен для фильтров
-
-    """
-    if announs_type == "channel":
-        filtr_button = [InlineKeyboardButton(text="Фильтры и сортировка", callback_data="channel_filtrs")]
-    elif announs_type == "ad":
-        filtr_button = [InlineKeyboardButton(text="Фильтры и сортировка", callback_data="ad_filtrs")]
-    elif announs_type == "traffic":
-        filtr_button = [InlineKeyboardButton(text="Фильтры и сортировка", callback_data="traff_filtrs")]
-    else:
-        filtr_button = None
-
-    return InlineKeyboardMarkup(
+def market_announs_list_menu(announs_list: dict, current_index: int, max_index: int, announs_type: str|None = None):
+ return InlineKeyboardMarkup(
         inline_keyboard=[
-            filtr_button,
+            [
+              InlineKeyboardButton(text="Фильтры и сортировка ")
+            ],
             list([InlineKeyboardButton(text=dialog_name, callback_data=f"get_announ:{announs_list[dialog_name]}")] for dialog_name in announs_list),
             *_enumerate_config(current_index, max_index),
             [
@@ -63,6 +52,11 @@ def announs_list_menu(announs_list: set, current_index: int, max_index: int, ann
             ]
         ]
     )
+
+
+"______________________"
+
+"""Работа с конкретным объявлением"""
 
 def not_my_announ_menu(article: int):
     return InlineKeyboardMarkup(
@@ -124,6 +118,32 @@ def return_to_announs_button():
             ]
         ]
     )
+
+"________________________________"
+
+"""Работа с откликами"""
+
+def responses_list_menu(responses_list: dict, current_index: int, max_index: int):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            list([InlineKeyboardButton(text=response_name, callback_data=f"get_announ:{responses_list[response_name]}")] for
+                 response_name in responses_list),
+            *_enumerate_config(current_index, max_index),
+        ]
+    )
+
+def my_response_menu(response_id):
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="", callback_data=f"cancel_response:{response_id}")
+            ],
+            [
+                InlineKeyboardButton(text="", callback_data="")
+            ]
+        ]
+    )
+
 
 def return_button():
     return InlineKeyboardMarkup(

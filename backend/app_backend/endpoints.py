@@ -4,6 +4,7 @@ from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
 from .app_database.announ_creator_db import post_announ_db
+from .app_database.orders_page_db import get_my_announs_db
 from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
 from backend.topics_reciever import build_topic_config
 from .app_classes import AnnounCreateSchema
@@ -71,7 +72,7 @@ def get_tgstat_channel(channel_link: str):
 
 
 @endpoints.get("/tgstat_add", tags=["Страница создания объявления"], summary="Получение информации о канале для рекламы с TgStat")
-def get_tgstat_channel(channel_link: str):
+def get_tgstat_ad(channel_link: str):
     try:
         return get_ad(channel_link)
     except Exception as e:
@@ -94,4 +95,13 @@ async def get_topics():
         return await build_topic_config()
     except Exception as e:
         logger.error("Ошибка при загрузке топиков")
+        return {"error": str(e)}
+
+
+@endpoints.get("/my_announs", tags=["Страница заказов"], summary="Получение объявлений пользователя")
+async def get_my_announs(user_id: int):
+    try:
+        return await get_my_announs_db(user_id)
+    except Exception as e:
+        logger.error(f"Ошибка при загрузке объявлений пользователя | user_id = {user_id} | error = {str(e)}")
         return {"error": str(e)}

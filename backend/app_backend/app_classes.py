@@ -87,11 +87,15 @@ class ClosedAnnoun:
 
 
 @dataclass(frozen=True)
-class ChannelsFilters:
+class CommonFilters:
     topic: str
     country: str
     min_price: float
     max_price: float
+
+
+@dataclass(frozen=True)
+class ChannelsFilters(CommonFilters):
     min_subs_count: int
     max_subs_count: int
     type: str
@@ -101,6 +105,27 @@ class ChannelsFilters:
     max_profit: float
     on_requests: bool
     author: bool
+
+
+@dataclass(frozen=True)
+class AdFilters(CommonFilters):
+    min_subs_count: int
+    max_subs_count: int
+    min_cover: float
+    max_cover: float
+    min_cpm: float
+    max_cpm: float
+    min_er: float
+    max_er: float
+
+
+@dataclass(frozen=True)
+class TrafficFilters(CommonFilters):
+    platform: str
+    traffic_type: str
+    audience_type: str
+    min_leads: int
+    max_leads: int
 
 
 @dataclass(frozen=True)

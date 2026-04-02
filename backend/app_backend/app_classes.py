@@ -218,6 +218,7 @@ class ChannelPost:
 
 @dataclass(frozen=True)
 class TopicsConfig:
+    """Класс конфигурации списка тематик, стран, типов аудитории и платформ"""
     topics: list[str]
     countries: list[str]
     audience_types: list[str]

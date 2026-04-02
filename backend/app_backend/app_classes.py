@@ -87,6 +87,23 @@ class ClosedAnnoun:
 
 
 @dataclass(frozen=True)
+class ChannelsFilters:
+    topic: str
+    country: str
+    min_price: float
+    max_price: float
+    min_subs_count: int
+    max_subs_count: int
+    type: str
+    min_cover: float
+    max_cover: float
+    min_profit: float
+    max_profit: float
+    on_requests: bool
+    author: bool
+
+
+@dataclass(frozen=True)
 class OpenedAnnoun:
     """Класс общих параметров открытого объявления"""
     article: int

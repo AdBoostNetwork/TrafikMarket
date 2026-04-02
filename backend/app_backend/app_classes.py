@@ -88,6 +88,7 @@ class ClosedAnnoun:
 
 @dataclass(frozen=True)
 class CommonFilters:
+    """Класс общих фильтров"""
     topic: str
     country: str
     min_price: float
@@ -96,6 +97,7 @@ class CommonFilters:
 
 @dataclass(frozen=True)
 class ChannelsFilters(CommonFilters):
+    """Класс фильтров Каналов"""
     min_subs_count: int
     max_subs_count: int
     type: str
@@ -109,6 +111,7 @@ class ChannelsFilters(CommonFilters):
 
 @dataclass(frozen=True)
 class AdFilters(CommonFilters):
+    """Класс фильтров Рекламы"""
     min_subs_count: int
     max_subs_count: int
     min_cover: float
@@ -121,6 +124,7 @@ class AdFilters(CommonFilters):
 
 @dataclass(frozen=True)
 class TrafficFilters(CommonFilters):
+    """Класс фильтров Трафика"""
     platform: str
     traffic_type: str
     audience_type: str

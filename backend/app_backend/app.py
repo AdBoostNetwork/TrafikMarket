@@ -3,8 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from.endpoints import endpoints
-from .pages.announs import announs_page
-from .pages.announ_creator import announ_creator
 from backend.config import AppConfig
 from .logger import get_logger
 
@@ -32,5 +30,3 @@ app.add_middleware(
 )
 
 app.include_router(endpoints)
-app.include_router(announs_page)
-app.include_router(announ_creator)

@@ -11,7 +11,7 @@ base_api_url = "https://api.tgstat.ru/channels"
 
 
 class ChartsData:
-    endpoints = ("subs", "views", "avg-posts-reach", "er", "err", "err24")
+    endpoints = ("subscribers", "views", "avg-posts-reach", "er", "err", "err24")
 
     def __init__(self, channel: str):
         self.channel = channel

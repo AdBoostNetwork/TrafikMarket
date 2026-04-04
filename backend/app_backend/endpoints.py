@@ -4,7 +4,7 @@ from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
 from .app_database.announ_creator_db import post_announ_db
-from .app_database.orders_page_db import get_my_announs_db, edit_announ_db
+from .app_database.orders_page_db import get_my_announs_db, get_active_orders_db, edit_announ_db
 from .app_database.helpers_db import delete_announ_db
 from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
 from backend.topics_reciever import build_topic_config
@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 endpoints = APIRouter()
 
 
-@endpoints.get("/my_profile", tags=["Профиль"], summary="Получение данных профиля")
+@endpoints.get("/my_profile", tags=["Страница профиля"], summary="Получение данных профиля")
 async def get_profile(user_id: int):
     try:
         return await get_profile_info_db(user_id)
@@ -26,7 +26,7 @@ async def get_profile(user_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@endpoints.get("/ref_link", tags=["Реферальная ссылка"], summary="Получение реферальной ссылки пользователя")
+@endpoints.get("/ref_link", tags=["Страница реферальной ссылки"], summary="Получение реферальной ссылки пользователя")
 async def get_ref_link(user_id: int):
     try:
         return await get_ref_link_db(user_id)
@@ -105,6 +105,14 @@ async def get_my_announs(user_id: int):
         return await get_my_announs_db(user_id)
     except Exception as e:
         logger.error(f"Ошибка при загрузке объявлений пользователя | user_id = {user_id} | error = {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@endpoints.get("/active_orders", tags=["Страница заказов"], summary="Получение активных заказов пользователя")
+async def get_active_orders(user_id: int):
+    try:
+        return await get_active_orders_db(user_id)
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 

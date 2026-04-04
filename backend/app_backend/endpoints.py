@@ -4,7 +4,7 @@ from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
 from .app_database.announ_creator_db import post_announ_db
-from .app_database.orders_page_db import get_my_announs_db, get_active_orders_db, edit_announ_db
+from .app_database.orders_page_db import get_my_announs_db, get_active_orders_db, get_closed_orders_db, edit_announ_db
 from .app_database.helpers_db import delete_announ_db
 from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
 from backend.topics_reciever import build_topic_config
@@ -112,6 +112,14 @@ async def get_my_announs(user_id: int):
 async def get_active_orders(user_id: int):
     try:
         return await get_active_orders_db(user_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@endpoints.get("/closed_orders", tags=["Страница заказов"], summary="Получение завершенных заказов пользователя")
+async def get_closed_orders(user_id: int):
+    try:
+        return await get_closed_orders_db(user_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

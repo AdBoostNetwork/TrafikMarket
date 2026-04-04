@@ -79,9 +79,9 @@ async def post_channel_announ_db(session, announ_id: int, data: dict):
     query = text(
         """
         INSERT INTO channels
-            (chn_announ_id, topic, chn_type, country, subs_count, cover_count, profit, entry_requests)
+            (chn_announ_id, topic, chn_type, country, subs_count, cover_count, profit, on_requests, channel_link, price, author)
         VALUES
-            (:announ_id, :topic, :chn_type, :country, :subs_count, :cover_count, :profit, :entry_requests);
+            (:announ_id, :topic, :chn_type, :country, :subs_count, :cover_count, :profit, :on_requests, :channel_link, :price, :author);
         """
     )
 
@@ -95,7 +95,10 @@ async def post_channel_announ_db(session, announ_id: int, data: dict):
             "subs_count": data["subs_count"],
             "cover_count": data["cover_count"],
             "profit": data["profit"],
-            "entry_requests": data["entry_requests"],
+            "on_requests": data["on_requests"],
+            "channel_link": data["channel_link"],
+            "price": data["price"],
+            "author": data["author"],
         },
     )
 

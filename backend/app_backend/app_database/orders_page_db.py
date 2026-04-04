@@ -1,7 +1,7 @@
 from sqlalchemy import text
 
 from backend.db_engine import new_session
-from ..app_classes import ClosedAnnoun
+from ..app_classes import ClosedAnnoun, AnnounCreateSchema
 from .helpers_db import get_seller_info_db
 from ..logger import get_logger
 
@@ -56,3 +56,11 @@ async def get_my_announs_db(user_id: int):
             announs_list.append(announ)
 
     return announs_list
+
+
+async def get_active_orders_db(user_id: int):
+    logger.info(f"Получение активных заказов пользователя | user_id: %s", user_id)
+
+
+async def edit_announ_db(announ_id: int, data: AnnounCreateSchema):
+    ...

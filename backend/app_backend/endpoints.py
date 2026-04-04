@@ -4,7 +4,7 @@ from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
 from .app_database.announ_creator_db import post_announ_db
-from .app_database.orders_page_db import get_my_announs_db
+from .app_database.orders_page_db import get_my_announs_db, edit_announ_db
 from .app_database.helpers_db import delete_announ_db
 from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
 from backend.topics_reciever import build_topic_config
@@ -114,4 +114,13 @@ async def delete_announ(announ_id: int, user_id: int):
         return await delete_announ_db(announ_id, user_id)
     except Exception as e:
         logger.error(f"Ошибка при удалении объявления | announ_id = {announ_id} | error = {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@endpoints.put("/announ", tags=["Страница редактирования объявления"], summary="Редактирование объявления")
+async def edit_announ(announ_id: int, announ_data: AnnounCreateSchema):
+    try:
+        return await edit_announ_db(announ_id, announ_data)
+    except Exception as e:
+        logger.error(f"Ошибка при редактировании объявления | announ_id = {announ_id} | error = {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

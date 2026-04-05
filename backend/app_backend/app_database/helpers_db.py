@@ -1,6 +1,6 @@
 from sqlalchemy import text
 
-from backend.app_backend.app_classes import SellerInfo
+from backend.app_backend.app_classes import SellerInfo, ClosedAnnoun
 from backend.db_engine import new_session
 from backend.logger import get_logger
 
@@ -8,7 +8,21 @@ from backend.logger import get_logger
 logger = get_logger(__name__)
 
 
-async def get_seller_info_db(session, seller_id: int) -> SellerInfo:
+async def delete_announ_db(announ_id: int, user_id: int):
+    query = text("DELETE FROM announs WHERE announ_id = :announ_id AND seller_id = :user_id RETURNING announ_id")
+
+    async with new_session() as session:
+        result = await session.execute(query, {"announ_id": announ_id, "user_id": user_id})
+        deleted_id = result.scalar_one_or_none()
+
+        if deleted_id is None:
+            raise Exception("not_allowed")
+
+        await session.commit()
+        return {"success": True}
+
+
+async def get_seller_info_db(session, seller_id: int):
     logger.info("Получение данных продавца | seller_id: %s", seller_id)
 
     query = text(
@@ -46,20 +60,6 @@ async def get_seller_info_db(session, seller_id: int) -> SellerInfo:
     )
 
 
-async def delete_announ_db(announ_id: int, user_id: int):
-    query = text("DELETE FROM announs WHERE announ_id = :announ_id AND seller_id = :user_id RETURNING announ_id")
-
-    async with new_session() as session:
-        result = await session.execute(query, {"announ_id": announ_id, "user_id": user_id})
-        deleted_id = result.scalar_one_or_none()
-
-        if deleted_id is None:
-            raise Exception("not_allowed")
-
-        await session.commit()
-        return {"success": True}
-
-
 async def get_user_announs_data_db(session, user_id: int):
     logger.info("Получение данных объявлений пользователя | user_id: %s", user_id)
 
@@ -86,3 +86,25 @@ async def get_user_announs_data_db(session, user_id: int):
 
     result = await session.execute(query, {"user_id": user_id})
     return result.mappings().all()
+
+
+async def get_user_announs_db(user_id: int):
+    logger.info("Получение объявлений пользователя | user_id: %s", user_id)
+
+    async with new_session() as session:
+        seller = await get_seller_info_db(session, user_id)
+        rows = await get_user_announs_data_db(session, user_id)
+        announs_list = []
+
+        for row in rows:
+            announ = ClosedAnnoun(
+                announ_id=int(row["announ_id"]),
+                seller=seller,
+                title=row["title"],
+                price=float(row["price"]),
+                description=row["description"],
+                topic=""
+            )
+            announs_list.append(announ)
+
+    return announs_list

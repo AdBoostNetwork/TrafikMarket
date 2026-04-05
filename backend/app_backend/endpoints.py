@@ -5,7 +5,7 @@ from .app_database.ref_link_db import get_ref_link_db
 from .app_database.opened_announ_db import get_announ_page_db
 from .app_database.announ_creator_db import post_announ_db
 from .app_database.orders_page_db import get_active_orders_db, get_closed_orders_db, edit_announ_db
-from app_database.other_user_db import get_user_info_db
+from .app_database.other_user_db import get_user_info_db
 from .app_database.helpers_db import delete_announ_db, get_user_announs_db
 from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
 from backend.topics_reciever import build_topic_config
@@ -143,7 +143,7 @@ async def edit_announ(announ_id: int, announ_data: AnnounCreateSchema):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@endpoints.get("/other_user", tags=["Станица другого пользователя"], summary="Получение информации о пользователе")
+@endpoints.get("/other_user", tags=["Страница другого пользователя"], summary="Получение информации о пользователе")
 async def get_other_user_info(user_id: int):
     try:
         return await get_user_info_db(user_id)

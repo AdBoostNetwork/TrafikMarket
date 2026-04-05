@@ -210,9 +210,14 @@ async def get_announ_info_db(session, announ_id: int, announ_type: str):
 async def get_announ_page_db(announ_id: int):
     logger.info("Получение данных страницы объявления | Announ id: %s", announ_id)
 
-    async with new_session() as session:
-        announ_type = await get_announ_type_db(session, announ_id)
-        announ_info = await get_announ_info_db(session, announ_id, announ_type)
+    try:
+        async with new_session() as session:
+            announ_type = await get_announ_type_db(session, announ_id)
+            announ_info = await get_announ_info_db(session, announ_id, announ_type)
+
+    except Exception as e:
+        logger.error(f"Ошибка при получении данных объявления | announ_id: {announ_id} | error: {str(e)}")
+        raise ValueError("Ошибка при получении данных объявления")
 
     return AnnounPageSchema(
         type=announ_type,

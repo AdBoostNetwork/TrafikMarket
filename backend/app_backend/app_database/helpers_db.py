@@ -58,3 +58,31 @@ async def delete_announ_db(announ_id: int, user_id: int):
 
         await session.commit()
         return {"success": True}
+
+
+async def get_user_announs_data_db(session, user_id: int):
+    logger.info("Получение данных объявлений пользователя | user_id: %s", user_id)
+
+    query = text(
+        """
+        SELECT an.announ_id,
+               an.title,
+               an.short_text AS description,
+               CASE
+                   WHEN an.type = 'channel' THEN ch.price
+                   WHEN an.type = 'traffic' THEN tr.price
+               END AS price
+        FROM announs an
+                 LEFT JOIN channels ch
+                           ON ch.chn_announ_id = an.announ_id
+                          AND an.type = 'channel'
+                 LEFT JOIN traffic tr
+                           ON tr.trf_announ_id = an.announ_id
+                          AND an.type = 'traffic'
+        WHERE an.seller_id = :user_id
+        ORDER BY an.announ_id DESC;
+        """
+    )
+
+    result = await session.execute(query, {"user_id": user_id})
+    return result.mappings().all()

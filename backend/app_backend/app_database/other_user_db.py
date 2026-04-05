@@ -40,7 +40,7 @@ async def get_user_info_db(user_id: int):
 
     profile = OtherProfile(
         name=data["name"],
-        avatar_filename=f'{str(data["user_id"])}.jpg',
+        avatar_filename=f'{user_id}.jpg',
         rating=rating,
         deals_count=data["deals_count"],
         success_deals_percent=success_deals_percent,

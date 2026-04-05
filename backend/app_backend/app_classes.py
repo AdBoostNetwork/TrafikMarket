@@ -84,6 +84,7 @@ class ClosedAnnoun:
     title: str
     price: float
     description: str
+    topic: str
 
 
 @dataclass(frozen=True)
@@ -227,3 +228,15 @@ class TopicsConfig:
     countries: list[str]
     audience_types: list[str]
     platforms: list[str]
+
+
+@dataclass(frozen=True)
+class OtherProfile:
+    name: str
+    avatar_filename: str
+    rating: float
+    deals_count: int
+    success_deals_percent: int
+    deals_summ: float
+    registration_date: str
+    was_online: str

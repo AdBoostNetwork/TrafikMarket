@@ -8,7 +8,7 @@ from ..logger import get_logger
 logger = get_logger(__name__)
 
 
-async def get_user_transactions(session, user_id: int):
+async def get_user_transactions_db(session, user_id: int):
     logger.info("Запрос транзакций пользователя | user_id: %s", user_id)
 
     query = text("""
@@ -51,7 +51,7 @@ async def get_profile_info_db(user_id: int):
         result = await session.execute(query, {"user_id": user_id})
         data = result.mappings().first()
 
-        transactions_list = await get_user_transactions(session, user_id)
+        transactions_list = await get_user_transactions_db(session, user_id)
 
         success_deals_percent = int(data["success_count"] * 100 / data["deals_count"]) if data["deals_count"] else 0
 

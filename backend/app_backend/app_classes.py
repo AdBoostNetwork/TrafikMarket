@@ -232,6 +232,7 @@ class TopicsConfig:
 
 @dataclass(frozen=True)
 class OtherProfile:
+    """Класс с данными для страницы профиля другого пользователя"""
     name: str
     avatar_filename: str
     rating: float

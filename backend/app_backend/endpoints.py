@@ -73,7 +73,7 @@ def get_tgstat_channel(channel_link: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@endpoints.get("/tgstat_add", tags=["Страница создания объявления"], summary="Получение информации о канале для рекламы с TgStat")
+@endpoints.get("/tgstat_ad", tags=["Страница создания объявления"], summary="Получение информации о канале для рекламы с TgStat")
 def get_tgstat_ad(channel_link: str):
     try:
         return get_ad(channel_link)

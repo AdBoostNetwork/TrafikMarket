@@ -64,7 +64,7 @@ class ChartsData:
 
             return Chart(
                 title=endpoint,
-                data=items,
+                points=items,
                 current_value=current_value,
                 yesterday_value=yesterday_value,
                 week_value=week_value,

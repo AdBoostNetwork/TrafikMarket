@@ -134,9 +134,9 @@ async def get_channel_announ_db(session, announ_id: int):
                a.long_text,
             
                c.channel_link, 
-               c.topic,
+               t.topic_name AS topic,
                c.chn_type,
-               c.country,
+               ctr.country_name AS country,
                c.subs_count,
                c.cover_count,
                c.profit,
@@ -146,6 +146,10 @@ async def get_channel_announ_db(session, announ_id: int):
         FROM announs a
                  JOIN channels c
                       ON c.chn_announ_id = a.announ_id
+                 LEFT JOIN topics t
+                      ON t.id = c.topic
+                 LEFT JOIN countries ctr
+                      ON ctr.id = c.country
         WHERE a.announ_id = :announ_id;
         """
     )

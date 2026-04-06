@@ -17,6 +17,20 @@ class ChartsData:
         self.channel = channel
 
     @staticmethod
+    def count_metrics(items: list[dict]):
+        if not items:
+            return None, None, None
+
+        metric_key = next(key for key in items[0] if key != "period")
+        current = items[0][metric_key]
+
+        yesterday_value = f"{current - items[1][metric_key]:+}" if len(items) > 1 else None
+        week_value = f"{current - items[7][metric_key]:+}" if len(items) > 7 else None
+        month_value = None
+
+        return yesterday_value, week_value, month_value
+
+    @staticmethod
     def get_chart_data(endpoint: str, params):
         url = f"{base_api_url}/{endpoint}"
 
@@ -28,9 +42,15 @@ class ChartsData:
             if payload.get("status") != "ok":
                 raise ValueError(f"Ошибка при получении данных")
 
+            yesterday_value, week_value, month_value = ChartsData.count_metrics(payload["response"])
+
             return Chart(
                 title=endpoint,
                 data=payload["response"],
+                current_value="",
+                yesterday_value=yesterday_value,
+                week_value=week_value,
+                month_value=month_value,
             )
 
         except Exception as e:

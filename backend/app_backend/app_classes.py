@@ -194,6 +194,10 @@ class AnnounCreateSchema(BaseModel):
 class Chart:
     """Структура данных графика"""
     title: str
+    current_value: str
+    yesterday_value: str | None
+    week_value: str | None
+    month_value: str | None
     data: list[dict]
 
 

@@ -305,7 +305,8 @@
 
   <script>
     const API_BASE = "http://127.0.0.1:8000";
-    const OTHER_PROFILE_ENDPOINT = "/other_profile";
+    const OTHER_USER_ENDPOINT = "/other_user";
+    const USER_ANNOUNS_ENDPOINT = "/user_announs";
     const AVA_BASE = "../users_avas/";
 
     function getUserIdFromQuery() {
@@ -383,24 +384,48 @@
       return s;
     }
 
+    function getInitial(name) {
+      const s = String(name || "").trim();
+      if (!s) return "?";
+
+      if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
+        const segmenter = new Intl.Segmenter("ru", { granularity: "grapheme" });
+        const first = segmenter.segment(s)[Symbol.iterator]().next().value?.segment;
+        return first ? first.toLocaleUpperCase() : "?";
+      }
+
+      const first = Array.from(s)[0];
+      return first ? first.toLocaleUpperCase() : "?";
+    }
+
     function setAvatar(name, avatarFilename) {
       const img = document.getElementById("avatarImg");
       const letter = document.getElementById("avatarLetter");
 
-      const first = (String(name || "").trim()[0] || "?").toUpperCase();
+      const first = getInitial(name);
       letter.textContent = first;
-
-      if (avatarFilename) {
-        img.src = `${AVA_BASE}${avatarFilename}`;
-        img.style.display = "block";
-        letter.style.display = "none";
-        img.onerror = () => {
-          img.style.display = "none";
-          letter.style.display = "block";
-        };
-      } else {
+      const showFallback = () => {
         img.style.display = "none";
         letter.style.display = "block";
+      };
+      const showImage = () => {
+        img.style.display = "block";
+        letter.style.display = "none";
+      };
+
+      img.onerror = null;
+
+      if (avatarFilename) {
+        img.src = `../users_avas/${encodeURIComponent(avatarFilename)}`;
+        showImage();
+        img.onerror = showFallback;
+
+        if (img.complete && img.naturalWidth === 0) {
+          showFallback();
+        }
+      } else {
+        img.removeAttribute("src");
+        showFallback();
       }
     }
 
@@ -425,18 +450,28 @@
 
       const first = (String(name || "").trim()[0] || "?").toUpperCase();
       if (letter) letter.textContent = first;
-
-      if (filename) {
-        img.src = `${AVA_BASE}${filename}`;
-        img.style.display = "block";
-        letter.style.display = "none";
-        img.onerror = () => {
-          img.style.display = "none";
-          letter.style.display = "block";
-        };
-      } else {
+      const showFallback = () => {
         img.style.display = "none";
         letter.style.display = "block";
+      };
+      const showImage = () => {
+        img.style.display = "block";
+        letter.style.display = "none";
+      };
+
+      img.onerror = null;
+
+      if (filename) {
+        img.src = `${AVA_BASE}${encodeURIComponent(filename)}`;
+        showImage();
+        img.onerror = showFallback;
+
+        if (img.complete && img.naturalWidth === 0) {
+          showFallback();
+        }
+      } else {
+        img.removeAttribute("src");
+        showFallback();
       }
     }
 
@@ -576,16 +611,26 @@
       }
 
       try {
-        const url = `${API_BASE}${OTHER_PROFILE_ENDPOINT}?user_id=${encodeURIComponent(userId)}`;
-        const res = await fetch(url);
-        if (!res.ok) {
+        const profileUrl = `${API_BASE}${OTHER_USER_ENDPOINT}?user_id=${encodeURIComponent(userId)}`;
+        const announsUrl = `${API_BASE}${USER_ANNOUNS_ENDPOINT}?user_id=${encodeURIComponent(userId)}`;
+
+        const [profileRes, announsRes] = await Promise.all([
+          fetch(profileUrl),
+          fetch(announsUrl),
+        ]);
+
+        if (!profileRes.ok || !announsRes.ok) {
           document.getElementById("name").textContent = "Ошибка загрузки";
           return;
         }
 
-        const data = await res.json();
-        renderUser(data.user);
-        renderAnnouns(data.announs);
+        const [user, announs] = await Promise.all([
+          profileRes.json(),
+          announsRes.json(),
+        ]);
+
+        renderUser(user);
+        renderAnnouns(announs);
       } catch (e) {
         document.getElementById("name").textContent = "Ошибка сети";
       }

@@ -12,42 +12,60 @@ base_api_url = "https://api.tgstat.ru/channels"
 
 class ChartsData:
     endpoints = ("subscribers", "views", "avg-posts-reach", "er", "err", "err24")
+    current_value_map = {
+        "subscribers": "participants_count",
+        "views": "daily_reach",
+        "avg-posts-reach": "avg_post_reach",
+        "er": "er_percent",
+        "err": "err_percent",
+        "err24": "err24_percent",
+    }
 
     def __init__(self, channel: str):
         self.channel = channel
+        self.params = {
+            "token": tgstat_token,
+            "channelId": self.channel
+        }
+        self.channel_stat = get_channel_stat(self.params)
 
     @staticmethod
     def count_metrics(items: list[dict]):
         if not items:
             return None, None, None
 
+        def format_delta(delta):
+            formatted = f"{delta:+.2f}".rstrip("0").rstrip(".")
+            return "0" if formatted in ("+0", "-0") else formatted
+
         metric_key = next(key for key in items[0] if key != "period")
         current = items[0][metric_key]
 
-        yesterday_value = f"{current - items[1][metric_key]:+}" if len(items) > 1 else None
-        week_value = f"{current - items[7][metric_key]:+}" if len(items) > 7 else None
+        yesterday_value = format_delta(current - items[1][metric_key]) if len(items) > 1 else None
+        week_value = format_delta(current - items[7][metric_key]) if len(items) > 7 else None
         month_value = None
 
         return yesterday_value, week_value, month_value
 
-    @staticmethod
-    def get_chart_data(endpoint: str, params):
+    def get_chart_data(self, endpoint: str):
         url = f"{base_api_url}/{endpoint}"
 
         try:
-            response = requests.get(url, params=params, timeout=10)
+            response = requests.get(url, params=self.params, timeout=10)
             response.raise_for_status()
             payload = response.json()
 
             if payload.get("status") != "ok":
                 raise ValueError(f"Ошибка при получении данных")
 
-            yesterday_value, week_value, month_value = ChartsData.count_metrics(payload["response"])
+            items = payload["response"]
+            yesterday_value, week_value, month_value = self.count_metrics(items)
+            current_value = self.channel_stat[self.current_value_map[endpoint]]
 
             return Chart(
                 title=endpoint,
-                data=payload["response"],
-                current_value="",
+                data=items,
+                current_value=current_value,
                 yesterday_value=yesterday_value,
                 week_value=week_value,
                 month_value=month_value,
@@ -58,15 +76,10 @@ class ChartsData:
             raise ValueError("Ошибка HTTP-запроса к TGStat") from e
 
     def get_charts_data(self):
-        params = {
-            "token": tgstat_token,
-            "channelId": self.channel
-        }
-
         charts_list = []
 
         for endpoint in self.endpoints:
-            charts_list.append(self.get_chart_data(endpoint, params))
+            charts_list.append(self.get_chart_data(endpoint))
         return charts_list
 
 

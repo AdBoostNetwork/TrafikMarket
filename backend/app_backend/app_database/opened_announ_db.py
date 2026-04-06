@@ -33,14 +33,22 @@ async def get_traffic_announ_db(session, announ_id: int):
                t.price,
                t.min_leads,
                t.max_leads,
-               t.topic,
-               t.platform,
+               tp.topic_name AS topic,
+               p.platform_name AS platform,
                t.traffic_type,
-               t.audience_type,
-               t.country
+               at.type_name AS audience_type,
+               ctr.country_name AS country
         FROM announs a
                  JOIN traffic t
                       ON t.trf_announ_id = a.announ_id
+                 LEFT JOIN topics tp
+                      ON tp.id = t.topic
+                 LEFT JOIN platforms p
+                      ON p.id = t.platform
+                 LEFT JOIN audience_types at
+                      ON at.id = t.audience_type
+                 LEFT JOIN countries ctr
+                      ON ctr.id = t.country
         WHERE a.announ_id = :announ_id;
         """
     )

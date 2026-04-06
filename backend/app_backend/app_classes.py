@@ -198,7 +198,7 @@ class Chart:
     yesterday_value: str | None
     week_value: str | None
     month_value: str | None
-    data: list[dict]
+    points: list[dict]
 
 
 @dataclass(frozen=True)

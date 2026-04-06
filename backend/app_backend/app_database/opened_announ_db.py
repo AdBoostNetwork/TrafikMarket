@@ -83,8 +83,8 @@ async def get_ad_announ_db(session, announ_id: int):
                a.long_text,
                 
                ad.channel_link,
-               ad.topic,
-               ad.country,
+               t.topic_name AS topic,
+               ctr.country_name AS country,
                ad.subs_count,
                ad.cover,
                ad.cpm,
@@ -92,6 +92,10 @@ async def get_ad_announ_db(session, announ_id: int):
         FROM announs a
                  JOIN ads ad
                       ON ad.ad_announ_id = a.announ_id
+                 LEFT JOIN topics t
+                      ON t.id = ad.topic
+                 LEFT JOIN countries ctr
+                      ON ctr.id = ad.country
         WHERE a.announ_id = :announ_id;
         """
     )
@@ -111,7 +115,7 @@ async def get_ad_announ_db(session, announ_id: int):
         seller=seller,
         channel_link=row["channel_link"],
         title=row["title"],
-        prices={"price": float(row["price"])},
+        prices={"1": 2},
         description=row["long_text"],
         imgs=imgs,
         topic=row["topic"],

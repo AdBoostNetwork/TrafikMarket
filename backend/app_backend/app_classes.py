@@ -136,8 +136,8 @@ class TrafficFilters(CommonFilters):
 @dataclass(frozen=True)
 class OpenedAnnoun:
     """Класс общих параметров открытого объявления"""
-    article: int
     seller: SellerInfo
+    article: int
     title: str
     description: str
     imgs: list[str]
@@ -166,7 +166,7 @@ class AdSchema(OpenedAnnoun):
     topic: str
     country: str
     subs_count: int
-    cover: int
+    cover_count: int
     cpm: int
     er: int
 
@@ -174,6 +174,7 @@ class AdSchema(OpenedAnnoun):
 @dataclass(frozen=True)
 class TrafficSchema(OpenedAnnoun):
     """Класс параметров объявления тематики Трафик"""
+    price: float
     topic: str
     platform: str
     traffic_type: str
@@ -181,7 +182,6 @@ class TrafficSchema(OpenedAnnoun):
     country: str
     min_leads: int
     max_leads: int
-    price: float
 
 
 class AnnounCreateSchema(BaseModel):

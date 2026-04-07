@@ -191,13 +191,19 @@ class AnnounCreateSchema(BaseModel):
 
 
 @dataclass(frozen=True)
-class TgStatChart:
+class ChartPoint:
+    date: str
+    value: float
+
+
+@dataclass(frozen=True)
+class Chart:
     """Структура данных графика"""
     title: str
     current_value: str
-    yesterday_value: str | None
-    week_value: str | None
-    month_value: str | None
+    yesterday_delta: str | None
+    week_delta: str | None
+    month_delta: str | None
     points: list[dict]
 
 

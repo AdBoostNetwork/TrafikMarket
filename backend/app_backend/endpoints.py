@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from .app_database.profile_db import get_profile_info_db
 from .app_database.ref_link_db import get_ref_link_db
-from .app_database.opened_announ_db import get_announ_page_db
+from .app_database.opened_announ_db import get_announ_page_db, get_price_chart_db
 from .app_database.announ_creator_db import post_announ_db
 from .app_database.orders_page_db import get_active_orders_db, get_closed_orders_db, edit_announ_db
 from .app_database.other_user_db import get_user_info_db
@@ -45,7 +45,16 @@ async def get_announ_info(announ_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@endpoints.get("/tgstat_charts", tags=["Страница объявления"], summary="Получение графиков с TgStat")
+@endpoints.get("/price_chart", tags=["Страница объявления"], summary="Получение значений для графика цены")
+async def get_price_chart(announ_id: int):
+    try:
+        return await get_price_chart_db(announ_id)
+    except Exception as e:
+        logger.error(f"Ошибка получения данных для графиков цены | announ_id = {announ_id} | error = {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@endpoints.get("/tgstat_charts", tags=["Страница объявления"], summary="Получение значений для графиков с TgStat")
 def get_tgstat_charts(channel_link: str):
     try:
         charts_data = ChartsData(channel_link)

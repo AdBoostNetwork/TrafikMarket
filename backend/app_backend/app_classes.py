@@ -192,6 +192,7 @@ class AnnounCreateSchema(BaseModel):
 
 @dataclass(frozen=True)
 class ChartPoint:
+    """Структура точки графика"""
     period: str
     value: float
 

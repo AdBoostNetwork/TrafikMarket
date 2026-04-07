@@ -191,7 +191,7 @@ class AnnounCreateSchema(BaseModel):
 
 
 @dataclass(frozen=True)
-class Chart:
+class TgStatChart:
     """Структура данных графика"""
     title: str
     current_value: str

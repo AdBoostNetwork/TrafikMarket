@@ -1,7 +1,7 @@
 import requests
 
 from backend.config import tgstat_token
-from backend.app_backend.app_classes import TgStatChart, TgStatChannel, TgStatAd, ChannelPost
+from backend.app_backend.app_classes import Chart, TgStatChannel, TgStatAd, ChannelPost
 from backend.logger import get_logger
 
 
@@ -62,13 +62,13 @@ class ChartsData:
             yesterday_value, week_value, month_value = self.count_metrics(items)
             current_value = self.channel_stat[self.current_value_map[endpoint]]
 
-            return TgStatChart(
+            return Chart(
                 title=endpoint,
                 points=items,
                 current_value=current_value,
-                yesterday_value=yesterday_value,
-                week_value=week_value,
-                month_value=month_value,
+                yesterday_delta=yesterday_value,
+                week_delta=week_value,
+                month_delta=month_value,
             )
 
         except Exception as e:

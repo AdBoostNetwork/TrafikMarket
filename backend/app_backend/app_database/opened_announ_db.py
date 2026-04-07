@@ -1,7 +1,7 @@
 from sqlalchemy import text
 
 from backend.db_engine import new_session
-from backend.app_backend.app_classes import ChannelSchema, AdSchema, TrafficSchema, AnnounPageSchema
+from backend.app_backend.app_classes import ChannelSchema, AdSchema, TrafficSchema, AnnounPageSchema, Chart, ChartPoint
 from .helpers_db import get_seller_info_db
 from backend.logger import get_logger
 
@@ -129,7 +129,7 @@ async def get_ad_announ_db(session, announ_id: int):
         topic=row["topic"],
         country=row["country"],
         subs_count=row["subs_count"],
-        cover=int(row["cover"]),
+        cover_count=int(row["cover"]),
         cpm=int(row["cpm"]),
         er=int(row["er"]),
     )
@@ -239,3 +239,38 @@ async def get_announ_page_db(announ_id: int):
         type=announ_type,
         announ_info=announ_info,
     )
+
+
+async def get_price_chart_points_db(announ_id: int):
+    logger.info(f"Запрос истории цены | announ_id: {announ_id}")
+
+    query = text(
+        """
+        SELECT price_date, price
+        FROM announ_price_history
+        WHERE announ_id = :announ_id
+        ORDER BY price_date DESC
+        """
+    )
+
+    try:
+        async with new_session() as session:
+            result = await session.execute(query, {"announ_id": announ_id})
+            rows = result.mappings().all()
+    except Exception as e:
+        logger.error(f"Ошибка при получении истории цены | announ_id: {announ_id} | error: {str(e)}")
+        raise ValueError("Ошибка при получении истории цены")
+
+    points = [
+        ChartPoint(
+            date=str(point["price_date"]),
+            value=float(point["price"]),
+        )
+        for point in rows
+    ]
+
+    return points
+
+
+async def get_price_chart_db(announ_id: int):
+    ...

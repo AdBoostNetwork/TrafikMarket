@@ -192,7 +192,7 @@ class AnnounCreateSchema(BaseModel):
 
 @dataclass(frozen=True)
 class ChartPoint:
-    date: str
+    period: str
     value: float
 
 
@@ -200,11 +200,11 @@ class ChartPoint:
 class Chart:
     """Структура данных графика"""
     title: str
-    current_value: str
+    current_value: float
     yesterday_delta: str | None
     week_delta: str | None
     month_delta: str | None
-    points: list[dict]
+    points: list
 
 
 @dataclass(frozen=True)

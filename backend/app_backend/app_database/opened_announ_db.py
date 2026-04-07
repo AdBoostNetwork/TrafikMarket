@@ -263,7 +263,7 @@ async def get_price_chart_points_db(announ_id: int):
 
     points = [
         ChartPoint(
-            date=str(point["price_date"]),
+            period=str(point["price_date"]),
             value=float(point["price"]),
         )
         for point in rows
@@ -272,5 +272,53 @@ async def get_price_chart_points_db(announ_id: int):
     return points
 
 
+async def get_current_price_db(announ_id: int):
+    logger.info(f"Запрос текущей цены | announ_id: {announ_id}")
+
+    query = text(
+        """
+        SELECT COALESCE(c.price, t.price) AS price
+        FROM announs a
+                 LEFT JOIN channels c
+                      ON c.chn_announ_id = a.announ_id
+                 LEFT JOIN traffic t
+                      ON t.trf_announ_id = a.announ_id
+        WHERE a.announ_id = :announ_id
+        """
+    )
+
+    try:
+        async with new_session() as session:
+            result = await session.execute(query, {"announ_id": announ_id})
+            price = result.scalar_one_or_none()
+    except Exception as e:
+        logger.error(f"Ошибка при получении текущей цены | announ_id: {announ_id} | error: {str(e)}")
+        raise ValueError("Ошибка при получении текущей цены")
+
+    return float(price) if price is not None else None
+
+
 async def get_price_chart_db(announ_id: int):
-    ...
+    points = await get_price_chart_points_db(announ_id)
+
+    if not points:
+        raise ValueError("нет данных")
+
+    def format_delta(delta):
+        formatted = f"{delta:+.2f}".rstrip("0").rstrip(".")
+        return "0" if formatted in ("+0", "-0") else formatted
+
+    current_value = await get_current_price_db(announ_id)
+    yesterday_price = points[0].value
+    yesterday_delta = format_delta(yesterday_price - points[1].value) if len(points) > 1 else None
+    week_delta = format_delta(yesterday_price - points[7].value) if len(points) > 7 else None
+    month_delta = format_delta(yesterday_price - points[30].value) if len(points) > 30 else None
+
+    return Chart(
+        title="price",
+        points=points,
+        current_value=current_value,
+        yesterday_delta=yesterday_delta,
+        week_delta=week_delta,
+        month_delta=month_delta,
+    )

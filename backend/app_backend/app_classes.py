@@ -170,6 +170,7 @@ class AdSchema(OpenedAnnoun):
     cover_count: int
     cpm: int
     er: int
+    tgstat_restriction: str
 
 
 @dataclass(frozen=True)

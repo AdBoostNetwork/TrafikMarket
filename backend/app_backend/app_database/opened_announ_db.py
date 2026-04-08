@@ -335,7 +335,7 @@ async def get_price_chart_db(announ_id: int):
     )
 
 
-async def get_similar_announs_data_db(session, announ_type: str):
+async def get_similar_announs_data_db(session, announ_id: int, announ_type: str):
     logger.info(f"Получение похожих объявлений | announ_type: {announ_type}")
 
     query = text(
@@ -370,12 +370,13 @@ async def get_similar_announs_data_db(session, announ_type: str):
                  LEFT JOIN topics tad
                            ON tad.id = ad.topic
         WHERE an.type = :announ_type
+          AND an.announ_id != :announ_id
         ORDER BY an.announ_id DESC
         LIMIT 10;
         """
     )
 
-    result = await session.execute(query, {"announ_type": announ_type})
+    result = await session.execute(query, {"announ_id": announ_id, "announ_type": announ_type})
     return result.mappings().all()
 
 
@@ -385,7 +386,7 @@ async def get_similar_announs_db(announ_id: int):
     try:
         async with new_session() as session:
             announ_type = await get_announ_type_db(session, announ_id)
-            announs = await get_similar_announs_data_db(session, announ_type)
+            announs = await get_similar_announs_data_db(session, announ_id, announ_type)
             announs_list = [
                 ClosedAnnoun(
                     announ_id=announ["announ_id"],

@@ -35,7 +35,7 @@ async def get_traffic_announ_db(session, announ_id: int):
                t.max_leads,
                tp.topic_name AS topic,
                p.platform_name AS platform,
-               t.traffic_type,
+               tt.traffic_type_name AS traffic_type,
                at.type_name AS audience_type,
                ctr.country_name AS country
         FROM announs a
@@ -45,6 +45,8 @@ async def get_traffic_announ_db(session, announ_id: int):
                       ON tp.id = t.topic
                  LEFT JOIN platforms p
                       ON p.id = t.platform
+                 LEFT JOIN traffic_types tt
+                      ON tt.id = t.traffic_type
                  LEFT JOIN audience_types at
                       ON at.id = t.audience_type
                  LEFT JOIN countries ctr

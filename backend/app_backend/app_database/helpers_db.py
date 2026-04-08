@@ -69,6 +69,11 @@ async def get_user_announs_data_db(session, user_id: int):
                an.title,
                an.short_text AS description,
                CASE
+                   WHEN an.type = 'channel' THEN tch.topic_name
+                   WHEN an.type = 'traffic' THEN ttr.topic_name
+                   WHEN an.type = 'ad' THEN tad.topic_name
+               END AS topic,
+               CASE
                    WHEN an.type = 'channel' THEN ch.price
                    WHEN an.type = 'traffic' THEN tr.price
                END AS price
@@ -76,9 +81,18 @@ async def get_user_announs_data_db(session, user_id: int):
                  LEFT JOIN channels ch
                            ON ch.chn_announ_id = an.announ_id
                           AND an.type = 'channel'
+                 LEFT JOIN topics tch
+                           ON tch.id = ch.topic
                  LEFT JOIN traffic tr
                            ON tr.trf_announ_id = an.announ_id
                           AND an.type = 'traffic'
+                 LEFT JOIN topics ttr
+                           ON ttr.id = tr.topic
+                 LEFT JOIN ads ad
+                           ON ad.ad_announ_id = an.announ_id
+                          AND an.type = 'ad'
+                 LEFT JOIN topics tad
+                           ON tad.id = ad.topic
         WHERE an.seller_id = :user_id
         ORDER BY an.announ_id DESC;
         """
@@ -94,17 +108,16 @@ async def get_user_announs_db(user_id: int):
     async with new_session() as session:
         seller = await get_seller_info_db(session, user_id)
         rows = await get_user_announs_data_db(session, user_id)
-        announs_list = []
-
-        for row in rows:
-            announ = ClosedAnnoun(
-                announ_id=int(row["announ_id"]),
+        announs_list = [
+            ClosedAnnoun(
+                announ_id=row["announ_id"],
                 seller=seller,
                 title=row["title"],
-                price=float(row["price"]),
+                price=float(row["price"]) if row["price"] is not None else 0.0,
                 description=row["description"],
-                topic=""
+                topic=row["topic"],
             )
-            announs_list.append(announ)
+            for row in rows
+        ]
 
     return announs_list

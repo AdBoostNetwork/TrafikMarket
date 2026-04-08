@@ -156,7 +156,8 @@ class ChannelSchema(OpenedAnnoun):
     profit: float
     on_requests: bool
     author: bool
-    tgstat_restriction: str
+    red_label: bool
+    black_label: bool
 
 
 @dataclass(frozen=True)
@@ -170,7 +171,6 @@ class AdSchema(OpenedAnnoun):
     cover_count: int
     cpm: int
     er: int
-    tgstat_restriction: str
 
 
 @dataclass(frozen=True)

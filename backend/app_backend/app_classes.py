@@ -156,6 +156,7 @@ class ChannelSchema(OpenedAnnoun):
     profit: float
     on_requests: bool
     author: bool
+    tgstat_restriction: str
 
 
 @dataclass(frozen=True)

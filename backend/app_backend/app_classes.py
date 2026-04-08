@@ -171,6 +171,8 @@ class AdSchema(OpenedAnnoun):
     cover_count: int
     cpm: int
     er: int
+    red_label: bool
+    black_label: bool
 
 
 @dataclass(frozen=True)

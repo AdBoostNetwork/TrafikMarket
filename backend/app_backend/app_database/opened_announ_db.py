@@ -1,7 +1,8 @@
 from sqlalchemy import text
 
 from backend.db_engine import new_session
-from backend.app_backend.app_classes import ChannelSchema, AdSchema, TrafficSchema, AnnounPageSchema, Chart, ChartPoint
+from backend.app_backend.app_classes import ChannelSchema, AdSchema, TrafficSchema, AnnounPageSchema, Chart, ChartPoint, \
+    ClosedAnnoun
 from .helpers_db import get_seller_info_db
 from backend.logger import get_logger
 
@@ -332,3 +333,73 @@ async def get_price_chart_db(announ_id: int):
         week_delta=week_delta,
         month_delta=month_delta,
     )
+
+
+async def get_similar_announs_data_db(session, announ_type: str):
+    logger.info(f"Получение похожих объявлений | announ_type: {announ_type}")
+
+    query = text(
+        """
+        SELECT an.announ_id,
+               an.seller_id,
+               an.title,
+               an.short_text AS description,
+               CASE
+                   WHEN an.type = 'channel' THEN tch.topic_name
+                   WHEN an.type = 'traffic' THEN ttr.topic_name
+                   WHEN an.type = 'ad' THEN tad.topic_name
+               END AS topic,
+               CASE
+                   WHEN an.type = 'channel' THEN ch.price
+                   WHEN an.type = 'traffic' THEN tr.price
+               END AS price
+        FROM announs an
+                 LEFT JOIN channels ch
+                           ON ch.chn_announ_id = an.announ_id
+                          AND an.type = 'channel'
+                 LEFT JOIN topics tch
+                           ON tch.id = ch.topic
+                 LEFT JOIN traffic tr
+                           ON tr.trf_announ_id = an.announ_id
+                          AND an.type = 'traffic'
+                 LEFT JOIN topics ttr
+                           ON ttr.id = tr.topic
+                 LEFT JOIN ads ad
+                           ON ad.ad_announ_id = an.announ_id
+                          AND an.type = 'ad'
+                 LEFT JOIN topics tad
+                           ON tad.id = ad.topic
+        WHERE an.type = :announ_type
+        ORDER BY an.announ_id DESC
+        LIMIT 10;
+        """
+    )
+
+    result = await session.execute(query, {"announ_type": announ_type})
+    return result.mappings().all()
+
+
+async def get_similar_announs_db(announ_id: int):
+    logger.info(f"Получение списка похожих объявлений | announ_id: {announ_id}")
+
+    try:
+        async with new_session() as session:
+            announ_type = await get_announ_type_db(session, announ_id)
+            announs = await get_similar_announs_data_db(session, announ_type)
+            announs_list = [
+                ClosedAnnoun(
+                    announ_id=announ["announ_id"],
+                    seller=await get_seller_info_db(session, int(announ["seller_id"])),
+                    title=announ["title"],
+                    price=announ["price"],
+                    description=announ["description"],
+                    topic=announ["topic"],
+                )
+                for announ in announs
+            ]
+
+    except Exception as e:
+        logger.error(f"Ошибка при получении списка похожих объявлений | announ_id: {announ_id} | error: {str(e)}")
+        raise ValueError("Ошибка при получении списка похожих объявлений")
+
+    return announs_list

@@ -156,7 +156,9 @@ async def get_channel_announ_db(session, announ_id: int):
                c.profit,
                c.on_requests,
                c.price,
-               c.author
+               c.author,
+               c.red_label,
+               c.black_label
         FROM announs a
                  JOIN channels c
                       ON c.chn_announ_id = a.announ_id
@@ -194,6 +196,8 @@ async def get_channel_announ_db(session, announ_id: int):
         profit=float(row["profit"]),
         on_requests=bool(row["on_requests"]),
         author=bool(row["author"]),
+        red_label=bool(row["red_label"]),
+        black_label=bool(row["black_label"]),
     )
 
 

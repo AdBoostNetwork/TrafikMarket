@@ -220,6 +220,8 @@ class TgStatChannel:
     country: str
     subs_count: int
     cover_count: float
+    red_label: bool
+    black_label: bool
 
 
 @dataclass(frozen=True)

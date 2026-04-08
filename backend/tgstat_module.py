@@ -125,6 +125,10 @@ def get_channel(channel: str):
 
     channel_info = get_channel_info(params)
     channel_stat = get_channel_stat(params)
+    restrictions = channel_info.get("tgstat_restrictions")
+
+    if not isinstance(restrictions, dict):
+        restrictions = {}
 
     return TgStatChannel(
         title=channel_info["title"],
@@ -132,6 +136,8 @@ def get_channel(channel: str):
         country=channel_info["country"],
         subs_count=channel_stat["participants_count"],
         cover_count=channel_stat["avg_post_reach"],
+        red_label=restrictions.get("red_label", False),
+        black_label=restrictions.get("black_label", False),
     )
 
 
@@ -143,6 +149,10 @@ def get_ad(channel: str):
 
     channel_info = get_channel_info(params)
     channel_stat = get_channel_stat(params)
+    restrictions = channel_info.get("tgstat_restrictions")
+
+    if not isinstance(restrictions, dict):
+        restrictions = {}
 
     return TgStatAd(
         title=channel_info["title"],
@@ -150,6 +160,8 @@ def get_ad(channel: str):
         country=channel_info["country"],
         subs_count=channel_stat["participants_count"],
         cover_count=channel_stat["avg_post_reach"],
+        red_label=restrictions.get("red_label", False),
+        black_label=restrictions.get("black_label", False),
         er=channel_stat["er_percent"],
     )
 

@@ -98,7 +98,9 @@ async def get_ad_announ_db(session, announ_id: int):
                ad.subs_count,
                ad.cover,
                ad.cpm,
-               ad.er
+               ad.er,
+               ad.red_label,
+               ad.black_label
         FROM announs a
                  JOIN ads ad
                       ON ad.ad_announ_id = a.announ_id
@@ -134,6 +136,8 @@ async def get_ad_announ_db(session, announ_id: int):
         cover_count=int(row["cover"]),
         cpm=int(row["cpm"]),
         er=int(row["er"]),
+        red_label=row["red_label"],
+        black_label=row["black_label"],
     )
 
 

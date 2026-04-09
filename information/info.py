@@ -75,7 +75,7 @@ class Channel(Announ):
     subs_count: int
     cover_count: float
     profit: float
-    entry_requests: bool
+    entry_requests: boolО
 
 
     Фильтры каналов:
@@ -347,3 +347,8 @@ def undep(summ):
     :param summ:
     :return:
     """
+
+
+#Для объявлений:
+
+""

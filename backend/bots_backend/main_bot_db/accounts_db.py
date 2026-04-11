@@ -1,6 +1,6 @@
 from sqlalchemy import text
 
-from backend.db_engine import new_session
+from backend.helpers.db_engine import new_session
 from backend.classes import UserCreateSchema
 from backend.logger import get_logger
 

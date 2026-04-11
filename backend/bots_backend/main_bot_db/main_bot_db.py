@@ -1,7 +1,4 @@
-from sqlalchemy import text
-
 from .main_bot_classes import Wallet
-from backend.db_engine import new_session
 from backend.logger import get_logger
 
 

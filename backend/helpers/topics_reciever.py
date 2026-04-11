@@ -1,6 +1,6 @@
 from sqlalchemy import text
 
-from backend.db_engine import new_session
+from backend.helpers.db_engine import new_session
 from backend.app_backend.app_classes import TopicsConfig
 from backend.logger import get_logger
 

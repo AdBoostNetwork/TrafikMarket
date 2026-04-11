@@ -1,6 +1,6 @@
 from sqlalchemy import text
 
-from backend.db_engine import new_session
+from backend.helpers.db_engine import new_session
 from backend.app_backend.app_classes import ChannelSchema, AdSchema, TrafficSchema, AnnounPageSchema, Chart, ChartPoint, ClosedAnnoun
 from .helpers_db import get_seller_info_db
 from backend.logger import get_logger

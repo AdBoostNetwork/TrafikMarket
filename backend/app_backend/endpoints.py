@@ -7,8 +7,8 @@ from .app_database.announ_creator_db import post_announ_db
 from .app_database.orders_page_db import get_active_orders_db, get_closed_orders_db, edit_announ_db
 from .app_database.other_user_db import get_user_info_db
 from .app_database.helpers_db import delete_announ_db, get_user_announs_db
-from backend.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
-from backend.topics_reciever import build_topic_config
+from backend.helpers.tgstat_module import ChartsData, get_last_posts, get_channel, get_ad
+from backend.helpers.topics_reciever import build_topic_config
 from .app_classes import AnnounCreateSchema
 from .logger import get_logger
 

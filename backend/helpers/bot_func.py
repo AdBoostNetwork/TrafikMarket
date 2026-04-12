@@ -1,5 +1,5 @@
 from .database import get_appeal_buy_id, change_appeal, create_appeal
-from .classes import Appeal
+from backend.classes import Appeal
 
 
 async def msg_to_support(user_id, text):

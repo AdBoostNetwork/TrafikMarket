@@ -103,7 +103,7 @@ def get_tgstat_ad(channel_link: str):
 @endpoints.post("/create_announ", tags=["Страница создания объявления"], summary="Создание объявления")
 async def create_announ(announ_data: AnnounCreateSchema):
     try:
-        return post_announ_db(announ_data)
+        return await post_announ_db(announ_data)
     except Exception as e:
         logger.error(f"Ошибка при создании объявления: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

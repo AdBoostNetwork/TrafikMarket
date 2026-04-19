@@ -56,7 +56,7 @@
     .card{
       width: 100%;
       background: var(--card);
-      border-radius: 30px;
+      border-radius: 24px;
       padding: 12px 12px;
     }
 
@@ -102,7 +102,7 @@
 
     .seller-name{
       color: var(--white);
-      font-weight: 600;
+      font-weight: 300;
       font-size: 15px;
       white-space: nowrap;
       overflow: hidden;
@@ -112,7 +112,7 @@
 
     .seller-right{
       color: var(--white);
-      font-weight: 600;
+      font-weight: 300;
       font-size: 14px;
       opacity: 0.95;
       white-space: nowrap;
@@ -135,6 +135,7 @@
       color: rgba(255,255,255,0.55);
       font-weight: 500;
       font-size: 14px;
+      margin-left: 2px;
     }
 
     .row-value{
@@ -177,6 +178,200 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
+    }
+
+    .link{
+      color: var(--accent, #3b82f6);
+      text-decoration: none;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .link:focus{ outline: none; }
+    .link:active{ color: var(--accent, #3b82f6); }
+
+    .chart-card{
+      background: #232324;
+      border: 1.5px solid rgba(74, 84, 110, 0.66);
+      border-radius: 19px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.02);
+      padding: 28px 14px 24px 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .chart-content{
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 180px;
+      column-gap: 18px;
+      align-items: center;
+    }
+
+    .chart-value{
+      margin: 0 0 14px;
+      font-size: 46px;
+      line-height: 0.92;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: #ffffff;
+    }
+
+    .chart-value.compact{
+      font-size: 38px;
+      letter-spacing: -0.03em;
+    }
+
+    .chart-metrics{
+      display: grid;
+      gap: 8px;
+    }
+
+    .chart-metric{
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      column-gap: 14px;
+      align-items: baseline;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .chart-metric-value{
+      color: #3f7cff;
+      white-space: nowrap;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      text-align: left;
+    }
+
+    .chart-metric-label{
+      color: rgba(255,255,255,0.55);
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    .chart-wrap{
+      justify-self: end;
+      margin-left: 6px;
+      overflow: hidden;
+    }
+
+    .chart-fade{
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 24px;
+      background: linear-gradient(90deg, #232324 0%, rgba(35,35,36,0) 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .chart-wrap svg{
+      width: 100%;
+      height: 100%;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chart-area{
+      opacity: 0.9;
+    }
+
+    .chart-line{
+      fill: none;
+      stroke: #3f7cff;
+      stroke-width: 2.05;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 4px rgba(63,124,255,0.12));
+    }
+
+    .chart-toggle{
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+
+      transform: translateX(-50%);
+      z-index: 10;
+
+      width: 40px;
+      height: 28px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .chart-toggle::before{
+      content: "⌄";
+      display: block;
+      color: rgba(255,255,255,0.55);
+      font-size: 28px;
+      line-height: 1;
+
+      transform-origin: 50% 55%;
+      transition: transform 120ms ease;
+    }
+
+    .chart-toggle.open::before{
+      transform: rotate(180deg);
+    }
+
+    .chart-toggle.hidden{ display:none; }
+
+    .tgstat-wrap{
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tgstat-collapse{
+      width: 100%;
+      display: grid;
+      place-items: center;
+      margin-top: 6px;
+    }
+
+    .tgstat-collapse button{
+      width: 40px;
+      height: 30px;
+      border-radius: 999px;
+      border: 0;
+      background: rgba(0,0,0,0);
+      color: rgba(255,255,255,0.65);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .skeleton{
+      position: relative;
+      overflow: hidden;
+      background: #2b2c30;
+      border-radius: 999px;
+    }
+    .skeleton::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      transform: translateX(-100%);
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+      animation: shimmer 1.35s ease-in-out infinite;
+    }
+    @keyframes shimmer{ 100%{ transform: translateX(100%);} }
+
+    .value-skeleton{ width: 176px; height: 44px; border-radius: 12px; margin-bottom: 12px; }
+    .metric-skeleton{ width: 176px; height: 20px; border-radius: 8px; }
+    .chart-skeleton{ position:absolute; inset:0; border-radius: 12px; }
+
+    @media (max-width: 420px){
+      .chart-content{ grid-template-columns: 1fr; gap: 10px; }
+      .chart-wrap{ justify-self: end; width: 170px; height: 116px; margin: 0 10px -10px 0; }
     }
 
     .media-item{
@@ -257,7 +452,7 @@
         </div>
 
         <div class="section-title">Вы покупаете у</div>
-        <div class="card">
+        <div class="card" style="border-radius: 40px">
           <div class="seller-row">
             <div class="seller-left">
               <div class="seller-avatar" id="sellerAvatar">
@@ -274,6 +469,58 @@
           <div class="rows" id="announRows"></div>
         </div>
 
+        <div class="card" id="articleCard" style="display:none;">
+          <div class="rows">
+            <div class="row" style="border-top:0; padding-top:0px;padding-bottom:0px">
+              <div class="row-label">ID объявления</div>
+              <div class="row-value" id="articleValue">—</div>
+            </div>
+          </div>
+        </div>
+
+<div id="chartsBlock" style="display:none;">
+  <div class="section-title">История изменения цены</div>
+
+  <div class="chart-card">
+    <button id="tgstatToggle" class="chart-toggle" type="button" aria-label="Показать графики TGStat"></button>
+    <div class="chart-content">
+      <div>
+        <div id="priceCurrent" class="chart-value">—</div>
+
+        <div class="chart-metrics">
+          <div class="chart-metric">
+            <span id="priceYesterday" class="chart-metric-value">—</span>
+            <span class="chart-metric-label">за вчера</span>
+          </div>
+          <div class="chart-metric">
+            <span id="priceWeek" class="chart-metric-value">—</span>
+            <span class="chart-metric-label">за неделю</span>
+          </div>
+          <div class="chart-metric">
+            <span id="priceMonth" class="chart-metric-value">—</span>
+            <span class="chart-metric-label">за месяц</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-wrap">
+        <div class="chart-fade" aria-hidden="true"></div>
+        <svg viewBox="0 0 180 124" preserveAspectRatio="none" aria-label="График изменения цены">
+          <defs>
+            <linearGradient id="areaGradientPrice" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4b78ff" stop-opacity="0.22"></stop>
+              <stop offset="100%" stop-color="#4b78ff" stop-opacity="0.02"></stop>
+            </linearGradient>
+          </defs>
+          <path id="priceAreaPath" class="chart-area" fill="url(#areaGradientPrice)"></path>
+          <path id="priceLinePath" class="chart-line"></path>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div id="tgstatCharts" style="display:none;"></div>
+</div>
         <div class="section-title">Подробное описание</div>
         <div class="card">
           <div class="desc" id="longText">—</div>
@@ -294,7 +541,119 @@
   <script>
     const API_BASE = "http://127.0.0.1:8000";
     const ENDPOINT = "/get_announ_info";
+    const PRICE_CHART_ENDPOINT = "/price_chart";
+    const TGSTAT_CHARTS_ENDPOINT = "/tgstat_charts";
+
+    const USE_MOCK_CHARTS = true; // капитан-заглушка тест
+
+    const MOCK_PRICE_CHART = {
+      title: "price",
+      current_value: 12500,
+      yesterday_delta: "+300",
+      week_delta: "+2400",
+      month_delta: null,
+      points: [
+        { period: "2026-04-07", value: 12500 },
+        { period: "2026-04-06", value: 12200 },
+        { period: "2026-04-05", value: 11900 },
+        { period: "2026-04-04", value: 11500 },
+        { period: "2026-04-03", value: 11100 },
+        { period: "2026-04-02", value: 10750 },
+        { period: "2026-04-01", value: 10400 },
+        { period: "2026-03-31", value: 10100 },
+        { period: "2026-03-30", value: 9950 },
+        { period: "2026-03-29", value: 9800 }
+      ]
+    };
+
+    const MOCK_TGSTAT_CHARTS = [
+      {
+        title: "subscribers",
+        current_value: 23500,
+        yesterday_delta: "+120",
+        week_delta: "+640",
+        month_delta: "+2100",
+        points: [
+          { period: "2026-04-07", participants_count: 23500 },
+          { period: "2026-04-06", participants_count: 23380 },
+          { period: "2026-04-05", participants_count: 23210 },
+          { period: "2026-04-04", participants_count: 23140 },
+          { period: "2026-04-03", participants_count: 23020 }
+        ]
+      },
+      {
+        title: "views",
+        current_value: 4200,
+        yesterday_delta: "+180",
+        week_delta: "+600",
+        month_delta: null,
+        points: [
+          { period: "2026-04-07", views_count: 4200 },
+          { period: "2026-04-06", views_count: 4020 },
+          { period: "2026-04-05", views_count: 3980 },
+          { period: "2026-04-04", views_count: 3870 },
+          { period: "2026-04-03", views_count: 3690 }
+        ]
+      },
+      {
+        title: "avg-posts-reach",
+        current_value: 6400,
+        yesterday_delta: "+90",
+        week_delta: "+310",
+        month_delta: "+800",
+        points: [
+          { period: "2026-04-07", avg_posts_reach: 6400 },
+          { period: "2026-04-06", avg_posts_reach: 6310 },
+          { period: "2026-04-05", avg_posts_reach: 6220 },
+          { period: "2026-04-04", avg_posts_reach: 6150 },
+          { period: "2026-04-03", avg_posts_reach: 6010 }
+        ]
+      },
+      {
+        title: "er",
+        current_value: 18,
+        yesterday_delta: "+1",
+        week_delta: "+2",
+        month_delta: null,
+        points: [
+          { period: "2026-04-07", er: 18 },
+          { period: "2026-04-06", er: 17 },
+          { period: "2026-04-05", er: 16 },
+          { period: "2026-04-04", er: 16 },
+          { period: "2026-04-03", er: 15 }
+        ]
+      },
+      {
+        title: "err",
+        current_value: 12,
+        yesterday_delta: "+1",
+        week_delta: "+2",
+        month_delta: "+3",
+        points: [
+          { period: "2026-04-07", err: 12 },
+          { period: "2026-04-06", err: 11 },
+          { period: "2026-04-05", err: 10 },
+          { period: "2026-04-04", err: 10 },
+          { period: "2026-04-03", err: 9 }
+        ]
+      },
+      {
+        title: "err24",
+        current_value: 7,
+        yesterday_delta: "+0",
+        week_delta: "+1",
+        month_delta: null,
+        points: [
+          { period: "2026-04-07", err24: 7 },
+          { period: "2026-04-06", err24: 7 },
+          { period: "2026-04-05", err24: 6 },
+          { period: "2026-04-04", err24: 6 },
+          { period: "2026-04-03", err24: 6 }
+        ]
+      }
+    ];
     const MEDIA_BASE = "../announs_media/";
+
     const PAY_LINK_TEMPLATE = "https://t.me/YOUR_BOT?start=pay_{announ_id}";
 
     function qs(name) {
@@ -365,8 +724,8 @@
       document.getElementById("sellerName").textContent = name;
 
       const deals = seller?.deals_count ?? 0;
-      const percent = seller?.success_deals_percent ?? 0;
-      document.getElementById("sellerStats").textContent = `Сделок: ${formatNumber(deals)} • ${formatNumber(percent)}%`;
+      const rating = seller?.rating ?? 0;
+      document.getElementById("sellerStats").textContent = `Сделок: ${formatNumber(deals)} • ☆ ${formatNumber(rating)}`;
 
       const avatarFilename = seller?.avatar_filename;
       const avatarBox = document.getElementById("sellerAvatar");
@@ -374,7 +733,7 @@
 
       if (isTruthy(avatarFilename)) {
         const img = document.createElement("img");
-        img.src = MEDIA_BASE + avatarFilename;
+        img.src = "../users_avas/" + avatarFilename;
         img.alt = "";
         avatarBox.appendChild(img);
       } else {
@@ -390,55 +749,87 @@
       const box = document.getElementById("announRows");
       box.innerHTML = "";
 
-      box.appendChild(rowText("Название", info?.title ?? "—"));
-      box.appendChild(rowText("Стоимость", `${formatNumber(info?.price)} USDT`, "price"));
+      const fmtUSDT = (v) => (v === null || v === undefined ? "—" : `${formatNumber(v)} USDT`);
+      const fmtBool = (v) => (v ? "Да" : "Нет");
+      const fmtArticle = (v) => (v === null || v === undefined || v === "" ? "—" : `#${v}`);
 
-      const map = {
-        channel: [
-          { key: "topic", label: "Тематика", kind: "chip" },
-          { key: "chn_type", label: "Тип канала", kind: "chip" },
-          { key: "country", label: "Страна", kind: "chip", fmt: humanizeCountry },
-          { key: "subs_count", label: "Количество подписичков", kind: "text", fmt: formatNumber },
-          { key: "cover_count", label: "Охват", kind: "text", fmt: formatNumber },
-          { key: "profit", label: "Доходность", kind: "text", fmt: (v) => `${formatNumber(v)} USDT` },
-        ],
-        ad: [
-          { key: "topic", label: "Тематика", kind: "chip" },
-          { key: "country", label: "Страна", kind: "chip", fmt: humanizeCountry },
-          { key: "cover", label: "Охват", kind: "text", fmt: formatNumber },
-          { key: "cpm", label: "ЦПМ", kind: "text", fmt: formatNumber },
-          { key: "er", label: "ЕР", kind: "text", fmt: (v) => `${formatNumber(v)}%` },
-        ],
-        traffic: [
-          { key: "topic", label: "Тематика", kind: "chip" },
-          { key: "platform", label: "Платформа", kind: "chip" },
-          { key: "traffic_type", label: "Тип залива", kind: "chip" },
-          { key: "audience_type", label: "Тип аудитории", kind: "chip" },
-          { key: "country", label: "Страна", kind: "chip", fmt: humanizeCountry },
-        ],
-        account: [
-          { key: "country", label: "Страна", kind: "chip", fmt: humanizeCountry },
-          { key: "log_type", label: "Тип входа", kind: "chip" },
-          { key: "idle_time", label: "Время отлеги", kind: "text" },
-          { key: "acc_type", label: "Тип", kind: "chip" },
-          { key: "premium", label: "Премиум", kind: "chip" },
-          { key: "stars_count", label: "Количество звезд", kind: "text", fmt: formatNumber },
-          { key: "gifts", label: "Подарки", kind: "text", fmt: (v) => (v ? "Да" : "Нет") },
-          { key: "tg_level", label: "Уровень тг", kind: "text", fmt: formatNumber },
-        ],
+      const addLinkRow = (label, url) => {
+        const row = document.createElement("div");
+        row.className = "row";
+        const l = document.createElement("div");
+        l.className = "row-label";
+        l.textContent = label;
+
+        const r = document.createElement("div");
+        r.className = "row-value";
+
+        if (isTruthy(url)) {
+          const a = document.createElement("a");
+          a.className = "link";
+          a.href = url;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.textContent = url;
+          r.appendChild(a);
+        } else {
+          r.textContent = "—";
+        }
+
+        row.appendChild(l);
+        row.appendChild(r);
+        return row;
       };
 
-      const fields = map[type] || [];
-      for (const f of fields) {
-        const raw = info?.[f.key];
-        const value = f.fmt ? f.fmt(raw) : (isTruthy(raw) ? String(raw) : "—");
-        if (f.kind === "chip") box.appendChild(rowChip(f.label, value));
-        else box.appendChild(rowText(f.label, value));
+      const add = (label, value, kind = "text", extraClass = "", fmt = null) => {
+        const v = fmt ? fmt(value) : (isTruthy(value) ? String(value) : "—");
+        if (kind === "chip") box.appendChild(rowChip(label, v));
+        else box.appendChild(rowText(label, v, extraClass));
+      };
+
+      if (type === "channel") {
+        add("Название", info?.title);
+        box.appendChild(addLinkRow("Ссылка", info?.channel_link));
+        add("Цена", info?.price, "text", "price", fmtUSDT);
+        add("Тематика", info?.topic, "chip");
+        add("Тип канала", info?.chn_type, "chip");
+        add("Страна", info?.country, "chip", "", humanizeCountry);
+        add("Подписчики", info?.subs_count, "text", "", formatNumber);
+        add("Охват", info?.cover_count, "text", "", formatNumber);
+        add("Доходность", info?.profit, "text", "", fmtUSDT);
+        add("Заявки", info?.on_requests, "text", "", fmtBool);
+        add("Авторский", info?.author, "text", "", fmtBool);
+        return;
       }
+
+      if (type === "ad") {
+        add("Название", info?.title);
+        box.appendChild(addLinkRow("Ссылка", info?.channel_link));
+        add("Тематика", info?.topic, "chip");
+        add("Страна", info?.country, "chip", "", humanizeCountry);
+        add("Подписчики", info?.subs_count, "text", "", formatNumber);
+        add("Охват", info?.cover_count, "text", "", formatNumber);
+        add("CPM", info?.cpm, "text", "", fmtUSDT);
+        add("ER", info?.er, "text", "", fmtUSDT);
+        return;
+      }
+
+      if (type === "traffic") {
+        add("Название", info?.title);
+        add("Цена за подписчика", info?.price, "text", "price", fmtUSDT);
+        add("Тематика", info?.topic, "chip");
+        add("Платформа", info?.platform, "chip");
+        add("Тип трафика", info?.traffic_type, "chip");
+        add("Тип аудитории", info?.audience_type, "chip");
+        add("Страна", info?.country, "chip", "", humanizeCountry);
+        box.appendChild(rowText("Лиды", `от ${formatNumber(info.min_leads)} до ${formatNumber(info.max_leads)}`));
+        return;
+      }
+
+      add("Название", info?.title);
     }
 
     function renderDescription(info) {
-      document.getElementById("longText").textContent = info?.long_text ?? "—";
+      document.getElementById("longText").textContent = info?.description ?? "—";
     }
 
     function renderMedia(imgs) {
@@ -446,7 +837,6 @@
       grid.innerHTML = "";
 
       const list = Array.isArray(imgs) ? imgs : [];
-
       const final = list.length ? list : ["__placeholder_1__", "__placeholder_2__"];
 
       final.forEach((filename, idx) => {
@@ -469,43 +859,62 @@
       });
     }
 
+    function renderArticle(article) {
+      const card = document.getElementById("articleCard");
+      const val = document.getElementById("articleValue");
+      if (!card || !val) return;
+
+      const hasValue = article !== null && article !== undefined && String(article).trim() !== "";
+      if (!hasValue) {
+        card.style.display = "none";
+        return;
+      }
+
+      card.style.display = "block";
+      val.textContent = `#${article}`;
+    }
     function categoryToType(category) {
       const c = (category || "").toLowerCase();
       if (c === "channels") return "channel";
       if (c === "ads") return "ad";
       if (c === "traffic") return "traffic";
-      if (c === "accounts") return "account";
-      return "channel"; // дефолт
+      return "channel";
     }
 
     function getPlaceholderData() {
       const type = categoryToType(qs("category"));
 
-      const base = {
-        seller: {
-          name: "Humble Eagle",
-          avatar_filename: "", // будет буква
-          deals_count: 0,
-          success_deals_percent: 0
-        },
+      const baseSeller = {
+        name: "Humble Eagle",
+        avatar_filename: "",
+        deals_count: 0,
+        success_deals_percent: 0,
+        rating: 0
+      };
+
+      const common = {
+        seller: baseSeller,
+        article: 0,
         title: "---",
-        price: 0,
-        long_text:
-          "Описание заглушка",
-        imgs: ["__placeholder_1__", "__placeholder_2__"]
+        description: "Описание заглушка",
+        imgs: ["__placeholder_1__", "__placeholder_2__"],
       };
 
       if (type === "channel") {
         return {
           type,
           announ_info: {
-            ...base,
+            ...common,
+            channel_link: "https://t.me/...",
+            price: 0,
             topic: "---",
             chn_type: "---",
-            country: "---",
+            country: "Россия",
             subs_count: 0,
             cover_count: 0,
-            profit: 0
+            profit: 0,
+            on_requests: false,
+            author: false
           }
         };
       }
@@ -514,10 +923,12 @@
         return {
           type,
           announ_info: {
-            ...base,
+            ...common,
+            channel_link: "https://t.me/...",
             topic: "---",
-            country: "---",
-            cover: 0,
+            country: "Россия",
+            subs_count: 0,
+            cover_count: 0,
             cpm: 0,
             er: 0
           }
@@ -528,31 +939,22 @@
         return {
           type,
           announ_info: {
-            ...base,
+            ...common,
+            price: 0,
             topic: "---",
             platform: "---",
             traffic_type: "---",
-            audience_type: "0-100",
-            country: "---"
+            audience_type: "---",
+            country: "Россия",
+            min_leads: 0,
+            max_leads: 0
           }
         };
       }
 
-      return {
-        type,
-        announ_info: {
-          ...base,
-          country: "---",
-          log_type: "---",
-          idle_time: "---",
-          acc_type: "---",
-          premium: "---",
-          stars_count: 0,
-          gifts: true,
-          tg_level: 0
-        }
-      };
+      return { type: "channel", announ_info: { ...common } };
     }
+
     async function loadAnnoun() {
       const announId = qs("announ_id");
 
@@ -562,7 +964,8 @@
         renderAnnounRows(demo.type, demo.announ_info);
         renderDescription(demo.announ_info);
         renderMedia(demo.announ_info.imgs);
-
+        loadPriceChart("mock", demo.type, demo.announ_info?.channel_link);
+        renderArticle(demo.announ_info.article);
         document.getElementById("payBtn").onclick = () => alert("Заглушка");
         document.getElementById("contactBtn").onclick = () => alert("Заглушка");
         return;
@@ -579,6 +982,8 @@
           renderAnnounRows(demo.type, demo.announ_info);
           renderDescription(demo.announ_info);
           renderMedia(demo.announ_info.imgs);
+          document.getElementById("chartsBlock").style.display = "none";
+          renderArticle(demo.announ_info.article);
           return;
         }
 
@@ -589,6 +994,8 @@
         renderAnnounRows(type, info);
         renderDescription(info);
         renderMedia(info.imgs);
+        loadPriceChart(announId, type, info?.channel_link);
+        renderArticle(info.article);
 
         const payLink = PAY_LINK_TEMPLATE.replace("{announ_id}", encodeURIComponent(announId));
         document.getElementById("payBtn").onclick = () => window.open(payLink, "_blank");
@@ -611,6 +1018,304 @@
       if (category) u.searchParams.set("category", category);
       document.getElementById("backBtn").setAttribute("href", u.pathname + u.search);
     })();
+
+    const CURRENCY = '$';
+
+    function formatMainUSD(v){
+      if (v === null || v === undefined || Number.isNaN(Number(v))) return "—";
+      return `${formatNumber(Number(v))}${CURRENCY}`;
+    }
+
+    function formatDeltaUSD(v){
+      if (v === null || v === undefined) return "—";
+      const s = String(v).trim();
+      if (!s) return "—";
+      const hasSign = s.startsWith("+") || s.startsWith("-");
+      return `${hasSign ? s : `+${s}`}${CURRENCY}`;
+    }
+
+    function sortPoints(points){
+      return [...points].sort((a,b)=> new Date(a.period) - new Date(b.period));
+    }
+
+    function buildSmoothPath(points){
+      if (points.length < 2){
+        return points.length ? `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}` : "";
+      }
+
+      const tangents = points.map((p, i) => {
+        if (i === 0) return (points[1].y - p.y) / (points[1].x - p.x);
+        if (i === points.length - 1) return (p.y - points[i-1].y) / (p.x - points[i-1].x);
+        return (points[i+1].y - points[i-1].y) / (points[i+1].x - points[i-1].x);
+      });
+
+      let path = `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+      for (let i=0;i<points.length-1;i++){
+        const cur = points[i], next = points[i+1];
+        const dx = next.x - cur.x;
+        const c1x = cur.x + dx/3;
+        const c2x = next.x - dx/3;
+        const c1y = cur.y + tangents[i]*dx/3;
+        const c2y = next.y - tangents[i+1]*dx/3;
+        path += ` C ${c1x.toFixed(2)} ${c1y.toFixed(2)}, ${c2x.toFixed(2)} ${c2y.toFixed(2)}, ${next.x.toFixed(2)} ${next.y.toFixed(2)}`;
+      }
+      return path;
+    }
+
+    function buildChartPath(points, width, height, padding, valueGetter){
+      const safe = (points||[])
+        .filter(p => p && p.period)
+        .map(p => ({ period: p.period, value: valueGetter(p) }))
+        .filter(p => p.value !== null && p.value !== undefined && !Number.isNaN(Number(p.value)));
+
+      const normalized = sortPoints(safe);
+      if (!normalized.length) return { line:"", area:"" };
+
+      const values = normalized.map(p => Number(p.value));
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const range = (max - min) || 1;
+
+      const stepX = normalized.length === 1 ? 0 : (width - padding.left - padding.right) / (normalized.length - 1);
+      const floorY = height - padding.bottom;
+      const topY = padding.top;
+
+      const coords = normalized.map((p, idx)=>{
+        const x = padding.left + stepX * idx;
+        const norm = (Number(p.value) - min) / range;
+        const y = floorY - norm * (floorY - topY) * 0.82;
+        return {x,y};
+      });
+
+      const line = buildSmoothPath(coords);
+      const area = `${line} L ${coords[coords.length-1].x.toFixed(2)} ${floorY.toFixed(2)} L ${coords[0].x.toFixed(2)} ${floorY.toFixed(2)} Z`;
+      return { line, area };
+    }
+
+    async function loadPriceChart(announId, type, channelLink){
+      const block = document.getElementById("chartsBlock");
+      const toggle = document.getElementById("tgstatToggle");
+
+      block.style.display = "block";
+
+      const canTgstat = (type === "channel" || type === "ad");
+      toggle.classList.toggle("hidden", !canTgstat);
+
+      try{
+        let payload;
+
+        if (USE_MOCK_CHARTS) {
+          payload = MOCK_PRICE_CHART;
+        } else {
+          const url = `${API_BASE}${PRICE_CHART_ENDPOINT}?announ_id=${encodeURIComponent(announId)}`;
+          const res = await fetch(url);
+          payload = await res.json();
+        }
+
+        const currentNode = document.getElementById("priceCurrent");
+        currentNode.textContent = formatMainUSD(payload.current_value);
+        currentNode.classList.toggle("compact", currentNode.textContent.length > 7);
+
+        document.getElementById("priceYesterday").textContent = formatDeltaUSD(payload.yesterday_delta);
+        document.getElementById("priceWeek").textContent = formatDeltaUSD(payload.week_delta);
+        document.getElementById("priceMonth").textContent = formatDeltaUSD(payload.month_delta);
+
+        const line = document.getElementById("priceLinePath");
+        const area = document.getElementById("priceAreaPath");
+
+        const paths = buildChartPath(payload.points || [], 180, 124, {top:18,right:10,bottom:18,left:22}, p => p.value);
+        line.setAttribute("d", paths.line);
+        area.setAttribute("d", paths.area);
+
+      }catch(e){
+        document.getElementById("priceCurrent").textContent = "—";
+        document.getElementById("priceYesterday").textContent = "—";
+        document.getElementById("priceWeek").textContent = "—";
+        document.getElementById("priceMonth").textContent = "—";
+        document.getElementById("priceLinePath").setAttribute("d","");
+        document.getElementById("priceAreaPath").setAttribute("d","");
+      }
+
+      let tgLoaded = false;
+      let tgOpen = false;
+
+      toggle.onclick = async () => {
+        if (!canTgstat) return;
+
+        const tgBox = document.getElementById("tgstatCharts");
+        if (tgOpen){
+          tgBox.style.display = "none";
+          tgOpen = false;
+          toggle.classList.add("open");
+          return;
+        }
+
+        tgBox.style.display = "block";
+        tgOpen = true;
+        toggle.classList.remove("open");
+
+        if (tgLoaded) return;
+
+        tgBox.innerHTML = `<div class="tgstat-wrap">${Array.from({length:6}).map(()=>`
+          <div class="chart-card">
+            <div class="chart-content">
+              <div>
+                <div class="skeleton value-skeleton"></div>
+                <div class="chart-metrics">
+                  <div class="skeleton metric-skeleton"></div>
+                  <div class="skeleton metric-skeleton"></div>
+                  <div class="skeleton metric-skeleton"></div>
+                </div>
+              </div>
+              <div class="chart-wrap" style="margin:0 10px 0 0;">
+                <div class="skeleton chart-skeleton"></div>
+              </div>
+            </div>
+          </div>
+        `).join("")}</div>`;
+
+        try{
+          let charts;
+
+          if (USE_MOCK_CHARTS) {
+            await new Promise(r => setTimeout(r, 1200));
+            charts = MOCK_TGSTAT_CHARTS;
+          } else {
+            const tgUrl = `${API_BASE}${TGSTAT_CHARTS_ENDPOINT}?channel_link=${encodeURIComponent(channelLink || "")}`;
+            const r = await fetch(tgUrl);
+            charts = await r.json();
+          }
+
+          renderTgstatCharts(charts);
+          tgLoaded = true;
+
+          renderTgstatCharts(charts);
+          tgLoaded = true;
+
+        }catch(err){
+          tgBox.innerHTML = `<div class="tgstat-wrap"><div class="card"><div class="desc">Не удалось загрузить графики TGStat</div></div></div>`;
+        }
+      };
+    }
+
+    function tgTitleRu(key){
+      const map = {
+        "subscribers": "Подписчики",
+        "views": "Просмотры",
+        "avg-posts-reach": "Средний охват",
+        "er": "ER",
+        "err": "ERR",
+        "err24": "ERR24"
+      };
+      return map[key] || key;
+    }
+
+    function tgPointValueGetter(title){
+      const map = {
+        "subscribers": (p)=>p.participants_count,
+        "views": (p)=>p.views_count,
+        "avg-posts-reach": (p)=>p.avg_posts_reach,
+        "er": (p)=>p.er,
+        "err": (p)=>p.err,
+        "err24": (p)=>p.err24,
+      };
+      return map[title] || ((p)=>p.value);
+    }
+
+    function renderTgstatCharts(charts){
+      const tgBox = document.getElementById("tgstatCharts");
+      const wrap = document.createElement("div");
+      wrap.className = "tgstat-wrap";
+
+      (charts || []).forEach((c) => {
+        const card = document.createElement("div");
+        card.className = "chart-card";
+
+        const content = document.createElement("div");
+        content.className = "chart-content";
+
+        const left = document.createElement("div");
+        const value = document.createElement("div");
+        value.className = "chart-value";
+        value.style.fontSize = "36px";
+        value.textContent = (c?.current_value === null || c?.current_value === undefined) ? "—" : `${formatNumber(c.current_value)}`;
+
+        const metrics = document.createElement("div");
+        metrics.className = "chart-metrics";
+        metrics.innerHTML = `
+          <div class="chart-metric"><span class="chart-metric-value">${formatDeltaUSD(c?.yesterday_delta)}</span><span class="chart-metric-label">за вчера</span></div>
+          <div class="chart-metric"><span class="chart-metric-value">${formatDeltaUSD(c?.week_delta)}</span><span class="chart-metric-label">за неделю</span></div>
+          <div class="chart-metric"><span class="chart-metric-value">${formatDeltaUSD(c?.month_delta)}</span><span class="chart-metric-label">за месяц</span></div>
+        `;
+
+        const label = document.createElement("div");
+        label.className = "section-title";
+        label.style.margin = "0 0 8px 6px";
+        label.textContent = tgTitleRu(c?.title);
+
+        left.appendChild(label);
+        left.appendChild(value);
+        left.appendChild(metrics);
+
+        const right = document.createElement("div");
+        right.className = "chart-wrap";
+        right.style.margin = "0 10px -10px 0";
+
+        const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+        svg.setAttribute("viewBox","0 0 180 124");
+        svg.setAttribute("preserveAspectRatio","none");
+
+        const defs = document.createElementNS("http://www.w3.org/2000/svg","defs");
+        const grad = document.createElementNS("http://www.w3.org/2000/svg","linearGradient");
+        const gid = `areaGradient_${Math.random().toString(16).slice(2)}`;
+        grad.setAttribute("id", gid);
+        grad.setAttribute("x1","0"); grad.setAttribute("y1","0"); grad.setAttribute("x2","0"); grad.setAttribute("y2","1");
+
+        const s1 = document.createElementNS("http://www.w3.org/2000/svg","stop");
+        s1.setAttribute("offset","0%"); s1.setAttribute("stop-color","#4b78ff"); s1.setAttribute("stop-opacity","0.22");
+        const s2 = document.createElementNS("http://www.w3.org/2000/svg","stop");
+        s2.setAttribute("offset","100%"); s2.setAttribute("stop-color","#4b78ff"); s2.setAttribute("stop-opacity","0.02");
+
+        grad.appendChild(s1); grad.appendChild(s2);
+        defs.appendChild(grad);
+        svg.appendChild(defs);
+
+        const area = document.createElementNS("http://www.w3.org/2000/svg","path");
+        area.setAttribute("class","chart-area");
+        area.setAttribute("fill",`url(#${gid})`);
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg","path");
+        line.setAttribute("class","chart-line");
+
+        svg.appendChild(area);
+        svg.appendChild(line);
+        right.appendChild(svg);
+
+        content.appendChild(left);
+        content.appendChild(right);
+        card.appendChild(content);
+        wrap.appendChild(card);
+
+        const getter = tgPointValueGetter(c?.title);
+        const paths = buildChartPath(c?.points || [], 180, 124, {top:18,right:10,bottom:18,left:22}, getter);
+        line.setAttribute("d", paths.line);
+        area.setAttribute("d", paths.area);
+      });
+
+      const collapse = document.createElement("div");
+      collapse.className = "tgstat-collapse";
+      collapse.innerHTML = `<button type="button" aria-label="Свернуть">⌃</button>`;
+      collapse.querySelector("button").onclick = () => {
+        document.getElementById("tgstatCharts").style.display = "none";
+        const t = document.getElementById("tgstatToggle");
+        t.textContent = "⌄";
+      };
+
+      wrap.appendChild(collapse);
+
+      tgBox.innerHTML = "";
+      tgBox.appendChild(wrap);
+    }
 
     loadAnnoun();
   </script>

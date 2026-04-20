@@ -14,9 +14,7 @@ class ChartsData:
     endpoints = ("subscribers", "views", "avg-posts-reach", "er", "err", "err24")
     current_value_map = {
         "subscribers": "participants_count",
-        "views": "daily_reach",
         "avg-posts-reach": "avg_post_reach",
-        "er": "er_percent",
         "err": "err_percent",
         "err24": "err24_percent",
     }

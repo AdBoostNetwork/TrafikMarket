@@ -328,14 +328,24 @@
       -webkit-mask: url("../icons/chart-toggle-arrow.png") center / contain no-repeat;
       mask: url("../icons/chart-toggle-arrow.png") center / contain no-repeat;
       transform-origin: 50% 50%;
+      transform: rotate(180deg);
       transition: transform 120ms ease, background-color 120ms ease;
     }
 
     .chart-toggle.open::before{
-      transform: scaleY(-1);
+      transform: rotate(0deg);
     }
 
     .chart-toggle.hidden{ display:none; }
+
+    .chart-toggle-inline{
+      position: static;
+      left: auto;
+      bottom: auto;
+      transform: none;
+      width: 40px;
+      height: 30px;
+    }
 
     .tgstat-wrap{
       margin-top: 12px;
@@ -1135,6 +1145,7 @@
     async function loadPriceChart(announId, type, channelLink){
       const block = document.getElementById("chartsBlock");
       const toggle = document.getElementById("tgstatToggle");
+      const tgBox = document.getElementById("tgstatCharts");
 
       block.style.display = "block";
 
@@ -1180,20 +1191,21 @@
       let tgOpen = false;
       toggle.classList.remove("open");
 
+      const setTgState = (isOpen) => {
+        tgOpen = isOpen;
+        tgBox.style.display = isOpen ? "block" : "none";
+        toggle.classList.toggle("open", isOpen);
+      };
+
       toggle.onclick = async () => {
         if (!canTgstat) return;
 
-        const tgBox = document.getElementById("tgstatCharts");
         if (tgOpen){
-          tgBox.style.display = "none";
-          tgOpen = false;
-          toggle.classList.remove("open");
+          setTgState(false);
           return;
         }
 
-        tgBox.style.display = "block";
-        tgOpen = true;
-        toggle.classList.add("open");
+        setTgState(true);
 
         if (tgLoaded) return;
 
@@ -1345,12 +1357,9 @@
 
       const collapse = document.createElement("div");
       collapse.className = "tgstat-collapse";
-      collapse.innerHTML = `<button type="button" aria-label="Свернуть">⌃</button>`;
+      collapse.innerHTML = `<button type="button" class="chart-toggle chart-toggle-inline open" aria-label="Свернуть"></button>`;
       collapse.querySelector("button").onclick = () => {
-        document.getElementById("tgstatCharts").style.display = "none";
-        const t = document.getElementById("tgstatToggle");
-        t.classList.remove("open");
-        tgOpen = false;
+        document.getElementById("tgstatToggle")?.click();
       };
 
       wrap.appendChild(collapse);

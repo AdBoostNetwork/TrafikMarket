@@ -26,6 +26,7 @@
 | `bad_marks` | `integer` | да | `0` | Количество отрицательных оценок |
 | `reg_date` | `date` | да | `—` | Дата регистрации |
 | `vip_status` | `integer` | да | `0` | VIP-статус |
+| `theme_mode` | `boolean` | да | `—` | Выбранная тема интерфейса (`false` — светлая, `true` — тёмная) |
 | `deals_summ` | `numeric(10,2)` | да | `0` | Сумма сделок |
 | `frozen_balance` | `numeric(10,2)` | да | `0` | Замороженный баланс |
 | `was_online` | `timestamp with time zone` | да | `—` | Время последней активности пользователя |

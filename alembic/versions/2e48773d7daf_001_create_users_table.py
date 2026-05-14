@@ -34,6 +34,7 @@ def upgrade() -> None:
             bad_marks INTEGER NOT NULL DEFAULT 0,
             reg_date DATE NOT NULL,
             vip_status INTEGER NOT NULL DEFAULT 0,
+            theme_mode BOOLEAN NOT NULL,
             deals_summ NUMERIC(10,2) NOT NULL DEFAULT 0,
             frozen_balance NUMERIC(10,2) NOT NULL DEFAULT 0,
             was_online TIMESTAMP WITH TIME ZONE NOT NULL,

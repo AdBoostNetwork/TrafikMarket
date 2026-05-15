@@ -40,6 +40,10 @@
 
 Создаёт таблицы `tg_ads` и `tg_ads_prices` (реклама в единичных Telegram-каналах).
 
+### `010_create_tg_net_ads`
+
+Создаёт таблицы `tg_net_ads`, `tg_net_ads_links`, `tg_net_ads_prices`, `tg_net_ads_topics`, `tg_net_ads_countries` (реклама в сетях Telegram-каналов).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -424,7 +428,96 @@
 | `PRIMARY KEY` | `tg_ads_prices_pkey` | `id` |
 | `FOREIGN KEY` | `tg_ads_prices_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES tg_ads(ad_id) ON DELETE CASCADE` |
 
-### 20 `images`
+### 20 `tg_net_ads`
+
+Параметры объявлений типа «реклама в сети Telegram-каналов». Связана 1:1 с `announs`. Ссылки, цены, тематики и страны вынесены в отдельные таблицы.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `subs_count` | `integer` | да | `—` | Суммарное количество подписчиков |
+| `cover_count` | `numeric(10,2)` | да | `—` | Суммарный охват сети |
+| `err` | `numeric(10,2)` | нет | `—` | ERR |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_net_ads_pkey` | `ad_id` |
+| `FOREIGN KEY` | `tg_net_ads_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 21 `tg_net_ads_links`
+
+Ссылки на каналы внутри рекламной сети. Метки задаются на уровне каждого канала.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `tg_net_ads.ad_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+| `red_label` | `boolean` | да | `false` | Красная метка |
+| `black_label` | `boolean` | да | `false` | Чёрная метка |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_net_ads_links_pkey` | `id` |
+| `FOREIGN KEY` | `tg_net_ads_links_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES tg_net_ads(ad_id) ON DELETE CASCADE` |
+
+### 22 `tg_net_ads_prices`
+
+Цены по форматам размещения рекламы в сети. Формат — произвольная строка.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `tg_net_ads.ad_id`) |
+| `format` | `text` | да | `—` | Формат размещения |
+| `price` | `numeric(10,2)` | да | `—` | Цена за формат |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_net_ads_prices_pkey` | `id` |
+| `FOREIGN KEY` | `tg_net_ads_prices_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES tg_net_ads(ad_id) ON DELETE CASCADE` |
+
+### 23 `tg_net_ads_topics`
+
+Тематики рекламной сети. Связь многие-ко-многим между `tg_net_ads` и `topics`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `tg_net_ads.ad_id`) |
+| `topic_id` | `integer` | да | `—` | ID тематики (FK → `topics.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_net_ads_topics_pkey` | `(ad_id, topic_id)` |
+| `FOREIGN KEY` | `tg_net_ads_topics_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES tg_net_ads(ad_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `tg_net_ads_topics_topic_id_fkey` | `FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE` |
+
+### 24 `tg_net_ads_countries`
+
+Страны рекламной сети. Связь многие-ко-многим между `tg_net_ads` и `countries`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `tg_net_ads.ad_id`) |
+| `country_id` | `integer` | да | `—` | ID страны (FK → `countries.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_net_ads_countries_pkey` | `(ad_id, country_id)` |
+| `FOREIGN KEY` | `tg_net_ads_countries_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES tg_net_ads(ad_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `tg_net_ads_countries_country_id_fkey` | `FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE` |
+
+### 25 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

@@ -36,6 +36,10 @@
 
 Создаёт таблицы `max_chns_nets`, `max_chns_nets_links`, `max_chns_nets_topics` (сети каналов MAX).
 
+### `009_create_tg_ads`
+
+Создаёт таблицы `tg_ads` и `tg_ads_prices` (реклама в единичных Telegram-каналах).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -377,7 +381,50 @@
 | `FOREIGN KEY` | `max_chns_nets_topics_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES max_chns_nets(net_announ_id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `max_chns_nets_topics_topic_id_fkey` | `FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE` |
 
-### 18 `images`
+### 18 `tg_ads`
+
+Параметры объявлений типа «реклама в единичном Telegram-канале». Связана 1:1 с `announs`. Цены по форматам размещения вынесены в `tg_ads_prices`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+| `topic` | `integer` | да | `—` | Тематика (FK → `topics.id`) |
+| `country` | `integer` | да | `—` | Страна (FK → `countries.id`) |
+| `subs_count` | `integer` | да | `—` | Количество подписчиков |
+| `cover_count` | `numeric(10,2)` | да | `—` | Охват канала |
+| `err` | `numeric(10,2)` | нет | `—` | ERR |
+| `red_label` | `boolean` | да | `false` | Красная метка |
+| `black_label` | `boolean` | да | `false` | Чёрная метка |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_ads_pkey` | `ad_id` |
+| `FOREIGN KEY` | `tg_ads_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `tg_ads_topic_fkey` | `FOREIGN KEY (topic) REFERENCES topics(id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `tg_ads_country_fkey` | `FOREIGN KEY (country) REFERENCES countries(id) ON DELETE CASCADE` |
+
+### 19 `tg_ads_prices`
+
+Цены по форматам размещения рекламы. Формат — произвольная строка (например, `1/24`, `1/48`). Одно объявление может иметь несколько форматов с разными ценами.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `tg_ads.ad_id`) |
+| `format` | `text` | да | `—` | Формат размещения |
+| `price` | `numeric(10,2)` | да | `—` | Цена за формат |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_ads_prices_pkey` | `id` |
+| `FOREIGN KEY` | `tg_ads_prices_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES tg_ads(ad_id) ON DELETE CASCADE` |
+
+### 20 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

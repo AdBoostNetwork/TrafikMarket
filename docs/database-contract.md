@@ -60,6 +60,10 @@
 
 Создаёт таблицы `stories_nets`, `stories_nets_links`, `stories_nets_prices`, `stories_nets_topics`, `stories_nets_countries` (реклама через сторис в сетях Telegram-каналов).
 
+### `015_create_traffic`
+
+Создаёт таблицу `traffic` (объявления трафика).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -774,7 +778,35 @@
 | `FOREIGN KEY` | `stories_nets_countries_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES stories_nets(story_id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `stories_nets_countries_country_id_fkey` | `FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE` |
 
-### 38 `images`
+### 38 `traffic`
+
+Параметры объявлений типа «трафик». Связана 1:1 с `announs`. Все атрибуты — ссылки на справочники.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `traffic_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `price` | `numeric(10,2)` | да | `—` | Цена за подписчика |
+| `min_subs` | `integer` | да | `—` | Минимальное количество подписчиков |
+| `max_subs` | `integer` | да | `—` | Максимальное количество подписчиков |
+| `topic` | `integer` | да | `—` | Тематика (FK → `topics.id`) |
+| `country` | `integer` | да | `—` | Страна (FK → `countries.id`) |
+| `platform` | `integer` | да | `—` | Платформа трафика (FK → `platforms.id`) |
+| `type` | `integer` | да | `—` | Тип трафика (FK → `traffic_types.id`) |
+| `auditory` | `integer` | да | `—` | Тип аудитории (FK → `audience_types.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `traffic_pkey` | `traffic_id` |
+| `FOREIGN KEY` | `traffic_traffic_id_fkey` | `FOREIGN KEY (traffic_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `traffic_topic_fkey` | `FOREIGN KEY (topic) REFERENCES topics(id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `traffic_country_fkey` | `FOREIGN KEY (country) REFERENCES countries(id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `traffic_platform_fkey` | `FOREIGN KEY (platform) REFERENCES platforms(id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `traffic_type_fkey` | `FOREIGN KEY (type) REFERENCES traffic_types(id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `traffic_auditory_fkey` | `FOREIGN KEY (auditory) REFERENCES audience_types(id) ON DELETE CASCADE` |
+
+### 39 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

@@ -28,9 +28,17 @@
 
 Создаёт таблицы `tg_chns_nets`, `tg_chns_nets_links`, `tg_chns_nets_topics`, `tg_chns_nets_countries` (сети Telegram-каналов).
 
-## 2. Таблицы и поля
+### `007_create_max_channels`
 
-### 2.1 `users`
+Создаёт таблицу `max_channels` (единичные каналы MAX).
+
+### `008_create_max_chns_nets`
+
+Создаёт таблицы `max_chns_nets`, `max_chns_nets_links`, `max_chns_nets_topics` (сети каналов MAX).
+
+## 2. Спецификация таблиц
+
+### 1. `users`
 
 Пользователи платформы. Основная сущность — регистрируется при первом обращении к боту. Хранит финансовый профиль (балансы), репутацию (оценки), реферальную принадлежность и метаданные аккаунта.
 
@@ -60,7 +68,7 @@
 | `PRIMARY KEY` | `users_pkey` | `user_id` |
 | `FOREIGN KEY` | `users_referrer_id_fkey` | `FOREIGN KEY (referrer_id) REFERENCES users(user_id) ON DELETE CASCADE` |
 
-### 2.2 `countries`
+### 2 `countries`
 
 Справочник стран. Используется для геотаргетинга объявлений.
 
@@ -76,7 +84,7 @@
 | `PRIMARY KEY` | `countries_pkey` | `id` |
 | `UNIQUE` | `countries_country_name_key` | `country_name` |
 
-### 2.3 `topics`
+### 3 `topics`
 
 Справочник тематик. Используется для классификации объявлений по тематике контента.
 
@@ -92,7 +100,7 @@
 | `PRIMARY KEY` | `topics_pkey` | `id` |
 | `UNIQUE` | `topics_topic_name_key` | `topic_name` |
 
-### 2.4 `platforms`
+### 4 `platforms`
 
 Справочник платформ трафика. Используется для указания источника трафика в объявлениях.
 
@@ -108,7 +116,7 @@
 | `PRIMARY KEY` | `platforms_pkey` | `id` |
 | `UNIQUE` | `platforms_platform_name_key` | `platform_name` |
 
-### 2.5 `traffic_types`
+### 5 `traffic_types`
 
 Справочник типов трафика (прямой пост, инвайтинг, таргет и др.). Используется в объявлениях типа «трафик».
 
@@ -124,7 +132,7 @@
 | `PRIMARY KEY` | `traffic_types_pkey` | `id` |
 | `UNIQUE` | `traffic_types_traffic_type_name_key` | `traffic_type_name` |
 
-### 2.6 `audience_types`
+### 6 `audience_types`
 
 Справочник типов аудитории (мца, жца, смешанная). Используется в объявлениях типа «трафик».
 
@@ -140,7 +148,7 @@
 | `PRIMARY KEY` | `audience_types_pkey` | `id` |
 | `UNIQUE` | `audience_types_type_name_key` | `type_name` |
 
-### 2.7 `announ_types`
+### 7 `announ_types`
 
 Справочник типов объявлений (каналы, реклама, трафик и их разновидности по платформам). Расширяется по мере добавления новых типов.
 
@@ -156,7 +164,7 @@
 | `PRIMARY KEY` | `announ_types_pkey` | `id` |
 | `UNIQUE` | `announ_types_type_name_key` | `type_name` |
 
-### 2.8 `announs`
+### 8 `announs`
 
 Базовая сущность объявления. Хранит общие поля для всех типов объявлений. Детальные параметры вынесены в отдельные таблицы, связанные с `announ_id`. Артикул (`article`) — человекочитаемый идентификатор для отображения пользователю и поиска через бот.
 
@@ -180,7 +188,7 @@
 | `FOREIGN KEY` | `announs_seller_id_fkey` | `FOREIGN KEY (seller_id) REFERENCES users(user_id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `announs_type_fkey` | `FOREIGN KEY (type) REFERENCES announ_types(id) ON DELETE CASCADE` |
 
-### 2.9 `tg_channels`
+### 9 `tg_channels`
 
 Параметры объявлений типа «единичный Telegram-канал». Связана 1:1 с `announs` через `chn_announ_id`.
 
@@ -211,7 +219,7 @@
 | `FOREIGN KEY` | `tg_channels_topic_fkey` | `FOREIGN KEY (topic) REFERENCES topics(id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `tg_channels_country_fkey` | `FOREIGN KEY (country) REFERENCES countries(id) ON DELETE CASCADE` |
 
-### 2.10 `tg_chns_nets`
+### 10 `tg_chns_nets`
 
 Параметры объявлений типа «сеть Telegram-каналов». Связана 1:1 с `announs`. Ссылки, тематики и страны вынесены в отдельные таблицы.
 
@@ -233,7 +241,7 @@
 | `PRIMARY KEY` | `tg_chns_nets_pkey` | `net_announ_id` |
 | `FOREIGN KEY` | `tg_chns_nets_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
 
-### 2.11 `tg_chns_nets_links`
+### 11 `tg_chns_nets_links`
 
 Ссылки на отдельные каналы внутри сети. Метки `red_label` и `black_label` задаются на уровне каждого канала.
 
@@ -252,7 +260,7 @@
 | `PRIMARY KEY` | `tg_chns_nets_links_pkey` | `id` |
 | `FOREIGN KEY` | `tg_chns_nets_links_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES tg_chns_nets(net_announ_id) ON DELETE CASCADE` |
 
-### 2.12 `tg_chns_nets_topics`
+### 12 `tg_chns_nets_topics`
 
 Тематики сети каналов. Связь многие-ко-многим между `tg_chns_nets` и `topics`.
 
@@ -269,7 +277,7 @@
 | `FOREIGN KEY` | `tg_chns_nets_topics_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES tg_chns_nets(net_announ_id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `tg_chns_nets_topics_topic_id_fkey` | `FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE` |
 
-### 2.13 `tg_chns_nets_countries`
+### 13 `tg_chns_nets_countries`
 
 Страны сети каналов. Связь многие-ко-многим между `tg_chns_nets` и `countries`.
 
@@ -286,7 +294,90 @@
 | `FOREIGN KEY` | `tg_chns_nets_countries_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES tg_chns_nets(net_announ_id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `tg_chns_nets_countries_country_id_fkey` | `FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE` |
 
-### 2.14 `images`
+### 14 `max_channels`
+
+Параметры объявлений типа «единичный канал MAX». Связана 1:1 с `announs` через `chn_announ_id`. В отличие от `tg_channels` не имеет поля страны и меток.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `chn_announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+| `price` | `numeric(10,2)` | да | `—` | Цена канала |
+| `chn_type` | `boolean` | нет | `—` | Тип канала |
+| `topic` | `integer` | да | `—` | Тематика (FK → `topics.id`) |
+| `subs_count` | `integer` | нет | `—` | Количество подписчиков |
+| `cover_count` | `numeric(10,2)` | нет | `—` | Охват канала |
+| `err` | `numeric(10,2)` | нет | `—` | ERR |
+| `profitability` | `numeric(10,2)` | нет | `—` | Доходность |
+| `on_requests` | `boolean` | да | `—` | Принимает заявки |
+| `requests_count` | `integer` | нет | `—` | Количество заявок |
+| `author` | `boolean` | да | `—` | Авторский канал |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_channels_pkey` | `chn_announ_id` |
+| `FOREIGN KEY` | `max_channels_chn_announ_id_fkey` | `FOREIGN KEY (chn_announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `max_channels_topic_fkey` | `FOREIGN KEY (topic) REFERENCES topics(id) ON DELETE CASCADE` |
+
+### 15 `max_chns_nets`
+
+Параметры объявлений типа «сеть каналов MAX». Связана 1:1 с `announs`. В отличие от `tg_chns_nets` не имеет таблицы стран и меток на ссылках.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `net_announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `price` | `numeric(10,2)` | да | `—` | Цена сети |
+| `subs_count` | `integer` | нет | `—` | Суммарное количество подписчиков |
+| `cover_count` | `numeric(10,2)` | нет | `—` | Суммарный охват сети |
+| `err` | `numeric(10,2)` | нет | `—` | ERR сети |
+| `profitability` | `numeric(10,2)` | нет | `—` | Доходность |
+| `on_requests` | `boolean` | да | `—` | Принимает заявки |
+| `requests_count` | `integer` | нет | `—` | Количество заявок |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_chns_nets_pkey` | `net_announ_id` |
+| `FOREIGN KEY` | `max_chns_nets_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 16 `max_chns_nets_links`
+
+Ссылки на отдельные каналы внутри сети MAX. Без меток.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `net_announ_id` | `integer` | да | `—` | ID объявления-сети (FK → `max_chns_nets.net_announ_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_chns_nets_links_pkey` | `id` |
+| `FOREIGN KEY` | `max_chns_nets_links_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES max_chns_nets(net_announ_id) ON DELETE CASCADE` |
+
+### 17 `max_chns_nets_topics`
+
+Тематики сети каналов MAX. Связь многие-ко-многим между `max_chns_nets` и `topics`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `net_announ_id` | `integer` | да | `—` | ID объявления-сети (FK → `max_chns_nets.net_announ_id`) |
+| `topic_id` | `integer` | да | `—` | ID тематики (FK → `topics.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_chns_nets_topics_pkey` | `(net_announ_id, topic_id)` |
+| `FOREIGN KEY` | `max_chns_nets_topics_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES max_chns_nets(net_announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `max_chns_nets_topics_topic_id_fkey` | `FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE` |
+
+### 18 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 
@@ -305,24 +396,4 @@
 
 ## 3. Начальные данные справочников
 
-Начальные значения добавляются миграцией `003_seed_dictionaries` (`0003_seed_dictionaries`).
-
-### 3.1 `countries`
-
-`Россия`, `Узбекистан`, `Казахстан`, `Украина`, `Беларусь`, `Индия`, `Китай`.
-
-### 3.2 `topics`
-
-`Telegram`, `Бизнес и стартапы`, `Блоги`, `Букмекерство`, `Видео и фильмы`, `Даркнет`, `Дизайн`, `Для взрослых`, `Другое`, `Еда и кулинария`, `Здоровье и Фитнес`, `Игры`, `Инстаграм`, `Интерьер и строительство`, `Искусство`, `Картинки и фото`, `Карьера`, `Книги`, `Криптовалюты`, `Курсы и гайды`, `Лингвистика`, `Маркетинг, PR, реклама`, `Медицина`, `Мода и красота`, `Музыка`, `Новости и СМИ`, `Образование`, `Общество`, `Познавательное`, `Политика`, `Право`, `Природа`, `Продажи`, `Психология`, `Путешествия`, `Религия`, `Рукоделие`, `Семья и дети`, `Софт и приложения`, `Спорт`, `Ставки и беттинг`, `Технологии`, `Транспорт`, `Цитаты`, `Шок-контент`, `Эзотерика`, `Экономика`, `Эротика`, `Юмор и развлечения`.
-
-### 3.3 `platforms`
-
-`Telegram`, `TikTok`, `VK`, `Like`, `YouTube`, `Instagram`, `FaceBook`, `X`, `MAX`.
-
-### 3.4 `traffic_types`
-
-`Прямой пост`, `Приветка`, `ОП`, `Мотивированный`, `Спам`, `Инвайтинг`, `Таргет`.
-
-### 3.5 `audience_types`
-
-`мца`, `жца`, `смешанная`.
+Начальные значения добавляются миграцией `003_seed_dictionaries`.

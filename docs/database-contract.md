@@ -2,7 +2,230 @@
 
 Техническая спецификация структуры базы данных PostgreSQL для проекта TrafikMarket.
 
-## 1. Миграции
+## Содержание
+
+- [1. Архитектурная схема базы данных](#1-архитектурная-схема-базы-данных)
+- [2. Спецификация миграций](#2-спецификация-миграций)
+- [3. Спецификация таблиц](#3-спецификация-таблиц)
+
+---
+
+## 1. Архитектурная схема базы данных
+
+```mermaid
+erDiagram
+    users {
+        bigint user_id PK
+    }
+    announs {
+        serial announ_id PK
+        bigint seller_id FK
+        integer type FK
+        bigint article UK
+    }
+    announ_types {
+        serial id PK
+        text type_name UK
+    }
+    images {
+        bigserial id PK
+        integer img_announ_id FK
+    }
+    topics { serial id PK }
+    countries { serial id PK }
+    platforms { serial id PK }
+    traffic_types { serial id PK }
+    audience_types { serial id PK }
+    rate { serial id PK }
+
+    tg_channels {
+        integer chn_announ_id PK
+        integer topic FK
+        integer country FK
+    }
+    tg_chns_nets { integer net_announ_id PK }
+    tg_chns_nets_links {
+        serial id PK
+        integer net_announ_id FK
+    }
+    tg_chns_nets_topics {
+        integer net_announ_id FK
+        integer topic_id FK
+    }
+    tg_chns_nets_countries {
+        integer net_announ_id FK
+        integer country_id FK
+    }
+
+    max_channels {
+        integer chn_announ_id PK
+        integer topic FK
+    }
+    max_chns_nets { integer net_announ_id PK }
+    max_chns_nets_links {
+        serial id PK
+        integer net_announ_id FK
+    }
+    max_chns_nets_topics {
+        integer net_announ_id FK
+        integer topic_id FK
+    }
+
+    tg_ads {
+        integer ad_id PK
+        integer topic FK
+        integer country FK
+    }
+    tg_ads_prices {
+        serial id PK
+        integer ad_id FK
+    }
+    tg_net_ads { integer ad_id PK }
+    tg_net_ads_links {
+        serial id PK
+        integer ad_id FK
+    }
+    tg_net_ads_prices {
+        serial id PK
+        integer ad_id FK
+    }
+    tg_net_ads_topics {
+        integer ad_id FK
+        integer topic_id FK
+    }
+    tg_net_ads_countries {
+        integer ad_id FK
+        integer country_id FK
+    }
+
+    max_ads {
+        integer ad_id PK
+        integer topic FK
+    }
+    max_ads_prices {
+        serial id PK
+        integer ad_id FK
+    }
+    max_net_ads { integer ad_id PK }
+    max_net_ads_links {
+        serial id PK
+        integer ad_id FK
+    }
+    max_net_ads_prices {
+        serial id PK
+        integer ad_id FK
+    }
+    max_net_ads_topics {
+        integer ad_id FK
+        integer topic_id FK
+    }
+
+    stories {
+        integer story_id PK
+        integer topic FK
+        integer country FK
+    }
+    stories_prices {
+        serial id PK
+        integer story_id FK
+    }
+    stories_nets { integer story_id PK }
+    stories_nets_links {
+        serial id PK
+        integer story_id FK
+    }
+    stories_nets_prices {
+        serial id PK
+        integer story_id FK
+    }
+    stories_nets_topics {
+        integer story_id FK
+        integer topic_id FK
+    }
+    stories_nets_countries {
+        integer story_id FK
+        integer country_id FK
+    }
+
+    traffic {
+        integer traffic_id PK
+        integer topic FK
+        integer country FK
+        integer platform FK
+        integer type FK
+        integer auditory FK
+    }
+
+    users ||--o{ announs : "продавец"
+    announs }o--|| announ_types : "тип"
+    announs ||--o{ images : "изображения"
+
+    announs ||--o| tg_channels : ""
+    tg_channels }o--|| topics : ""
+    tg_channels }o--|| countries : ""
+
+    announs ||--o| tg_chns_nets : ""
+    tg_chns_nets ||--o{ tg_chns_nets_links : ""
+    tg_chns_nets ||--o{ tg_chns_nets_topics : ""
+    tg_chns_nets ||--o{ tg_chns_nets_countries : ""
+    tg_chns_nets_topics }o--|| topics : ""
+    tg_chns_nets_countries }o--|| countries : ""
+
+    announs ||--o| max_channels : ""
+    max_channels }o--|| topics : ""
+
+    announs ||--o| max_chns_nets : ""
+    max_chns_nets ||--o{ max_chns_nets_links : ""
+    max_chns_nets ||--o{ max_chns_nets_topics : ""
+    max_chns_nets_topics }o--|| topics : ""
+
+    announs ||--o| tg_ads : ""
+    tg_ads }o--|| topics : ""
+    tg_ads }o--|| countries : ""
+    tg_ads ||--o{ tg_ads_prices : ""
+
+    announs ||--o| tg_net_ads : ""
+    tg_net_ads ||--o{ tg_net_ads_links : ""
+    tg_net_ads ||--o{ tg_net_ads_prices : ""
+    tg_net_ads ||--o{ tg_net_ads_topics : ""
+    tg_net_ads ||--o{ tg_net_ads_countries : ""
+    tg_net_ads_topics }o--|| topics : ""
+    tg_net_ads_countries }o--|| countries : ""
+
+    announs ||--o| max_ads : ""
+    max_ads }o--|| topics : ""
+    max_ads ||--o{ max_ads_prices : ""
+
+    announs ||--o| max_net_ads : ""
+    max_net_ads ||--o{ max_net_ads_links : ""
+    max_net_ads ||--o{ max_net_ads_prices : ""
+    max_net_ads ||--o{ max_net_ads_topics : ""
+    max_net_ads_topics }o--|| topics : ""
+
+    announs ||--o| stories : ""
+    stories }o--|| topics : ""
+    stories }o--|| countries : ""
+    stories ||--o{ stories_prices : ""
+
+    announs ||--o| stories_nets : ""
+    stories_nets ||--o{ stories_nets_links : ""
+    stories_nets ||--o{ stories_nets_prices : ""
+    stories_nets ||--o{ stories_nets_topics : ""
+    stories_nets ||--o{ stories_nets_countries : ""
+    stories_nets_topics }o--|| topics : ""
+    stories_nets_countries }o--|| countries : ""
+
+    announs ||--o| traffic : ""
+    traffic }o--|| topics : ""
+    traffic }o--|| countries : ""
+    traffic }o--|| platforms : ""
+    traffic }o--|| traffic_types : ""
+    traffic }o--|| audience_types : ""
+```
+
+---
+
+## 2. Спецификация миграций
 
 ### `001_create_users_table`
 
@@ -68,7 +291,7 @@
 
 Создаёт таблицу `rate` (курс USDT к рублю). Ограничение `CHECK (id = 1)` гарантирует единственную запись.
 
-## 2. Спецификация таблиц
+## 3. Спецификация таблиц
 
 ### 1. `users`
 

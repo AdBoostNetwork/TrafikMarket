@@ -64,6 +64,10 @@
 
 Создаёт таблицу `traffic` (объявления трафика).
 
+### `016_create_rate`
+
+Создаёт таблицу `rate` (курс USDT к рублю). Ограничение `CHECK (id = 1)` гарантирует единственную запись.
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -806,7 +810,23 @@
 | `FOREIGN KEY` | `traffic_type_fkey` | `FOREIGN KEY (type) REFERENCES traffic_types(id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `traffic_auditory_fkey` | `FOREIGN KEY (auditory) REFERENCES audience_types(id) ON DELETE CASCADE` |
 
-### 39 `images`
+### 39 `rate`
+
+Курс USDT к рублю. Таблица содержит ровно одну запись — это гарантируется ограничением `CHECK (id = 1)`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи (всегда = 1) |
+| `ruble_usdt_rate` | `numeric(10,2)` | да | `—` | Курс USDT к рублю |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `rate_pkey` | `id` |
+| `CHECK` | `rate_single_row` | `id = 1` |
+
+### 40 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

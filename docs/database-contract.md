@@ -44,6 +44,10 @@
 
 Создаёт таблицы `tg_net_ads`, `tg_net_ads_links`, `tg_net_ads_prices`, `tg_net_ads_topics`, `tg_net_ads_countries` (реклама в сетях Telegram-каналов).
 
+### `011_create_max_ads`
+
+Создаёт таблицы `max_ads` и `max_ads_prices` (реклама в единичных каналах MAX).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -517,7 +521,46 @@
 | `FOREIGN KEY` | `tg_net_ads_countries_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES tg_net_ads(ad_id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `tg_net_ads_countries_country_id_fkey` | `FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE` |
 
-### 25 `images`
+### 25 `max_ads`
+
+Параметры объявлений типа «реклама в единичном канале MAX». Связана 1:1 с `announs`. В отличие от `tg_ads` не имеет страны и меток, тематика одна (не список). Цены по форматам вынесены в `max_ads_prices`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+| `topic` | `integer` | да | `—` | Тематика (FK → `topics.id`) |
+| `subs_count` | `integer` | да | `—` | Количество подписчиков |
+| `cover_count` | `numeric(10,2)` | да | `—` | Охват канала |
+| `err` | `numeric(10,2)` | нет | `—` | ERR |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_ads_pkey` | `ad_id` |
+| `FOREIGN KEY` | `max_ads_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `max_ads_topic_fkey` | `FOREIGN KEY (topic) REFERENCES topics(id) ON DELETE CASCADE` |
+
+### 26 `max_ads_prices`
+
+Цены по форматам размещения рекламы в MAX. Формат — произвольная строка.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `max_ads.ad_id`) |
+| `format` | `text` | да | `—` | Формат размещения |
+| `price` | `numeric(10,2)` | да | `—` | Цена за формат |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_ads_prices_pkey` | `id` |
+| `FOREIGN KEY` | `max_ads_prices_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES max_ads(ad_id) ON DELETE CASCADE` |
+
+### 27 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

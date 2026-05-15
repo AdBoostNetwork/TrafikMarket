@@ -52,6 +52,10 @@
 
 Создаёт таблицы `max_net_ads`, `max_net_ads_links`, `max_net_ads_prices`, `max_net_ads_topics` (реклама в сетях каналов MAX).
 
+### `013_create_stories`
+
+Создаёт таблицы `stories` и `stories_prices` (реклама через сторис в единичных Telegram-каналах).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -634,7 +638,50 @@
 | `FOREIGN KEY` | `max_net_ads_topics_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES max_net_ads(ad_id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `max_net_ads_topics_topic_id_fkey` | `FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE` |
 
-### 31 `images`
+### 31 `stories`
+
+Параметры объявлений типа «реклама через сторис в единичном Telegram-канале». Связана 1:1 с `announs`. Структура аналогична `tg_ads`. Цены по форматам вынесены в `stories_prices`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `story_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+| `topic` | `integer` | да | `—` | Тематика (FK → `topics.id`) |
+| `country` | `integer` | да | `—` | Страна (FK → `countries.id`) |
+| `subs_count` | `integer` | да | `—` | Количество подписчиков |
+| `cover_count` | `numeric(10,2)` | да | `—` | Охват канала |
+| `err` | `numeric(10,2)` | нет | `—` | ERR |
+| `red_label` | `boolean` | да | `false` | Красная метка |
+| `black_label` | `boolean` | да | `false` | Чёрная метка |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_pkey` | `story_id` |
+| `FOREIGN KEY` | `stories_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `stories_topic_fkey` | `FOREIGN KEY (topic) REFERENCES topics(id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `stories_country_fkey` | `FOREIGN KEY (country) REFERENCES countries(id) ON DELETE CASCADE` |
+
+### 32 `stories_prices`
+
+Цены по форматам размещения рекламы через сторис. Формат — произвольная строка.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `story_id` | `integer` | да | `—` | ID объявления (FK → `stories.story_id`) |
+| `format` | `text` | да | `—` | Формат размещения |
+| `price` | `numeric(10,2)` | да | `—` | Цена за формат |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_prices_pkey` | `id` |
+| `FOREIGN KEY` | `stories_prices_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES stories(story_id) ON DELETE CASCADE` |
+
+### 33 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

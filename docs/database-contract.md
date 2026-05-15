@@ -56,6 +56,10 @@
 
 Создаёт таблицы `stories` и `stories_prices` (реклама через сторис в единичных Telegram-каналах).
 
+### `014_create_stories_nets`
+
+Создаёт таблицы `stories_nets`, `stories_nets_links`, `stories_nets_prices`, `stories_nets_topics`, `stories_nets_countries` (реклама через сторис в сетях Telegram-каналов).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -681,7 +685,96 @@
 | `PRIMARY KEY` | `stories_prices_pkey` | `id` |
 | `FOREIGN KEY` | `stories_prices_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES stories(story_id) ON DELETE CASCADE` |
 
-### 33 `images`
+### 33 `stories_nets`
+
+Параметры объявлений типа «реклама через сторис в сети Telegram-каналов». Связана 1:1 с `announs`. Метки вынесены на уровень каждой ссылки в `stories_nets_links`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `story_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `subs_count` | `integer` | да | `—` | Суммарное количество подписчиков |
+| `cover_count` | `numeric(10,2)` | да | `—` | Суммарный охват сети |
+| `err` | `numeric(10,2)` | нет | `—` | ERR |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_nets_pkey` | `story_id` |
+| `FOREIGN KEY` | `stories_nets_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 34 `stories_nets_links`
+
+Ссылки на каналы внутри сети сторис. Метки задаются на уровне каждого канала.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `story_id` | `integer` | да | `—` | ID объявления (FK → `stories_nets.story_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+| `red_label` | `boolean` | да | `false` | Красная метка |
+| `black_label` | `boolean` | да | `false` | Чёрная метка |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_nets_links_pkey` | `id` |
+| `FOREIGN KEY` | `stories_nets_links_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES stories_nets(story_id) ON DELETE CASCADE` |
+
+### 35 `stories_nets_prices`
+
+Цены по форматам размещения сторис в сети. Формат — произвольная строка.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `story_id` | `integer` | да | `—` | ID объявления (FK → `stories_nets.story_id`) |
+| `format` | `text` | да | `—` | Формат размещения |
+| `price` | `numeric(10,2)` | да | `—` | Цена за формат |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_nets_prices_pkey` | `id` |
+| `FOREIGN KEY` | `stories_nets_prices_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES stories_nets(story_id) ON DELETE CASCADE` |
+
+### 36 `stories_nets_topics`
+
+Тематики сети сторис. Связь многие-ко-многим между `stories_nets` и `topics`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `story_id` | `integer` | да | `—` | ID объявления (FK → `stories_nets.story_id`) |
+| `topic_id` | `integer` | да | `—` | ID тематики (FK → `topics.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_nets_topics_pkey` | `(story_id, topic_id)` |
+| `FOREIGN KEY` | `stories_nets_topics_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES stories_nets(story_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `stories_nets_topics_topic_id_fkey` | `FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE` |
+
+### 37 `stories_nets_countries`
+
+Страны сети сторис. Связь многие-ко-многим между `stories_nets` и `countries`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `story_id` | `integer` | да | `—` | ID объявления (FK → `stories_nets.story_id`) |
+| `country_id` | `integer` | да | `—` | ID страны (FK → `countries.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_nets_countries_pkey` | `(story_id, country_id)` |
+| `FOREIGN KEY` | `stories_nets_countries_story_id_fkey` | `FOREIGN KEY (story_id) REFERENCES stories_nets(story_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `stories_nets_countries_country_id_fkey` | `FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE` |
+
+### 38 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

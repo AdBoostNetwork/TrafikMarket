@@ -48,6 +48,10 @@
 
 Создаёт таблицы `max_ads` и `max_ads_prices` (реклама в единичных каналах MAX).
 
+### `012_create_max_net_ads`
+
+Создаёт таблицы `max_net_ads`, `max_net_ads_links`, `max_net_ads_prices`, `max_net_ads_topics` (реклама в сетях каналов MAX).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -560,7 +564,77 @@
 | `PRIMARY KEY` | `max_ads_prices_pkey` | `id` |
 | `FOREIGN KEY` | `max_ads_prices_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES max_ads(ad_id) ON DELETE CASCADE` |
 
-### 27 `images`
+### 27 `max_net_ads`
+
+Параметры объявлений типа «реклама в сети каналов MAX». Связана 1:1 с `announs`. В отличие от `tg_net_ads` не имеет стран и меток на ссылках.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `subs_count` | `integer` | да | `—` | Суммарное количество подписчиков |
+| `cover_count` | `numeric(10,2)` | да | `—` | Суммарный охват сети |
+| `err` | `numeric(10,2)` | нет | `—` | ERR |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_net_ads_pkey` | `ad_id` |
+| `FOREIGN KEY` | `max_net_ads_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 28 `max_net_ads_links`
+
+Ссылки на каналы внутри рекламной сети MAX. Без меток.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `max_net_ads.ad_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_net_ads_links_pkey` | `id` |
+| `FOREIGN KEY` | `max_net_ads_links_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES max_net_ads(ad_id) ON DELETE CASCADE` |
+
+### 29 `max_net_ads_prices`
+
+Цены по форматам размещения рекламы в сети MAX. Формат — произвольная строка.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `max_net_ads.ad_id`) |
+| `format` | `text` | да | `—` | Формат размещения |
+| `price` | `numeric(10,2)` | да | `—` | Цена за формат |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_net_ads_prices_pkey` | `id` |
+| `FOREIGN KEY` | `max_net_ads_prices_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES max_net_ads(ad_id) ON DELETE CASCADE` |
+
+### 30 `max_net_ads_topics`
+
+Тематики рекламной сети MAX. Связь многие-ко-многим между `max_net_ads` и `topics`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `ad_id` | `integer` | да | `—` | ID объявления (FK → `max_net_ads.ad_id`) |
+| `topic_id` | `integer` | да | `—` | ID тематики (FK → `topics.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `max_net_ads_topics_pkey` | `(ad_id, topic_id)` |
+| `FOREIGN KEY` | `max_net_ads_topics_ad_id_fkey` | `FOREIGN KEY (ad_id) REFERENCES max_net_ads(ad_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `max_net_ads_topics_topic_id_fkey` | `FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE` |
+
+### 31 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

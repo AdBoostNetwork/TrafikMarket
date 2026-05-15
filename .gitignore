@@ -7,3 +7,4 @@ bots/Support_bot/config.py
 data
 context/
 .env
+instructions

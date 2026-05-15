@@ -20,6 +20,14 @@
 
 Создаёт таблицы `announ_types`, `announs`, `images` и sequence `announs_article_seq` (старт с 30000).
 
+### `005_create_tg_channels`
+
+Создаёт таблицу `tg_channels` (единичные Telegram-каналы).
+
+### `006_create_tg_chns_nets`
+
+Создаёт таблицы `tg_chns_nets`, `tg_chns_nets_links`, `tg_chns_nets_topics`, `tg_chns_nets_countries` (сети Telegram-каналов).
+
 ## 2. Таблицы и поля
 
 ### 2.1 `users`
@@ -172,7 +180,113 @@
 | `FOREIGN KEY` | `announs_seller_id_fkey` | `FOREIGN KEY (seller_id) REFERENCES users(user_id) ON DELETE CASCADE` |
 | `FOREIGN KEY` | `announs_type_fkey` | `FOREIGN KEY (type) REFERENCES announ_types(id) ON DELETE CASCADE` |
 
-### 2.9 `images`
+### 2.9 `tg_channels`
+
+Параметры объявлений типа «единичный Telegram-канал». Связана 1:1 с `announs` через `chn_announ_id`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `chn_announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+| `price` | `numeric(10,2)` | да | `—` | Цена канала |
+| `chn_type` | `boolean` | нет | `—` | Тип канала |
+| `topic` | `integer` | да | `—` | Тематика (FK → `topics.id`) |
+| `country` | `integer` | да | `—` | Страна (FK → `countries.id`) |
+| `subs_count` | `integer` | нет | `—` | Количество подписчиков |
+| `cover_count` | `numeric(10,2)` | нет | `—` | Охват канала |
+| `err` | `numeric(10,2)` | нет | `—` | ERR |
+| `profitability` | `numeric(10,2)` | нет | `—` | Доходность |
+| `on_requests` | `boolean` | да | `—` | Принимает заявки |
+| `requests_count` | `integer` | нет | `—` | Количество заявок |
+| `author` | `boolean` | да | `—` | Авторский канал |
+| `red_label` | `boolean` | да | `false` | Красная метка |
+| `black_label` | `boolean` | да | `false` | Чёрная метка |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_channels_pkey` | `chn_announ_id` |
+| `FOREIGN KEY` | `tg_channels_chn_announ_id_fkey` | `FOREIGN KEY (chn_announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `tg_channels_topic_fkey` | `FOREIGN KEY (topic) REFERENCES topics(id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `tg_channels_country_fkey` | `FOREIGN KEY (country) REFERENCES countries(id) ON DELETE CASCADE` |
+
+### 2.10 `tg_chns_nets`
+
+Параметры объявлений типа «сеть Telegram-каналов». Связана 1:1 с `announs`. Ссылки, тематики и страны вынесены в отдельные таблицы.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `net_announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `price` | `numeric(10,2)` | да | `—` | Цена сети |
+| `subs_count` | `integer` | нет | `—` | Суммарное количество подписчиков |
+| `cover_count` | `numeric(10,2)` | нет | `—` | Суммарный охват сети |
+| `err` | `numeric(10,2)` | нет | `—` | ERR сети |
+| `profitability` | `numeric(10,2)` | нет | `—` | Доходность |
+| `on_requests` | `boolean` | да | `—` | Принимает заявки |
+| `requests_count` | `integer` | нет | `—` | Количество заявок |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_chns_nets_pkey` | `net_announ_id` |
+| `FOREIGN KEY` | `tg_chns_nets_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 2.11 `tg_chns_nets_links`
+
+Ссылки на отдельные каналы внутри сети. Метки `red_label` и `black_label` задаются на уровне каждого канала.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `net_announ_id` | `integer` | да | `—` | ID объявления-сети (FK → `tg_chns_nets.net_announ_id`) |
+| `link` | `text` | да | `—` | Ссылка на канал |
+| `red_label` | `boolean` | да | `false` | Красная метка |
+| `black_label` | `boolean` | да | `false` | Чёрная метка |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_chns_nets_links_pkey` | `id` |
+| `FOREIGN KEY` | `tg_chns_nets_links_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES tg_chns_nets(net_announ_id) ON DELETE CASCADE` |
+
+### 2.12 `tg_chns_nets_topics`
+
+Тематики сети каналов. Связь многие-ко-многим между `tg_chns_nets` и `topics`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `net_announ_id` | `integer` | да | `—` | ID объявления-сети (FK → `tg_chns_nets.net_announ_id`) |
+| `topic_id` | `integer` | да | `—` | ID тематики (FK → `topics.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_chns_nets_topics_pkey` | `(net_announ_id, topic_id)` |
+| `FOREIGN KEY` | `tg_chns_nets_topics_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES tg_chns_nets(net_announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `tg_chns_nets_topics_topic_id_fkey` | `FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE` |
+
+### 2.13 `tg_chns_nets_countries`
+
+Страны сети каналов. Связь многие-ко-многим между `tg_chns_nets` и `countries`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `net_announ_id` | `integer` | да | `—` | ID объявления-сети (FK → `tg_chns_nets.net_announ_id`) |
+| `country_id` | `integer` | да | `—` | ID страны (FK → `countries.id`) |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `tg_chns_nets_countries_pkey` | `(net_announ_id, country_id)` |
+| `FOREIGN KEY` | `tg_chns_nets_countries_net_announ_id_fkey` | `FOREIGN KEY (net_announ_id) REFERENCES tg_chns_nets(net_announ_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `tg_chns_nets_countries_country_id_fkey` | `FOREIGN KEY (country_id) REFERENCES countries(id) ON DELETE CASCADE` |
+
+### 2.14 `images`
 
 Изображения объявлений. Хранит ключи файлов в MinIO; одно объявление может иметь несколько изображений. Удаляются каскадно вместе с объявлением.
 

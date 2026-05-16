@@ -25,7 +25,7 @@
 
 ### `004_create_announs`
 
-Создаёт таблицы `announ_types`, `announs`, `images` и sequence `announs_article_seq` (старт с 30000).
+Создаёт таблицы `announ_types`, `announs`, `images` и sequence `announs_article_seq` (старт с 30000). В `announs` добавлены флаги `tgstat_announ` и `maxdash_announ` для синхронизации с внешними источниками данных.
 
 ### `005_create_tg_channels`
 
@@ -217,6 +217,8 @@
 | `long_text` | `varchar(1024)` | нет | `—` | Подробное описание |
 | `status` | `varchar(16)` | да | `—` | Статус объявления |
 | `article` | `bigint` | да | `nextval('announs_article_seq')` | Артикул объявления (sequence с 30000) |
+| `tgstat_announ` | `boolean` | да | `—` | Флаг синхронизации с TGStat |
+| `maxdash_announ` | `boolean` | да | `—` | Флаг синхронизации с MAX Dashboard |
 
 Ограничения:
 

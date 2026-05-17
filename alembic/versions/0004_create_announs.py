@@ -41,8 +41,10 @@ def upgrade() -> None:
             title      VARCHAR(50) NOT NULL,
             short_text VARCHAR(128) NOT NULL,
             long_text  VARCHAR(1024) NULL,
-            status     VARCHAR(16) NOT NULL,
-            article    BIGINT NOT NULL DEFAULT nextval('announs_article_seq'),
+            status         VARCHAR(16) NOT NULL,
+            article        BIGINT NOT NULL DEFAULT nextval('announs_article_seq'),
+            tgstat_announ  BOOLEAN NOT NULL,
+            maxdash_announ BOOLEAN NOT NULL,
             CONSTRAINT announs_pkey PRIMARY KEY (announ_id),
             CONSTRAINT announs_article_key UNIQUE (article),
             CONSTRAINT announs_seller_id_fkey FOREIGN KEY (seller_id)

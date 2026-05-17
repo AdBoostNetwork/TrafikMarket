@@ -70,3 +70,4 @@ TrafikMarket/
 ## Документация
 
 - [docs/database-contract.md](docs/database-contract.md) — полная схема PostgreSQL: таблицы, ограничения, миграции
+- [docs/migrate.md](docs/migrate.md) — контейнер `migrate`: конфигурация, поведение при запуске, команды

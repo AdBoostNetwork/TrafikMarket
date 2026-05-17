@@ -1,3 +1,5 @@
+name: traffmarket
+
 x-database-env: &database-env
   DATABASE_URL: ${DATABASE_URL:-postgres://postgres:postgres@postgres:5432/traffmarket?sslmode=disable}
 
@@ -11,7 +13,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-traffmarket}
     volumes:
-      - trafikmarket_data:/var/lib/postgresql/data
+      - traffmarket_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-traffmarket}"]
       interval: 5s
@@ -31,5 +33,5 @@ services:
     restart: "no"
 
 volumes:
-  trafikmarket_data:
-    name: traffmarket_postgres
+  traffmarket_data:
+    name: traffmarket

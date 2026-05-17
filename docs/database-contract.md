@@ -75,6 +75,10 @@
 
 Создаёт таблицу `rate` (курс USDT к рублю). Ограничение `CHECK (id = 1)` гарантирует единственную запись.
 
+### `017_create_wallpapers`
+
+Создаёт таблицу `wallpapers` (обои интерфейса mini app).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -851,6 +855,24 @@
 |---|---|---|
 | `PRIMARY KEY` | `images_pkey` | `id` |
 | `FOREIGN KEY` | `images_img_announ_id_fkey` | `FOREIGN KEY (img_announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 41. `wallpapers`
+
+Каталог обоев интерфейса mini app. Хранит название и ключ файла в MinIO.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID обоев |
+| `wallpaper_name` | `text` | да | `—` | Название обоев |
+| `img_key` | `text` | да | `—` | Ключ файла обоев в MinIO |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `wallpapers_pkey` | `id` |
+| `UNIQUE` | `wallpapers_wallpaper_name_key` | `wallpaper_name` |
+| `UNIQUE` | `wallpapers_img_key_key` | `img_key` |
 
 ## 3. Начальные данные справочников
 

@@ -55,10 +55,13 @@ TrafikMarket/
 ├── alembic/
 │   └── versions/               Миграции БД
 ├── backend/
-│   └── app_backend/            Бэкенд app (FastAPI, DB-layer)
-├── dockerfiles/                Dockerfile.migrate, .app, .main-bot, .support-bot
-├── docs/                       Документации
-├── frontend/                   Frontend 
+│   ├── app_backend/            Бэкенд app (FastAPI, DB-layer)
+│   └── updater/
+│       ├── rabbitmq_schemas.py Dataclass-схемы задач RabbitMQ
+│       └── scheduler/          updater-scheduler: формирование задач обновления
+├── dockerfiles/                Dockerfile.migrate, .scheduler, .app, .main-bot, .support-bot
+├── docs/                       Документация
+├── frontend/                   Frontend
 ├── docker-compose.yml
 ├── alembic.ini
 ├── requirements.txt
@@ -71,3 +74,4 @@ TrafikMarket/
 
 - [docs/database-contract.md](docs/database-contract.md) — полная схема PostgreSQL: таблицы, ограничения, миграции
 - [docs/migrate.md](docs/migrate.md) — контейнер `migrate`: конфигурация, поведение при запуске, команды
+- [docs/updater.md](docs/updater.md) — контейнеры `updater-scheduler` / `updater-worker`: очереди RabbitMQ, расписание, тестирование

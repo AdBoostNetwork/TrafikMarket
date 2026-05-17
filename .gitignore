@@ -1,10 +1,10 @@
 ../TraffkMarket/.idea/
 .DS_Store
-backend/.env
-.idea/
+.idea
 .vscode/
 bots/Support_bot/config.py
 data
-context/
+context
 .env
 instructions
+logs

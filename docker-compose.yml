@@ -1,8 +1,5 @@
 name: traffmarket
 
-x-database-env: &database-env
-  DATABASE_URL: ${DATABASE_URL:-postgres://postgres:postgres@postgres:5432/traffmarket?sslmode=disable}
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -26,12 +23,51 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.migrate
-    environment: *database-env
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/traffmarket?sslmode=disable
     depends_on:
       postgres:
         condition: service_healthy
     restart: "no"
 
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.scheduler
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/traffmarket?sslmode=disable
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      SCHEDULER_RUN_HOUR: ${SCHEDULER_RUN_HOUR:-3}
+      TGSTAT_QUEUE: ${TGSTAT_QUEUE:-updater.tgstat}
+      MAXDASH_QUEUE: ${MAXDASH_QUEUE:-updater.maxdash}
+    volumes:
+      - ./logs/scheduler:/app/backend/updater/scheduler/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
 volumes:
   traffmarket_data:
     name: traffmarket
+  rabbitmq_data:
+    name: traffmarket_rabbitmq

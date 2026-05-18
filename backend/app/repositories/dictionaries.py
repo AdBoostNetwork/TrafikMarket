@@ -17,7 +17,7 @@ class DictionariesRepository:
         logger.info("Запрос обоев")
         try:
             result = await self._session.execute(
-                text("SELECT wallpaper_name, img_key FROM wallpapers ORDER BY id")
+                text("SELECT id, wallpaper_name, img_key FROM wallpapers ORDER BY id")
             )
             return result.mappings().all()
         except Exception as e:

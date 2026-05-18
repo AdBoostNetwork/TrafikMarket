@@ -68,12 +68,14 @@ AppError             # базовая
 | Метод | URL | Описание |
 |---|---|---|
 | GET | `/profile/balance` | Свободный баланс пользователя (`current_balance - frozen_balance`) |
+| GET | `/profile/wallpaper` | Текущие обои пользователя (`wallpaper_id`, `img_key`) |
+| PUT | `/profile/wallpaper` | Смена обоев пользователя — принимает `wallpaper_id`, возвращает `SuccessResponse` |
 
 ### `dictionaries` — `/dictionaries`
 
 | Метод | URL | Описание |
 |---|---|---|
-| GET | `/dictionaries/wallpapers` | Список обоев интерфейса (`wallpaper_name`, `img_key`) |
+| GET | `/dictionaries/wallpapers` | Список обоев интерфейса (`id`, `wallpaper_name`, `img_key`) |
 | GET | `/dictionaries/countries` | Справочник стран (`id`, `name`) |
 | GET | `/dictionaries/topics` | Справочник тематик (`id`, `name`) |
 | GET | `/dictionaries/platforms` | Справочник платформ трафика (`id`, `name`) |

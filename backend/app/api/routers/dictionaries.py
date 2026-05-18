@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.schemas.dictionaries import DictionaryItemResponse, WallpaperResponse
+from app.api.schemas.dictionaries import DictionaryItemResponse, RateResponse, WallpaperResponse
 from app.core.errors import RepositoryError
 from app.db.dependencies import get_session
 from app.logger import get_logger
@@ -94,4 +94,18 @@ async def get_audience_types(session: AsyncSession = Depends(get_session)) -> li
         raise HTTPException(status_code=500, detail="db_error")
     except Exception as e:
         logger.error("get_audience_types error | error=%s", str(e))
+        raise HTTPException(status_code=500, detail="internal_error")
+
+
+@router.get("/rate", response_model=RateResponse, summary="Получение текущего курса USDT к рублю")
+async def get_rate(session: AsyncSession = Depends(get_session)) -> RateResponse:
+    try:
+        repo = DictionariesRepository(session)
+        service = DictionariesService(repo)
+        return await service.get_rate()
+    except RepositoryError as e:
+        logger.error("get_rate db_error | error=%s", str(e))
+        raise HTTPException(status_code=500, detail="db_error")
+    except Exception as e:
+        logger.error("get_rate error | error=%s", str(e))
         raise HTTPException(status_code=500, detail="internal_error")

@@ -12,3 +12,8 @@ class DictionaryItemResponse(BaseModel):
     """Элемент справочника (страна, тематика, платформа, тип трафика, тип аудитории)"""
     id: int
     name: str
+
+
+class RateResponse(BaseModel):
+    """Текущий курс USDT к рублю"""
+    ruble_usdt_rate: float

@@ -38,6 +38,7 @@ def upgrade() -> None:
             deals_summ NUMERIC(10,2) NOT NULL DEFAULT 0,
             frozen_balance NUMERIC(10,2) NOT NULL DEFAULT 0,
             was_online TIMESTAMP WITH TIME ZONE NOT NULL,
+            wallpaper_id INTEGER NULL,
             CONSTRAINT users_pkey PRIMARY KEY (user_id),
             CONSTRAINT users_referrer_id_fkey FOREIGN KEY (referrer_id)
                 REFERENCES users(user_id)

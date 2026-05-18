@@ -107,6 +107,7 @@
 | `deals_summ` | `numeric(10,2)` | да | `0` | Сумма сделок |
 | `frozen_balance` | `numeric(10,2)` | да | `0` | Замороженный баланс |
 | `was_online` | `timestamp with time zone` | да | `—` | Время последней активности пользователя |
+| `wallpaper_id` | `integer` | нет | `—` | Выбранные обои (FK → `wallpapers.id`) |
 
 Ограничения:
 
@@ -114,6 +115,7 @@
 |---|---|---|
 | `PRIMARY KEY` | `users_pkey` | `user_id` |
 | `FOREIGN KEY` | `users_referrer_id_fkey` | `FOREIGN KEY (referrer_id) REFERENCES users(user_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `users_wallpaper_id_fkey` | `FOREIGN KEY (wallpaper_id) REFERENCES wallpapers(id) ON DELETE SET NULL` |
 
 ### 2 `countries`
 

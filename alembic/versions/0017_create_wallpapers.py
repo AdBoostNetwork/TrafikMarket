@@ -32,7 +32,16 @@ def upgrade() -> None:
         """
     )
 
+    op.execute(
+        """
+        ALTER TABLE users
+            ADD CONSTRAINT users_wallpaper_id_fkey
+            FOREIGN KEY (wallpaper_id) REFERENCES wallpapers(id) ON DELETE SET NULL;
+        """
+    )
+
 
 def downgrade() -> None:
     """Downgrade schema."""
+    op.execute("ALTER TABLE users DROP CONSTRAINT IF EXISTS users_wallpaper_id_fkey;")
     op.execute("DROP TABLE wallpapers;")

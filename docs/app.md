@@ -74,6 +74,11 @@ AppError             # базовая
 | Метод | URL | Описание |
 |---|---|---|
 | GET | `/dictionaries/wallpapers` | Список обоев интерфейса (`wallpaper_name`, `img_key`) |
+| GET | `/dictionaries/countries` | Справочник стран (`id`, `name`) |
+| GET | `/dictionaries/topics` | Справочник тематик (`id`, `name`) |
+| GET | `/dictionaries/platforms` | Справочник платформ трафика (`id`, `name`) |
+| GET | `/dictionaries/traffic-types` | Справочник типов трафика (`id`, `name`) |
+| GET | `/dictionaries/audience-types` | Справочник типов аудитории (`id`, `name`) |
 
 ## Стиль кода
 

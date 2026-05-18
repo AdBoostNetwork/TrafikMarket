@@ -66,6 +66,25 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
 
+  app:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.app
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/traffmarket?sslmode=disable
+      APP_HOST: 0.0.0.0
+      APP_PORT: 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs/app:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
 volumes:
   traffmarket_data:
     name: traffmarket

@@ -16,7 +16,7 @@ class DictionariesService:
     async def get_wallpapers(self) -> list[WallpaperResponse]:
         logger.info("Получение обоев")
         rows = await self._repo.get_wallpapers()
-        return [WallpaperResponse(wallpaper_name=row["wallpaper_name"], img_key=row["img_key"]) for row in rows]
+        return [WallpaperResponse(id=row["id"], wallpaper_name=row["wallpaper_name"], img_key=row["img_key"]) for row in rows]
 
     async def get_countries(self) -> list[DictionaryItemResponse]:
         logger.info("Получение стран")

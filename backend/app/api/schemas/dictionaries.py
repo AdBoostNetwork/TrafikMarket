@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class WallpaperResponse(BaseModel):
     """Объект обоев интерфейса mini app"""
+    id: int
     wallpaper_name: str
     img_key: str
 

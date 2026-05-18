@@ -9,6 +9,10 @@ class DictionariesService:
     def __init__(self, repo: DictionariesRepository) -> None:
         self._repo = repo
 
+    @staticmethod
+    def _map_items(rows) -> list[DictionaryItemResponse]:
+        return [DictionaryItemResponse(id=row["id"], name=row["name"]) for row in rows]
+
     async def get_wallpapers(self) -> list[WallpaperResponse]:
         logger.info("Получение обоев")
         rows = await self._repo.get_wallpapers()
@@ -16,25 +20,20 @@ class DictionariesService:
 
     async def get_countries(self) -> list[DictionaryItemResponse]:
         logger.info("Получение стран")
-        rows = await self._repo.get_countries()
-        return [DictionaryItemResponse(id=row["id"], name=row["name"]) for row in rows]
+        return self._map_items(await self._repo.get_countries())
 
     async def get_topics(self) -> list[DictionaryItemResponse]:
         logger.info("Получение тематик")
-        rows = await self._repo.get_topics()
-        return [DictionaryItemResponse(id=row["id"], name=row["name"]) for row in rows]
+        return self._map_items(await self._repo.get_topics())
 
     async def get_platforms(self) -> list[DictionaryItemResponse]:
         logger.info("Получение платформ")
-        rows = await self._repo.get_platforms()
-        return [DictionaryItemResponse(id=row["id"], name=row["name"]) for row in rows]
+        return self._map_items(await self._repo.get_platforms())
 
     async def get_traffic_types(self) -> list[DictionaryItemResponse]:
         logger.info("Получение типов трафика")
-        rows = await self._repo.get_traffic_types()
-        return [DictionaryItemResponse(id=row["id"], name=row["name"]) for row in rows]
+        return self._map_items(await self._repo.get_traffic_types())
 
     async def get_audience_types(self) -> list[DictionaryItemResponse]:
         logger.info("Получение типов аудитории")
-        rows = await self._repo.get_audience_types()
-        return [DictionaryItemResponse(id=row["id"], name=row["name"]) for row in rows]
+        return self._map_items(await self._repo.get_audience_types())

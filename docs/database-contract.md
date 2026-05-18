@@ -79,6 +79,10 @@
 
 Создаёт таблицу `wallpapers` (обои интерфейса mini app).
 
+### `018_create_news`
+
+Создаёт таблицу `news` (новости раздела «Кошелёк»).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -873,6 +877,22 @@
 | `PRIMARY KEY` | `wallpapers_pkey` | `id` |
 | `UNIQUE` | `wallpapers_wallpaper_name_key` | `wallpaper_name` |
 | `UNIQUE` | `wallpapers_img_key_key` | `img_key` |
+
+### 42. `news`
+
+Новости раздела «Кошелёк» mini app.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID новости |
+| `news_name` | `text` | да | `—` | Название новости |
+| `news_text` | `text` | да | `—` | Текст новости |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `news_pkey` | `id` |
 
 ## 3. Начальные данные справочников
 

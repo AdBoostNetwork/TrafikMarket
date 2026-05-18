@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db.dependencies import init_session_factory
-from app.api.routers import profile
+from app.api.routers import dictionaries, profile
 from app.logger import get_logger
 
 logger = get_logger(__name__)
@@ -29,3 +29,4 @@ app.add_middleware(
 )
 
 app.include_router(profile.router)
+app.include_router(dictionaries.router)

@@ -65,11 +65,11 @@ AppError             # базовая
 
 ### `profile` — `/profile`
 
-| Метод | URL | Описание |
-|---|---|---|
-| GET | `/profile/balance` | Свободный баланс пользователя (`current_balance - frozen_balance`) |
-| GET | `/profile/wallpaper` | Текущие обои пользователя (`wallpaper_id`, `img_key`) |
-| PUT | `/profile/wallpaper` | Смена обоев пользователя — принимает `wallpaper_id`, возвращает `SuccessResponse` |
+| Метод | URL | Описание                      |
+|---|---|-------------------------------|
+| GET | `/profile/balance` | Свободный баланс пользователя |
+| GET | `/profile/wallpaper` | Текущие обои пользователя     |
+| PUT | `/profile/wallpaper` | Смена обоев пользователя      |
 
 ### `dictionaries` — `/dictionaries`
 
@@ -81,12 +81,4 @@ AppError             # базовая
 | GET | `/dictionaries/platforms` | Справочник платформ трафика (`id`, `name`) |
 | GET | `/dictionaries/traffic-types` | Справочник типов трафика (`id`, `name`) |
 | GET | `/dictionaries/audience-types` | Справочник типов аудитории (`id`, `name`) |
-
-## Стиль кода
-
-- SQL — `text(...)` inline в методе репозитория; модульные константы только для длинных или переиспользуемых запросов
-- Логи: `logger.info("описание | key=value")`, русские описания
-- Репозитории — классы с `__init__(self, session: AsyncSession)`
-- Сервисы — классы с `__init__(self, repo: XxxRepository)`
-- Dataclass `@dataclass(frozen=True)` — для внутренних структур между слоями
-- Pydantic `BaseModel` — только для API-схем
+| GET | `/dictionaries/rate` | Текущий курс USDT к рублю (`ruble_usdt_rate`) |

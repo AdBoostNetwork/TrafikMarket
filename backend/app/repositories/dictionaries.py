@@ -68,6 +68,23 @@ class DictionariesRepository:
             logger.error("Ошибка запроса типов трафика | error=%s", str(e))
             raise RepositoryError(f"get_traffic_types: {e}") from e
 
+    async def get_rate(self) -> RowMapping:
+        logger.info("Запрос курса USDT")
+        try:
+            result = await self._session.execute(
+                text("SELECT ruble_usdt_rate FROM rate WHERE id = 1")
+            )
+            row = result.mappings().one_or_none()
+        except Exception as e:
+            logger.error("Ошибка запроса курса | error=%s", str(e))
+            raise RepositoryError(f"get_rate: {e}") from e
+
+        if row is None:
+            logger.warning("Курс не найден")
+            raise RepositoryError("rate_not_found")
+
+        return row
+
     async def get_audience_types(self) -> Sequence[RowMapping]:
         logger.info("Запрос типов аудитории")
         try:

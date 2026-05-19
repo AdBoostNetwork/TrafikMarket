@@ -81,4 +81,5 @@ AppError             # базовая
 | GET | `/dictionaries/platforms` | Справочник платформ трафика (`id`, `name`) |
 | GET | `/dictionaries/traffic-types` | Справочник типов трафика (`id`, `name`) |
 | GET | `/dictionaries/audience-types` | Справочник типов аудитории (`id`, `name`) |
+| GET | `/dictionaries/news` | Список новостей платформы (`news_name`, `news_text`, `icon_key`) |
 | GET | `/dictionaries/rate` | Текущий курс USDT к рублю (`ruble_usdt_rate`) |

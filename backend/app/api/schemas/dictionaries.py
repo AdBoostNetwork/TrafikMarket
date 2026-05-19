@@ -17,3 +17,10 @@ class DictionaryItemResponse(BaseModel):
 class RateResponse(BaseModel):
     """Текущий курс USDT к рублю"""
     ruble_usdt_rate: float
+
+
+class NewsItemResponse(BaseModel):
+    """Новость платформы"""
+    news_name: str
+    news_text: str
+    icon_key: str

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.schemas.dictionaries import DictionaryItemResponse, RateResponse, WallpaperResponse
+from app.api.schemas.dictionaries import DictionaryItemResponse, NewsItemResponse, RateResponse, WallpaperResponse
 from app.core.errors import RepositoryError
 from app.db.dependencies import get_session
 from app.logger import get_logger
@@ -94,6 +94,20 @@ async def get_audience_types(session: AsyncSession = Depends(get_session)) -> li
         raise HTTPException(status_code=500, detail="db_error")
     except Exception as e:
         logger.error("get_audience_types error | error=%s", str(e))
+        raise HTTPException(status_code=500, detail="internal_error")
+
+
+@router.get("/news", response_model=list[NewsItemResponse], summary="Получение списка новостей")
+async def get_news(session: AsyncSession = Depends(get_session)) -> list[NewsItemResponse]:
+    try:
+        repo = DictionariesRepository(session)
+        service = DictionariesService(repo)
+        return await service.get_news()
+    except RepositoryError as e:
+        logger.error("get_news db_error | error=%s", str(e))
+        raise HTTPException(status_code=500, detail="db_error")
+    except Exception as e:
+        logger.error("get_news error | error=%s", str(e))
         raise HTTPException(status_code=500, detail="internal_error")
 
 

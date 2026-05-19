@@ -8,20 +8,20 @@
 
 ## Контейнеры
 
-| Контейнер | Назначение |
-|---|---|
-| `postgres` | Основная БД: пользователи, объявления, сделки, поддержка |
-| `migrate` | Применение Alembic-миграций (`upgrade head`) |
-| `app` | FastAPI — публичный HTTP API для mini app |
-| `frontend` | nginx — отдача статики mini app |
-| `main-bot` | Основной Telegram-бот (aiogram) |
-| `support-bot` | Бот поддержки (aiogram) |
-| `external-data` | Шлюз внешних данных: TGStat, MAX Dashboard, курс USDT |
-| `updater-scheduler` | Раз в сутки формирует задачи обновления → RabbitMQ |
-| `updater-worker` | Читает задачи из RabbitMQ, запрашивает `external-data`, пишет в БД |
-| `rabbitmq` | Брокер очередей фоновых задач |
-| `redis` | FSM-состояние ботов, короткий кэш |
-| `minio` | Object Storage для аватаров и медиа объявлений |
+| Контейнер | Назначение | Статус |
+|---|---|---|
+| `postgres` | Основная БД: пользователи, объявления, сделки, поддержка | ✅ реализован |
+| `migrate` | Применение Alembic-миграций (`upgrade head`) | ✅ реализован |
+| `app` | FastAPI — публичный HTTP API для mini app | ✅ реализован |
+| `rabbitmq` | Брокер очередей фоновых задач | ✅ реализован |
+| `updater-scheduler` | Раз в сутки формирует задачи обновления → RabbitMQ | ✅ реализован |
+| `updater-worker` | Читает задачи из RabbitMQ, запрашивает `external-data`, пишет в БД | 🔲 не реализован |
+| `external-data` | Шлюз внешних данных: TGStat, MAX Dashboard, курс USDT | 🔲 не реализован |
+| `frontend` | nginx — отдача статики mini app | 🔲 не реализован |
+| `main-bot` | Основной Telegram-бот (aiogram) | 🔲 не реализован |
+| `support-bot` | Бот поддержки (aiogram) | 🔲 не реализован |
+| `redis` | FSM-состояние ботов, короткий кэш | 🔲 не реализован |
+| `minio` | Object Storage для аватаров и медиа объявлений | 🔲 не реализован |
 
 ---
 
@@ -53,9 +53,20 @@
 ```
 TrafikMarket/
 ├── alembic/
-│   └── versions/               Миграции БД
+│   └── versions/               Миграции БД (001–018)
 ├── backend/
-│   ├── app_backend/            Бэкенд app (FastAPI, DB-layer)
+│   ├── app/                    Бэкенд app (новый, в разработке)
+│   │   ├── api/
+│   │   │   ├── routers/        HTTP-роутеры (profile, dictionaries)
+│   │   │   └── schemas/        Pydantic-схемы (request/response)
+│   │   ├── core/               Ошибки (errors.py)
+│   │   ├── db/                 Сессия БД и зависимости
+│   │   ├── repositories/       SQL-запросы
+│   │   ├── services/           Бизнес-логика
+│   │   ├── external_data/      Клиент external-data (не реализован)
+│   │   ├── app.py              FastAPI инстанс
+│   │   └── main.py             Точка входа
+│   ├── app_backend/            Бэкенд app (старый, только для справки)
 │   └── updater/
 │       ├── rabbitmq_schemas.py Dataclass-схемы задач RabbitMQ
 │       └── scheduler/          updater-scheduler: формирование задач обновления
@@ -73,5 +84,6 @@ TrafikMarket/
 ## Документация
 
 - [docs/database-contract.md](docs/database-contract.md) — полная схема PostgreSQL: таблицы, ограничения, миграции
+- [docs/app.md](docs/app.md) — контейнер `app`: структура пакета, роутеры, архитектура запроса
 - [docs/migrate.md](docs/migrate.md) — контейнер `migrate`: конфигурация, поведение при запуске, команды
 - [docs/updater.md](docs/updater.md) — контейнеры `updater-scheduler` / `updater-worker`: очереди RabbitMQ, расписание, тестирование

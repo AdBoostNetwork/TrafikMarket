@@ -1,4 +1,4 @@
-from app.api.schemas.dictionaries import DictionaryItemResponse, RateResponse, WallpaperResponse
+from app.api.schemas.dictionaries import DictionaryItemResponse, NewsItemResponse, RateResponse, WallpaperResponse
 from app.logger import get_logger
 from app.repositories.dictionaries import DictionariesRepository
 
@@ -37,6 +37,11 @@ class DictionariesService:
     async def get_audience_types(self) -> list[DictionaryItemResponse]:
         logger.info("Получение типов аудитории")
         return self._map_items(await self._repo.get_audience_types())
+
+    async def get_news(self) -> list[NewsItemResponse]:
+        logger.info("Получение новостей")
+        rows = await self._repo.get_news()
+        return [NewsItemResponse(news_name=row["news_name"], news_text=row["news_text"], icon_key=row["icon_key"]) for row in rows]
 
     async def get_rate(self) -> RateResponse:
         logger.info("Получение курса USDT")

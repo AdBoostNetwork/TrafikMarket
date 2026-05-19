@@ -68,6 +68,17 @@ class DictionariesRepository:
             logger.error("Ошибка запроса типов трафика | error=%s", str(e))
             raise RepositoryError(f"get_traffic_types: {e}") from e
 
+    async def get_news(self) -> Sequence[RowMapping]:
+        logger.info("Запрос новостей")
+        try:
+            result = await self._session.execute(
+                text("SELECT news_name, news_text, icon_key FROM news ORDER BY id")
+            )
+            return result.mappings().all()
+        except Exception as e:
+            logger.error("Ошибка запроса новостей | error=%s", str(e))
+            raise RepositoryError(f"get_news: {e}") from e
+
     async def get_rate(self) -> RowMapping:
         logger.info("Запрос курса USDT")
         try:

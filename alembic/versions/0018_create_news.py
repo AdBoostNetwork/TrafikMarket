@@ -25,6 +25,7 @@ def upgrade() -> None:
             id        SERIAL NOT NULL,
             news_name TEXT NOT NULL,
             news_text TEXT NOT NULL,
+            icon_key  TEXT NOT NULL,
             CONSTRAINT news_pkey PRIMARY KEY (id)
         );
         """

@@ -13,11 +13,14 @@ backend/app/
     routers/                     # HTTP-слой, только маршрутизация и обработка ошибок
     schemas/                     # Pydantic response-модели
   services/                      # бизнес-логика use-case уровня
-  repositories/                  # SQL-запросы (text queries), без бизнес-логики
+  repositories/                  # SQL-запросы и операции с хранилищем, без бизнес-логики
   external_data/                 # клиент контейнера external-data (не реализован)
   db/
     session.py                   # make_session() → async_sessionmaker (NullPool)
     dependencies.py              # get_session — FastAPI Depends, init_session_factory()
+  storage/
+    client.py                    # make_storage() → aioboto3.Session (credentials из env)
+    dependencies.py              # get_storage — FastAPI Depends, init_storage_client()
   core/
     errors.py                    # иерархия ошибок
 ```
@@ -30,6 +33,10 @@ backend/app/
 | `APP_HOST` | Хост uvicorn |
 | `APP_PORT` | Порт uvicorn |
 | `LOG_LEVEL` | Уровень логирования (по умолчанию `INFO`) |
+| `MINIO_ENDPOINT` | URL MinIO (`http://minio:9000`) |
+| `MINIO_ACCESS_KEY` | Access Key MinIO |
+| `MINIO_SECRET_KEY` | Secret Key MinIO |
+| `MINIO_BUCKET_ANNOUNCEMENTS` | Бакет изображений объявлений |
 
 ## Запуск локально
 
@@ -45,20 +52,21 @@ python -m app.main
 ## Архитектура запроса
 
 ```
-Router → Depends(get_session) → Repository(session) → Service(repo) → Response
+Router → Depends(get_session) + Depends(get_storage) → Repository(session) + StorageRepository(s3) → Service → Response
 ```
 
-- `session_factory` инициализируется один раз в `lifespan` при старте
-- Сессия живёт ровно один запрос, открывается и закрывается через `yield`
-- Репозиторий получает сессию в конструктор, бизнес-логики не содержит
-- Сервис получает репозиторий в конструктор, работает только с доменными объектами
+- `session_factory` и `storage_client` инициализируются один раз в `lifespan` при старте
+- Сессия и S3-клиент живут ровно один запрос, открываются и закрываются через `yield`
+- Репозиторий получает сессию или S3-клиент в конструктор, бизнес-логики не содержит
+- Сервис получает репозитории в конструктор, работает только с доменными объектами
 
 ## Ошибки
 
 ```python
-AppError             # базовая
-├── RepositoryError  # ошибка БД → HTTP 500
-└── NotFoundError    # сущность не найдена → HTTP 404
+AppError              # базовая
+├── RepositoryError   # ошибка БД → HTTP 500
+├── NotFoundError     # сущность не найдена → HTTP 404
+└── StorageError      # ошибка MinIO → HTTP 500
 ```
 
 ## Роутеры

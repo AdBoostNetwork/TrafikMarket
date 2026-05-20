@@ -8,3 +8,7 @@ class RepositoryError(AppError):
 
 class NotFoundError(AppError):
     """Сущность не найдена → 404"""
+
+
+class StorageError(AppError):
+    """Ошибка при запросе к объектному хранилищу → 500"""

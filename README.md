@@ -56,13 +56,14 @@ TrafikMarket/
 ├── alembic/
 │   └── versions/               Миграции БД (001–018)
 ├── backend/
-│   ├── app/                    Бэкенд app (новый, в разработке)
+│   ├── app/                    Бэкенд app
 │   │   ├── api/
 │   │   │   ├── routers/        HTTP-роутеры (profile, dictionaries)
 │   │   │   └── schemas/        Pydantic-схемы (request/response)
-│   │   ├── core/               Ошибки (errors.py)
+│   │   ├── core/               Иерархия ошибок (errors.py)
 │   │   ├── db/                 Сессия БД и зависимости
-│   │   ├── repositories/       SQL-запросы
+│   │   ├── storage/            S3-клиент MinIO и зависимости
+│   │   ├── repositories/       SQL-запросы и операции с хранилищем
 │   │   ├── services/           Бизнес-логика
 │   │   ├── external_data/      Клиент external-data (не реализован)
 │   │   ├── app.py              FastAPI инстанс
@@ -72,12 +73,11 @@ TrafikMarket/
 │       ├── rabbitmq_schemas.py Dataclass-схемы задач RabbitMQ
 │       └── scheduler/          updater-scheduler: формирование задач обновления
 ├── dockerfiles/                Dockerfile.migrate, .scheduler, .app, .main-bot, .support-bot
+├── requirements/               Зависимости по контейнерам (migrate, app, scheduler)
 ├── docs/                       Документация
 ├── frontend/                   Frontend
 ├── docker-compose.yml
-├── alembic.ini
-├── requirements.txt
-└── README.md
+└── alembic.ini
 ```
 
 ---

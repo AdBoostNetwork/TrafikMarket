@@ -21,7 +21,8 @@
 | `main-bot` | Основной Telegram-бот (aiogram) | 🔲 не реализован |
 | `support-bot` | Бот поддержки (aiogram) | 🔲 не реализован |
 | `redis` | FSM-состояние ботов, короткий кэш | 🔲 не реализован |
-| `minio` | Object Storage для аватаров и медиа объявлений | 🔲 не реализован |
+| `minio` | Object Storage для аватаров и медиа объявлений | ✅ реализован |
+| `minio-init` | Создание бакетов и политик публичного чтения | ✅ реализован |
 
 ---
 
@@ -87,3 +88,4 @@ TrafikMarket/
 - [docs/app.md](docs/app.md) — контейнер `app`: структура пакета, роутеры, архитектура запроса
 - [docs/migrate.md](docs/migrate.md) — контейнер `migrate`: конфигурация, поведение при запуске, команды
 - [docs/updater.md](docs/updater.md) — контейнеры `updater-scheduler` / `updater-worker`: очереди RabbitMQ, расписание, тестирование
+- [docs/minio.md](docs/minio.md) — контейнеры `minio` / `minio-init`: бакеты, ключи объектов, конфигурация

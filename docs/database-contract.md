@@ -83,6 +83,10 @@
 
 Создаёт таблицу `news` (новости раздела «Кошелёк»).
 
+### `019_create_transactions`
+
+Создаёт таблицы `transactions_io`, `transactions_deals`, `transactions_refs`. `deal_id` в `transactions_deals` добавлен без FK-ограничения — оно будет добавлено в миграции `deals`.
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -896,6 +900,68 @@
 | Тип | Имя | Выражение |
 |---|---|---|
 | `PRIMARY KEY` | `news_pkey` | `id` |
+
+### 43. `transactions_io`
+
+Пополнения и выводы средств пользователей.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID операции |
+| `user_id` | `bigint` | да | `—` | ID пользователя (FK → `users.user_id`) |
+| `amount` | `numeric(10,2)` | да | `—` | Сумма операции |
+| `type` | `text` | да | `—` | Тип операции: `in` — пополнение, `out` — вывод |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `transactions_io_pkey` | `id` |
+| `FOREIGN KEY` | `transactions_io_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `CHECK` | `transactions_io_type_check` | `type IN ('in', 'out')` |
+
+### 44. `transactions_deals`
+
+Транзакции сделок и комиссий. `deal_id` хранится без FK-ограничения — оно будет добавлено в миграции `deals`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID операции |
+| `user_from` | `bigint` | да | `—` | Пользователь, с которого списаны средства (FK → `users.user_id`) |
+| `user_to` | `bigint` | да | `—` | Пользователь, которому перечислены средства (FK → `users.user_id`) |
+| `deal_id` | `integer` | да | `—` | ID сделки (FK будет добавлен в миграции `deals`) |
+| `amount` | `numeric(10,2)` | да | `—` | Сумма операции |
+| `type` | `text` | да | `—` | Тип операции: `deal` — транзакция сделки, `fee` — комиссия |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `transactions_deals_pkey` | `id` |
+| `FOREIGN KEY` | `transactions_deals_user_from_fkey` | `FOREIGN KEY (user_from) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `transactions_deals_user_to_fkey` | `FOREIGN KEY (user_to) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `CHECK` | `transactions_deals_type_check` | `type IN ('deal', 'fee')` |
+
+### 45. `transactions_refs`
+
+Транзакции реферальных вознаграждений. Сумма вычитается из комиссии, на которую ссылается `trn_deal_id`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID операции |
+| `user_to` | `bigint` | да | `—` | Пользователь, которому начислено вознаграждение (FK → `users.user_id`) |
+| `user_from` | `bigint` | да | `—` | Пользователь, за которого начислено вознаграждение (FK → `users.user_id`) |
+| `trn_deal_id` | `integer` | да | `—` | ID комиссии, от которой вычисляется выплата (FK → `transactions_deals.id`) |
+| `amount` | `numeric(10,2)` | да | `—` | Сумма вознаграждения |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `transactions_refs_pkey` | `id` |
+| `FOREIGN KEY` | `transactions_refs_user_to_fkey` | `FOREIGN KEY (user_to) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `transactions_refs_user_from_fkey` | `FOREIGN KEY (user_from) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `transactions_refs_trn_deal_id_fkey` | `FOREIGN KEY (trn_deal_id) REFERENCES transactions_deals(id) ON DELETE RESTRICT` |
 
 ## 3. Начальные данные справочников
 

@@ -87,9 +87,9 @@
 
 Создаёт таблицы `transactions_io`, `transactions_deals`, `transactions_refs`. `deal_id` в `transactions_deals` добавлен без FK-ограничения — оно будет добавлено в миграции `deals`.
 
-### `020_create_chn_requests`
+### `020_create_requests`
 
-Создаёт таблицу `chn_requests` (отклики на объявления каналов).
+Создаёт все таблицы откликов: `chn_requests` (каналы), `ad_requests` + `ad_requests_media` + `ad_requests_buttons` (реклама), `stories_requests` (сторис), `traffic_requests` (трафик). Ограничение «хотя бы одно из `ad_text`/`ad_media` заполнено» в `ad_requests` обеспечивается на уровне приложения.
 
 ## 2. Спецификация таблиц
 
@@ -987,6 +987,111 @@
 | `UNIQUE` | `chn_requests_user_announ_key` | `(user_id, announ_id)` |
 | `FOREIGN KEY` | `chn_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
 | `FOREIGN KEY` | `chn_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 47. `ad_requests`
+
+Отклики пользователей на рекламные объявления. Один пользователь — не более одного отклика на объявление. Гарантия заполненности хотя бы одного из полей `ad_text`/`ad_media` — на уровне приложения.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID отклика |
+| `created_at` | `timestamp with time zone` | да | `—` | Время создания отклика |
+| `user_id` | `bigint` | да | `—` | ID пользователя (FK → `users.user_id`) |
+| `announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `format` | `text` | да | `—` | Выбранный формат рекламы |
+| `ad_text` | `text` | нет | `—` | Текст публикации |
+| `ad_time` | `timestamp with time zone` | да | `—` | Дата и время публикации |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `ad_requests_pkey` | `id` |
+| `UNIQUE` | `ad_requests_user_announ_key` | `(user_id, announ_id)` |
+| `FOREIGN KEY` | `ad_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `ad_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 48. `ad_requests_media`
+
+Медиафайлы отклика (фото/видео). Максимум 10 на отклик — ограничение на уровне приложения.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `request_id` | `integer` | да | `—` | ID отклика (FK → `ad_requests.id`) |
+| `media_key` | `text` | да | `—` | Ключ файла в MinIO |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `ad_requests_media_pkey` | `id` |
+| `FOREIGN KEY` | `ad_requests_media_request_id_fkey` | `FOREIGN KEY (request_id) REFERENCES ad_requests(id) ON DELETE CASCADE` |
+
+### 49. `ad_requests_buttons`
+
+Кнопки рекламной публикации (текст + ссылка).
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `request_id` | `integer` | да | `—` | ID отклика (FK → `ad_requests.id`) |
+| `btn_text` | `text` | да | `—` | Текст кнопки |
+| `btn_url` | `text` | да | `—` | Ссылка кнопки |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `ad_requests_buttons_pkey` | `id` |
+| `FOREIGN KEY` | `ad_requests_buttons_request_id_fkey` | `FOREIGN KEY (request_id) REFERENCES ad_requests(id) ON DELETE CASCADE` |
+
+### 50. `stories_requests`
+
+Отклики пользователей на объявления сторис. Один пользователь — не более одного отклика на объявление.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID отклика |
+| `created_at` | `timestamp with time zone` | да | `—` | Время создания отклика |
+| `user_id` | `bigint` | да | `—` | ID пользователя (FK → `users.user_id`) |
+| `announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `format` | `text` | да | `—` | Выбранный формат сторис |
+| `story_text` | `text` | нет | `—` | Текст сторис |
+| `story_media` | `text` | да | `—` | Ключ медиафайла в MinIO |
+| `story_time` | `timestamp with time zone` | да | `—` | Дата и время публикации сторис |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_requests_pkey` | `id` |
+| `UNIQUE` | `stories_requests_user_announ_key` | `(user_id, announ_id)` |
+| `FOREIGN KEY` | `stories_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `stories_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 51. `traffic_requests`
+
+Отклики пользователей на объявления трафика. Один пользователь — не более одного отклика на объявление.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID отклика |
+| `created_at` | `timestamp with time zone` | да | `—` | Время создания отклика |
+| `user_id` | `bigint` | да | `—` | ID пользователя (FK → `users.user_id`) |
+| `announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `leads_count` | `integer` | да | `—` | Количество подписчиков для покупки |
+| `link` | `text` | да | `—` | Ссылка на целевой ресурс |
+| `price` | `numeric(10,2)` | да | `—` | Цена трафика |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `traffic_requests_pkey` | `id` |
+| `UNIQUE` | `traffic_requests_user_announ_key` | `(user_id, announ_id)` |
+| `FOREIGN KEY` | `traffic_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `traffic_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
 
 ## 3. Начальные данные справочников
 

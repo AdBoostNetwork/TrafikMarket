@@ -1,0 +1,93 @@
+# App Container
+
+FastAPI-backend Telegram Mini App. Обслуживает фронтенд: профиль, объявления, справочники, заказы.
+
+## Структура пакета
+
+```text
+backend/app/
+  main.py                        # точка входа: читает APP_HOST, APP_PORT из env, запускает uvicorn
+  app.py                         # FastAPI инстанс, middleware, lifespan, подключение роутеров
+  logger.py                      # get_logger(name) — логи пишутся в logs/app.log в корне проекта
+  api/
+    routers/                     # HTTP-слой, только маршрутизация и обработка ошибок
+    schemas/                     # Pydantic response-модели
+  services/                      # бизнес-логика use-case уровня
+  repositories/                  # SQL-запросы и операции с хранилищем, без бизнес-логики
+  external_data/                 # клиент контейнера external-data (не реализован)
+  db/
+    session.py                   # make_session() → async_sessionmaker (NullPool)
+    dependencies.py              # get_session — FastAPI Depends, init_session_factory()
+  storage/
+    client.py                    # make_storage() → aioboto3.Session (credentials из env)
+    dependencies.py              # get_storage — FastAPI Depends, init_storage_client()
+  core/
+    errors.py                    # иерархия ошибок
+```
+
+## Переменные окружения
+
+| Переменная | Описание |
+|---|---|
+| `DATABASE_URL` | URL PostgreSQL (`postgres://...`) |
+| `APP_HOST` | Хост uvicorn |
+| `APP_PORT` | Порт uvicorn |
+| `LOG_LEVEL` | Уровень логирования (по умолчанию `INFO`) |
+| `MINIO_ENDPOINT` | URL MinIO (`http://minio:9000`) |
+| `MINIO_ACCESS_KEY` | Access Key MinIO |
+| `MINIO_SECRET_KEY` | Secret Key MinIO |
+| `MINIO_BUCKET_ANNOUNCEMENTS` | Бакет изображений объявлений |
+
+## Запуск локально
+
+```bash
+export DATABASE_URL="postgres://postgres:postgres@localhost:5432/traffmarket?sslmode=disable"
+export APP_HOST="127.0.0.1"
+export APP_PORT="8000"
+export PYTHONPATH=/path/to/TrafikMarket/backend
+
+python -m app.main
+```
+
+## Архитектура запроса
+
+```
+Router → Depends(get_session) + Depends(get_storage) → Repository(session) + StorageRepository(s3) → Service → Response
+```
+
+- `session_factory` и `storage_client` инициализируются один раз в `lifespan` при старте
+- Сессия и S3-клиент живут ровно один запрос, открываются и закрываются через `yield`
+- Репозиторий получает сессию или S3-клиент в конструктор, бизнес-логики не содержит
+- Сервис получает репозитории в конструктор, работает только с доменными объектами
+
+## Ошибки
+
+```python
+AppError              # базовая
+├── RepositoryError   # ошибка БД → HTTP 500
+├── NotFoundError     # сущность не найдена → HTTP 404
+└── StorageError      # ошибка MinIO → HTTP 500
+```
+
+## Роутеры
+
+### `profile` — `/profile`
+
+| Метод | URL | Описание                      |
+|---|---|-------------------------------|
+| GET | `/profile/balance` | Свободный баланс пользователя |
+| GET | `/profile/wallpaper` | Текущие обои пользователя     |
+| PUT | `/profile/wallpaper` | Смена обоев пользователя      |
+
+### `dictionaries` — `/dictionaries`
+
+| Метод | URL | Описание |
+|---|---|---|
+| GET | `/dictionaries/wallpapers` | Список обоев интерфейса (`id`, `wallpaper_name`, `img_key`) |
+| GET | `/dictionaries/countries` | Справочник стран (`id`, `name`) |
+| GET | `/dictionaries/topics` | Справочник тематик (`id`, `name`) |
+| GET | `/dictionaries/platforms` | Справочник платформ трафика (`id`, `name`) |
+| GET | `/dictionaries/traffic-types` | Справочник типов трафика (`id`, `name`) |
+| GET | `/dictionaries/audience-types` | Справочник типов аудитории (`id`, `name`) |
+| GET | `/dictionaries/news` | Список новостей платформы (`news_name`, `news_text`, `icon_key`) |
+| GET | `/dictionaries/rate` | Текущий курс USDT к рублю (`ruble_usdt_rate`) |

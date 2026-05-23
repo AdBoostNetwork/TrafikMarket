@@ -75,6 +75,22 @@
 
 Создаёт таблицу `rate` (курс USDT к рублю). Ограничение `CHECK (id = 1)` гарантирует единственную запись.
 
+### `017_create_wallpapers`
+
+Создаёт таблицу `wallpapers` (обои интерфейса mini app).
+
+### `018_create_news`
+
+Создаёт таблицу `news` (новости раздела «Кошелёк»).
+
+### `019_create_transactions`
+
+Создаёт таблицы `transactions_io`, `transactions_deals`, `transactions_refs`. `deal_id` в `transactions_deals` добавлен без FK-ограничения — оно будет добавлено в миграции `deals`.
+
+### `020_create_requests`
+
+Создаёт все таблицы откликов: `chn_requests` (каналы), `ad_requests` + `ad_requests_media` + `ad_requests_buttons` (реклама), `stories_requests` (сторис), `traffic_requests` (трафик). Ограничение «хотя бы одно из `ad_text`/`ad_media` заполнено» в `ad_requests` обеспечивается на уровне приложения.
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -99,6 +115,7 @@
 | `deals_summ` | `numeric(10,2)` | да | `0` | Сумма сделок |
 | `frozen_balance` | `numeric(10,2)` | да | `0` | Замороженный баланс |
 | `was_online` | `timestamp with time zone` | да | `—` | Время последней активности пользователя |
+| `wallpaper_id` | `integer` | нет | `—` | Выбранные обои (FK → `wallpapers.id`) |
 
 Ограничения:
 
@@ -106,6 +123,7 @@
 |---|---|---|
 | `PRIMARY KEY` | `users_pkey` | `user_id` |
 | `FOREIGN KEY` | `users_referrer_id_fkey` | `FOREIGN KEY (referrer_id) REFERENCES users(user_id) ON DELETE CASCADE` |
+| `FOREIGN KEY` | `users_wallpaper_id_fkey` | `FOREIGN KEY (wallpaper_id) REFERENCES wallpapers(id) ON DELETE SET NULL` |
 
 ### 2 `countries`
 
@@ -851,6 +869,229 @@
 |---|---|---|
 | `PRIMARY KEY` | `images_pkey` | `id` |
 | `FOREIGN KEY` | `images_img_announ_id_fkey` | `FOREIGN KEY (img_announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 41. `wallpapers`
+
+Каталог обоев интерфейса mini app. Хранит название и ключ файла в MinIO.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID обоев |
+| `wallpaper_name` | `text` | да | `—` | Название обоев |
+| `img_key` | `text` | да | `—` | Ключ файла обоев в MinIO |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `wallpapers_pkey` | `id` |
+| `UNIQUE` | `wallpapers_wallpaper_name_key` | `wallpaper_name` |
+| `UNIQUE` | `wallpapers_img_key_key` | `img_key` |
+
+### 42. `news`
+
+Новости раздела «Кошелёк» mini app.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID новости |
+| `news_name` | `text` | да | `—` | Название новости |
+| `news_text` | `text` | да | `—` | Текст новости |
+| `icon_key` | `text` | да | `—` | Ключ иконки в MinIO |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `news_pkey` | `id` |
+
+### 43. `transactions_io`
+
+Пополнения и выводы средств пользователей.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID операции |
+| `user_id` | `bigint` | да | `—` | ID пользователя (FK → `users.user_id`) |
+| `amount` | `numeric(10,2)` | да | `—` | Сумма операции |
+| `type` | `text` | да | `—` | Тип операции: `in` — пополнение, `out` — вывод |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `transactions_io_pkey` | `id` |
+| `FOREIGN KEY` | `transactions_io_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `CHECK` | `transactions_io_type_check` | `type IN ('in', 'out')` |
+
+### 44. `transactions_deals`
+
+Транзакции сделок и комиссий. `deal_id` хранится без FK-ограничения — оно будет добавлено в миграции `deals`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID операции |
+| `user_from` | `bigint` | да | `—` | Пользователь, с которого списаны средства (FK → `users.user_id`) |
+| `user_to` | `bigint` | да | `—` | Пользователь, которому перечислены средства (FK → `users.user_id`) |
+| `deal_id` | `integer` | да | `—` | ID сделки (FK будет добавлен в миграции `deals`) |
+| `amount` | `numeric(10,2)` | да | `—` | Сумма операции |
+| `type` | `text` | да | `—` | Тип операции: `deal` — транзакция сделки, `fee` — комиссия |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `transactions_deals_pkey` | `id` |
+| `FOREIGN KEY` | `transactions_deals_user_from_fkey` | `FOREIGN KEY (user_from) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `transactions_deals_user_to_fkey` | `FOREIGN KEY (user_to) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `CHECK` | `transactions_deals_type_check` | `type IN ('deal', 'fee')` |
+
+### 45. `transactions_refs`
+
+Транзакции реферальных вознаграждений. Сумма вычитается из комиссии, на которую ссылается `trn_deal_id`.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID операции |
+| `user_to` | `bigint` | да | `—` | Пользователь, которому начислено вознаграждение (FK → `users.user_id`) |
+| `user_from` | `bigint` | да | `—` | Пользователь, за которого начислено вознаграждение (FK → `users.user_id`) |
+| `trn_deal_id` | `integer` | да | `—` | ID комиссии, от которой вычисляется выплата (FK → `transactions_deals.id`) |
+| `amount` | `numeric(10,2)` | да | `—` | Сумма вознаграждения |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `transactions_refs_pkey` | `id` |
+| `FOREIGN KEY` | `transactions_refs_user_to_fkey` | `FOREIGN KEY (user_to) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `transactions_refs_user_from_fkey` | `FOREIGN KEY (user_from) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `transactions_refs_trn_deal_id_fkey` | `FOREIGN KEY (trn_deal_id) REFERENCES transactions_deals(id) ON DELETE RESTRICT` |
+
+### 46. `chn_requests`
+
+Отклики пользователей на объявления каналов. Один пользователь может оставить не более одного отклика на одно объявление.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID отклика |
+| `created_at` | `timestamp with time zone` | да | `—` | Время создания отклика |
+| `user_id` | `bigint` | да | `—` | ID пользователя, создавшего отклик (FK → `users.user_id`) |
+| `announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `tg_username` | `text` | да | `—` | Telegram username для передачи канала |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `chn_requests_pkey` | `id` |
+| `UNIQUE` | `chn_requests_user_announ_key` | `(user_id, announ_id)` |
+| `FOREIGN KEY` | `chn_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `chn_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 47. `ad_requests`
+
+Отклики пользователей на рекламные объявления. Один пользователь — не более одного отклика на объявление. Гарантия заполненности хотя бы одного из полей `ad_text`/`ad_media` — на уровне приложения.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID отклика |
+| `created_at` | `timestamp with time zone` | да | `—` | Время создания отклика |
+| `user_id` | `bigint` | да | `—` | ID пользователя (FK → `users.user_id`) |
+| `announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `format` | `text` | да | `—` | Выбранный формат рекламы |
+| `ad_text` | `text` | нет | `—` | Текст публикации |
+| `ad_time` | `timestamp with time zone` | да | `—` | Дата и время публикации |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `ad_requests_pkey` | `id` |
+| `UNIQUE` | `ad_requests_user_announ_key` | `(user_id, announ_id)` |
+| `FOREIGN KEY` | `ad_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `ad_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 48. `ad_requests_media`
+
+Медиафайлы отклика (фото/видео). Максимум 10 на отклик — ограничение на уровне приложения.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `request_id` | `integer` | да | `—` | ID отклика (FK → `ad_requests.id`) |
+| `media_key` | `text` | да | `—` | Ключ файла в MinIO |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `ad_requests_media_pkey` | `id` |
+| `FOREIGN KEY` | `ad_requests_media_request_id_fkey` | `FOREIGN KEY (request_id) REFERENCES ad_requests(id) ON DELETE CASCADE` |
+
+### 49. `ad_requests_buttons`
+
+Кнопки рекламной публикации (текст + ссылка).
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID записи |
+| `request_id` | `integer` | да | `—` | ID отклика (FK → `ad_requests.id`) |
+| `btn_text` | `text` | да | `—` | Текст кнопки |
+| `btn_url` | `text` | да | `—` | Ссылка кнопки |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `ad_requests_buttons_pkey` | `id` |
+| `FOREIGN KEY` | `ad_requests_buttons_request_id_fkey` | `FOREIGN KEY (request_id) REFERENCES ad_requests(id) ON DELETE CASCADE` |
+
+### 50. `stories_requests`
+
+Отклики пользователей на объявления сторис. Один пользователь — не более одного отклика на объявление.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID отклика |
+| `created_at` | `timestamp with time zone` | да | `—` | Время создания отклика |
+| `user_id` | `bigint` | да | `—` | ID пользователя (FK → `users.user_id`) |
+| `announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `format` | `text` | да | `—` | Выбранный формат сторис |
+| `story_text` | `text` | нет | `—` | Текст сторис |
+| `story_media` | `text` | да | `—` | Ключ медиафайла в MinIO |
+| `story_time` | `timestamp with time zone` | да | `—` | Дата и время публикации сторис |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `stories_requests_pkey` | `id` |
+| `UNIQUE` | `stories_requests_user_announ_key` | `(user_id, announ_id)` |
+| `FOREIGN KEY` | `stories_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `stories_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
+
+### 51. `traffic_requests`
+
+Отклики пользователей на объявления трафика. Один пользователь — не более одного отклика на объявление.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID отклика |
+| `created_at` | `timestamp with time zone` | да | `—` | Время создания отклика |
+| `user_id` | `bigint` | да | `—` | ID пользователя (FK → `users.user_id`) |
+| `announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `leads_count` | `integer` | да | `—` | Количество подписчиков для покупки |
+| `link` | `text` | да | `—` | Ссылка на целевой ресурс |
+| `price` | `numeric(10,2)` | да | `—` | Цена трафика |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `traffic_requests_pkey` | `id` |
+| `UNIQUE` | `traffic_requests_user_announ_key` | `(user_id, announ_id)` |
+| `FOREIGN KEY` | `traffic_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `traffic_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
 
 ## 3. Начальные данные справочников
 

@@ -1,0 +1,26 @@
+from pydantic import BaseModel
+
+
+class WallpaperResponse(BaseModel):
+    """Объект обоев интерфейса mini app"""
+    id: int
+    wallpaper_name: str
+    img_key: str
+
+
+class DictionaryItemResponse(BaseModel):
+    """Элемент справочника (страна, тематика, платформа, тип трафика, тип аудитории)"""
+    id: int
+    name: str
+
+
+class RateResponse(BaseModel):
+    """Текущий курс USDT к рублю"""
+    ruble_usdt_rate: float
+
+
+class NewsItemResponse(BaseModel):
+    """Новость платформы"""
+    news_name: str
+    news_text: str
+    icon_key: str

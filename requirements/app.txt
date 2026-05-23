@@ -1,0 +1,9 @@
+aioboto3~=13.4.0
+fastapi~=0.121.3
+uvicorn~=0.38.0
+starlette~=0.50.0
+pydantic~=2.12.4
+SQLAlchemy~=2.0.45
+asyncpg~=0.30.0
+python-dotenv~=1.2.1
+requests~=2.32.5

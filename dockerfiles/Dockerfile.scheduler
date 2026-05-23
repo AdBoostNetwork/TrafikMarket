@@ -6,8 +6,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app/backend
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements/scheduler.txt ./
+RUN pip install --no-cache-dir -r scheduler.txt
 
 COPY backend/updater/ ./backend/updater/
 

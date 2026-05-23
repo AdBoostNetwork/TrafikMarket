@@ -87,6 +87,10 @@
 
 Создаёт таблицы `transactions_io`, `transactions_deals`, `transactions_refs`. `deal_id` в `transactions_deals` добавлен без FK-ограничения — оно будет добавлено в миграции `deals`.
 
+### `020_create_chn_requests`
+
+Создаёт таблицу `chn_requests` (отклики на объявления каналов).
+
 ## 2. Спецификация таблиц
 
 ### 1. `users`
@@ -962,6 +966,27 @@
 | `FOREIGN KEY` | `transactions_refs_user_to_fkey` | `FOREIGN KEY (user_to) REFERENCES users(user_id) ON DELETE RESTRICT` |
 | `FOREIGN KEY` | `transactions_refs_user_from_fkey` | `FOREIGN KEY (user_from) REFERENCES users(user_id) ON DELETE RESTRICT` |
 | `FOREIGN KEY` | `transactions_refs_trn_deal_id_fkey` | `FOREIGN KEY (trn_deal_id) REFERENCES transactions_deals(id) ON DELETE RESTRICT` |
+
+### 46. `chn_requests`
+
+Отклики пользователей на объявления каналов. Один пользователь может оставить не более одного отклика на одно объявление.
+
+| Столбец | Тип / атрибут | Обязательность | По умолчанию | Описание |
+|---|---|---|---|---|
+| `id` | `serial` | да | `auto` | ID отклика |
+| `created_at` | `timestamp with time zone` | да | `—` | Время создания отклика |
+| `user_id` | `bigint` | да | `—` | ID пользователя, создавшего отклик (FK → `users.user_id`) |
+| `announ_id` | `integer` | да | `—` | ID объявления (FK → `announs.announ_id`) |
+| `tg_username` | `text` | да | `—` | Telegram username для передачи канала |
+
+Ограничения:
+
+| Тип | Имя | Выражение |
+|---|---|---|
+| `PRIMARY KEY` | `chn_requests_pkey` | `id` |
+| `UNIQUE` | `chn_requests_user_announ_key` | `(user_id, announ_id)` |
+| `FOREIGN KEY` | `chn_requests_user_id_fkey` | `FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT` |
+| `FOREIGN KEY` | `chn_requests_announ_id_fkey` | `FOREIGN KEY (announ_id) REFERENCES announs(announ_id) ON DELETE CASCADE` |
 
 ## 3. Начальные данные справочников
 

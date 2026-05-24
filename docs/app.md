@@ -73,11 +73,12 @@ AppError              # базовая
 
 ### `profile` — `/profile`
 
-| Метод | URL | Описание                      |
-|---|---|-------------------------------|
+| Метод | URL | Описание |
+|---|---|---|
 | GET | `/profile/balance` | Свободный баланс пользователя |
-| GET | `/profile/wallpaper` | Текущие обои пользователя     |
-| PUT | `/profile/wallpaper` | Смена обоев пользователя      |
+| GET | `/profile/wallpaper` | Текущие обои пользователя |
+| PUT | `/profile/wallpaper` | Смена обоев пользователя |
+| GET | `/profile/transactions` | История транзакций пользователя (cursor-пагинация, 20 за запрос) |
 
 ### `dictionaries` — `/dictionaries`
 

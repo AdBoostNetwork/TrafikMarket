@@ -46,4 +46,4 @@ class DictionariesService:
     async def get_rate(self) -> RateResponse:
         logger.info("Получение курса USDT")
         row = await self._repo.get_rate()
-        return RateResponse(ruble_usdt_rate=float(row["ruble_usdt_rate"]))
+        return RateResponse(ruble_usdt_rate=row["ruble_usdt_rate"])

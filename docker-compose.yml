@@ -103,7 +103,9 @@ services:
       mc anonymous set download minio/avatars &&
       mc anonymous set download minio/announcements &&
       mc anonymous set download minio/wallpapers &&
-      mc anonymous set download minio/news
+      mc anonymous set download minio/news &&
+      mc mb --ignore-existing minio/requests &&
+      mc anonymous set download minio/requests
       "
     restart: "no"
 
@@ -123,6 +125,7 @@ services:
       MINIO_BUCKET_ANNOUNCEMENTS: announcements
       MINIO_BUCKET_WALLPAPERS: wallpapers
       MINIO_BUCKET_NEWS: news
+      MINIO_BUCKET_REQUESTS: requests
     ports:
       - "8000:8000"
     volumes:

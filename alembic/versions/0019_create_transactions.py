@@ -22,10 +22,11 @@ def upgrade() -> None:
     op.execute(
         """
         CREATE TABLE transactions_io (
-            id      SERIAL NOT NULL,
-            user_id BIGINT NOT NULL,
-            amount  NUMERIC(10,2) NOT NULL,
-            type    TEXT NOT NULL,
+            id         SERIAL NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+            user_id    BIGINT NOT NULL,
+            amount     NUMERIC(10,2) NOT NULL,
+            type       TEXT NOT NULL,
             CONSTRAINT transactions_io_pkey PRIMARY KEY (id),
             CONSTRAINT transactions_io_user_id_fkey FOREIGN KEY (user_id)
                 REFERENCES users(user_id) ON DELETE RESTRICT,
@@ -37,12 +38,14 @@ def upgrade() -> None:
     op.execute(
         """
         CREATE TABLE transactions_deals (
-            id        SERIAL NOT NULL,
-            user_from BIGINT NOT NULL,
-            user_to   BIGINT NOT NULL,
-            deal_id   INTEGER NOT NULL,
-            amount    NUMERIC(10,2) NOT NULL,
-            type      TEXT NOT NULL,
+            id         SERIAL NOT NULL,
+            created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+            user_from  BIGINT NOT NULL,
+            user_to    BIGINT NOT NULL,
+            deal_id    INTEGER NOT NULL,
+            announ_type TEXT NOT NULL,
+            amount     NUMERIC(10,2) NOT NULL,
+            type       TEXT NOT NULL,
             CONSTRAINT transactions_deals_pkey PRIMARY KEY (id),
             CONSTRAINT transactions_deals_user_from_fkey FOREIGN KEY (user_from)
                 REFERENCES users(user_id) ON DELETE RESTRICT,
@@ -57,6 +60,7 @@ def upgrade() -> None:
         """
         CREATE TABLE transactions_refs (
             id          SERIAL NOT NULL,
+            created_at  TIMESTAMP WITH TIME ZONE NOT NULL,
             user_to     BIGINT NOT NULL,
             user_from   BIGINT NOT NULL,
             trn_deal_id INTEGER NOT NULL,

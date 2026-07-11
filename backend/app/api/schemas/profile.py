@@ -5,6 +5,13 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, Field
 
 
+class AssetsResponse(BaseModel):
+    """Активы пользователя"""
+    current_balance: Decimal
+    frozen_balance: Decimal
+    total_balance: Decimal
+
+
 class BalanceResponse(BaseModel):
     """Свободный баланс пользователя"""
     free_balance: Decimal

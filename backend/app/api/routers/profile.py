@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.schemas.common import SuccessResponse
-from app.api.schemas.profile import BalanceResponse, TransactionsResponse, WallpaperCurrentResponse, WallpaperUpdateRequest
+from app.api.schemas.profile import AssetsResponse, BalanceResponse, TransactionsResponse, WallpaperCurrentResponse, WallpaperUpdateRequest
 from app.core.errors import NotFoundError, RepositoryError
 from app.db.dependencies import get_session
 from app.logger import get_logger
@@ -12,6 +12,23 @@ from app.services.profile import ProfileService
 logger = get_logger(__name__)
 
 router = APIRouter(prefix="/profile", tags=["Профиль"])
+
+
+@router.get("/assets", response_model=AssetsResponse, summary="Получение активов пользователя")
+async def get_assets(user_id: int, session: AsyncSession = Depends(get_session)) -> AssetsResponse:
+    try:
+        repo = ProfileRepository(session)
+        service = ProfileService(repo)
+        return await service.get_assets(user_id)
+    except NotFoundError as e:
+        logger.error("get_assets not_found | user_id=%s | error=%s", user_id, str(e))
+        raise HTTPException(status_code=404, detail=str(e))
+    except RepositoryError as e:
+        logger.error("get_assets db_error | user_id=%s | error=%s", user_id, str(e))
+        raise HTTPException(status_code=500, detail="db_error")
+    except Exception as e:
+        logger.error("get_assets error | user_id=%s | error=%s", user_id, str(e))
+        raise HTTPException(status_code=500, detail="internal_error")
 
 
 @router.get("/balance", response_model=BalanceResponse, summary="Получение баланса пользователя")

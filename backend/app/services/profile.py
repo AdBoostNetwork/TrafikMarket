@@ -2,6 +2,7 @@ from datetime import datetime
 
 from app.api.schemas.common import SuccessResponse
 from app.api.schemas.profile import (
+    AssetsResponse,
     BalanceResponse,
     DealTransaction,
     IOTransaction,
@@ -22,6 +23,15 @@ _TRANSACTIONS_LIMIT = 20
 class ProfileService:
     def __init__(self, repo: ProfileRepository) -> None:
         self._repo = repo
+
+    async def get_assets(self, user_id: int) -> AssetsResponse:
+        logger.info("Получение активов | user_id=%s", user_id)
+        row = await self._repo.get_balance(user_id)
+        return AssetsResponse(
+            current_balance=row["current_balance"],
+            frozen_balance=row["frozen_balance"],
+            total_balance=row["current_balance"] + row["frozen_balance"],
+        )
 
     async def get_balance(self, user_id: int) -> BalanceResponse:
         logger.info("Получение баланса | user_id=%s", user_id)

@@ -139,6 +139,34 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
 
+  ai-assistant:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.ai-assistant
+    environment:
+      AI_HOST: 0.0.0.0
+      AI_PORT: 8001
+      AI_DATABASE_URL: postgres://postgres:postgres@postgres:5432/traffmarket_ai?sslmode=disable
+      MAIN_DATABASE_URL: postgres://postgres:postgres@postgres:5432/traffmarket?sslmode=disable
+
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_URL: https://openrouter.ai/api/v1
+      LLM_MODEL: ${LLM_MODEL:-}
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./logs/ai-assistant:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8001/health').status==200 else 1)"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
 volumes:
   traffmarket_data:
     name: traffmarket

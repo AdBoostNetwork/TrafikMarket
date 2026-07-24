@@ -10,3 +10,5 @@ instructions
 logs
 ideas
 docs/AI TOOLS.md
+__pycache__/
+*.pyc

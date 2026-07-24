@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from pydantic import BaseModel
 
 
@@ -16,7 +18,7 @@ class DictionaryItemResponse(BaseModel):
 
 class RateResponse(BaseModel):
     """Текущий курс USDT к рублю"""
-    ruble_usdt_rate: float
+    ruble_usdt_rate: Decimal
 
 
 class NewsItemResponse(BaseModel):

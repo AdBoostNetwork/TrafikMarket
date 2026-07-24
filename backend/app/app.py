@@ -32,3 +32,8 @@ app.add_middleware(
 
 app.include_router(profile.router)
 app.include_router(dictionaries.router)
+
+
+@app.get("/health", tags=["Health"], summary="Проверка состояния сервиса")
+async def health() -> dict:
+    return {"status": "ok"}

@@ -1,0 +1,14 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app/backend
+
+COPY requirements/ai-assistant.txt ./
+RUN pip install --no-cache-dir -r ai-assistant.txt
+
+COPY backend/ai_assistant/ ./backend/ai_assistant/
+
+CMD ["python", "-m", "ai_assistant.main"]

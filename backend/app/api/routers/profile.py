@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.schemas.common import SuccessResponse
-from app.api.schemas.profile import BalanceResponse, WallpaperCurrentResponse, WallpaperUpdateRequest
+from app.api.schemas.profile import AssetsResponse, BalanceResponse, TransactionsResponse, WallpaperCurrentResponse, WallpaperUpdateRequest
 from app.core.errors import NotFoundError, RepositoryError
 from app.db.dependencies import get_session
 from app.logger import get_logger
@@ -12,6 +12,23 @@ from app.services.profile import ProfileService
 logger = get_logger(__name__)
 
 router = APIRouter(prefix="/profile", tags=["Профиль"])
+
+
+@router.get("/assets", response_model=AssetsResponse, summary="Получение активов пользователя")
+async def get_assets(user_id: int, session: AsyncSession = Depends(get_session)) -> AssetsResponse:
+    try:
+        repo = ProfileRepository(session)
+        service = ProfileService(repo)
+        return await service.get_assets(user_id)
+    except NotFoundError as e:
+        logger.error("get_assets not_found | user_id=%s | error=%s", user_id, str(e))
+        raise HTTPException(status_code=404, detail=str(e))
+    except RepositoryError as e:
+        logger.error("get_assets db_error | user_id=%s | error=%s", user_id, str(e))
+        raise HTTPException(status_code=500, detail="db_error")
+    except Exception as e:
+        logger.error("get_assets error | user_id=%s | error=%s", user_id, str(e))
+        raise HTTPException(status_code=500, detail="internal_error")
 
 
 @router.get("/balance", response_model=BalanceResponse, summary="Получение баланса пользователя")
@@ -45,6 +62,23 @@ async def get_wallpaper(user_id: int, session: AsyncSession = Depends(get_sessio
         raise HTTPException(status_code=500, detail="db_error")
     except Exception as e:
         logger.error("get_wallpaper error | user_id=%s | error=%s", user_id, str(e))
+        raise HTTPException(status_code=500, detail="internal_error")
+
+
+@router.get("/transactions", response_model=TransactionsResponse, summary="Получение транзакций пользователя")
+async def get_transactions(user_id: int, cursor: str | None = Query(None, max_length=100), session: AsyncSession = Depends(get_session)) -> TransactionsResponse:
+    try:
+        repo = ProfileRepository(session)
+        service = ProfileService(repo)
+        return await service.get_transactions(user_id, cursor)
+    except ValueError as e:
+        logger.error("get_transactions invalid_cursor | user_id=%s | cursor=%s | error=%s", user_id, cursor, str(e))
+        raise HTTPException(status_code=400, detail="invalid_cursor")
+    except RepositoryError as e:
+        logger.error("get_transactions db_error | user_id=%s | error=%s", user_id, str(e))
+        raise HTTPException(status_code=500, detail="db_error")
+    except Exception as e:
+        logger.error("get_transactions error | user_id=%s | error=%s", user_id, str(e))
         raise HTTPException(status_code=500, detail="internal_error")
 
 

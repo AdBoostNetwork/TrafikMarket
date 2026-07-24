@@ -177,10 +177,10 @@ class Tool:
 | `AI_HOST` | Хост uvicorn |
 | `AI_PORT` | Порт uvicorn |
 | `AI_DATABASE_URL` | URL БД помощника (`postgres://...`) |
-| `MAIN_DATABASE_URL_RO` | URL основной БД под read-only ролью |
+| `MAIN_DATABASE_URL` | URL основной БД под read-only ролью |
 | `APP_BASE_URL` | Внутренний URL контейнера `app` (`http://app:8000`) для действий |
 | `OPENROUTER_API_KEY` | Ключ OpenRouter |
-| `OPENROUTER_BASE_URL` | Базовый URL OpenRouter (позволяет подменить на локальную Ollama) |
+| `OPENROUTER_URL` | Базовый URL OpenRouter |
 | `LLM_MODEL` | Идентификатор модели |
 | `WEB_SEARCH_API_KEY` | Ключ поискового API (веб-поиск) |
 | `MESSAGE_LIMIT_PER_DAY` | Лимит сообщений на пользователя в сутки |
@@ -225,7 +225,7 @@ class Tool:
 
 Зафиксировано:
 
-- LLM — OpenRouter, провайдер-независимый слой (задел под локальную Ollama).
+- LLM — OpenRouter (OpenAI-compatible слой).
 - БД помощника — отдельная база в контейнере `postgres`, свой Alembic.
 - Аналитика — read-only SQL к основной БД; действия — только HTTP к `app`.
 - Транспорт — `frontend`/`bot` → `app` → `ai-assistant`, `user_id` от `app`, стрим ответов (SSE).

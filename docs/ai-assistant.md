@@ -95,7 +95,7 @@ backend/ai_assistant/
     registry.py              # реестр инструментов (регистрация декоратором)
     context.py               # ToolContext: user_id, сессии, http-клиент app
   tools/
-    base.py                  # ToolSpec, базовый класс Tool
+    base.py                  # базовый класс Tool (abc.ABC) + pydantic Params
     analytics/               # аналитические инструменты (read-only SQL), один модуль = один инструмент
     actions/                 # инструменты-действия (HTTP к app)
     external/                # веб-поиск
@@ -140,24 +140,32 @@ backend/ai_assistant/
 
 ```python
 # tools/base.py
-from dataclasses import dataclass
+import abc
+from typing import TYPE_CHECKING
+from pydantic import BaseModel
 
-@dataclass(frozen=True)
-class ToolSpec:
-    name: str            # уникальное имя, snake_case, напр. "get_avg_cpm"
-    description: str     # для модели: что делает и когда вызывать
-    parameters: dict     # JSON-schema параметров (без user_id)
+if TYPE_CHECKING:
+    from ai_assistant.agent.context import ToolContext
 
-class Tool:
-    spec: ToolSpec
-    async def execute(self, ctx: "ToolContext", **params) -> dict:
+class Tool(abc.ABC):
+    name: str                     # уникальное имя, snake_case, напр. "get_avg_cpm"
+    description: str              # для модели: что делает и когда вызывать
+    Params: type[BaseModel]      # pydantic-модель аргументов (без user_id)
+
+    @abc.abstractmethod
+    async def execute(self, ctx: "ToolContext", params: BaseModel) -> dict:
+        ...
+
+    def tool_spec(self) -> dict:  # OpenAI function-tool; parameters = Params.model_json_schema()
         ...
 ```
 
 Инварианты:
 
-- `user_id` **не входит** в `spec.parameters`. Исполнитель берёт его из `ctx.user_id`, который
+- `user_id` **не входит** в `Params`. Исполнитель берёт его из `ctx.user_id`, который
   проставлен из авторизованной сессии `app`.
+- JSON-schema для модели генерится из `Params` (`Params.model_json_schema()` через `tool_spec()`);
+  аргументы от модели валидируются pydantic (`Params.model_validate`) до вызова `execute`.
 - Аналитический инструмент получает read-only сессию основной БД из `ctx`, пишет SQL через
   `sqlalchemy.text()` в стиле `backend/app/repositories/`.
 - Инструмент-действие вызывает ручку `app` через `ctx.app_client`, не пишет в БД сам.
@@ -166,7 +174,7 @@ class Tool:
 - Регистрация в реестре — декоратором `@register` из `agent/registry.py`.
 
 Каждый инструмент из [docs/AI TOOLS.md](AI%20TOOLS.md) реализуется по этому шаблону. Названия
-в каталоге — человекочитаемые; техническое имя (`spec.name`) задаётся при реализации.
+в каталоге — человекочитаемые; техническое имя (`Tool.name`) задаётся при реализации.
 
 ---
 

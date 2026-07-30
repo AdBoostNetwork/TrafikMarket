@@ -9,7 +9,7 @@ from ai_assistant.agent.loop import stream_chat
 from ai_assistant.agent.registry import registry
 from ai_assistant.api.schemas.chat import ChatRequest
 from ai_assistant.core.errors import LLMError
-from ai_assistant.db.dependencies import get_main_session
+from ai_assistant.db.dependencies import get_ai_session, get_main_session
 from ai_assistant.logger import get_logger
 
 logger = get_logger(__name__)
@@ -22,10 +22,11 @@ async def chat(
     data: ChatRequest,
     request: Request,
     session: AsyncSession = Depends(get_main_session),
+    ai_session: AsyncSession = Depends(get_ai_session),
 ) -> StreamingResponse:
     client = request.app.state.llm_client
     system_prompt = request.app.state.system_prompt
-    ctx = ToolContext(user_id=data.user_id, db=session)
+    ctx = ToolContext(user_id=data.user_id, db=session, ai_db=ai_session)
     logger.info("В чат отправлено сообщение | %s", repr(data))
 
     async def event_stream():

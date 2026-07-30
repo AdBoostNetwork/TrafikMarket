@@ -26,9 +26,23 @@ services:
     environment:
       DATABASE_URL: postgres://postgres:postgres@postgres:5432/traffmarket?sslmode=disable
       AI_DB_PASSWORD: ${AI_DB_PASSWORD}
+      AI_APP_PASSWORD: ${AI_APP_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
+    restart: "no"
+
+  ai-migrate:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.ai-migrate
+    environment:
+      AI_DATABASE_URL: postgres://ai_assistant:${AI_APP_PASSWORD}@postgres:5432/traffmarket_ai?sslmode=disable
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     restart: "no"
 
   rabbitmq:
@@ -147,7 +161,7 @@ services:
     environment:
       AI_HOST: 0.0.0.0
       AI_PORT: 8001
-      AI_DATABASE_URL: postgres://postgres:postgres@postgres:5432/traffmarket_ai?sslmode=disable
+      AI_DATABASE_URL: postgres://ai_assistant:${AI_APP_PASSWORD}@postgres:5432/traffmarket_ai?sslmode=disable
       MAIN_DATABASE_URL: postgres://ai_readonly:${AI_DB_PASSWORD}@postgres:5432/traffmarket?sslmode=disable
 
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
@@ -163,6 +177,8 @@ services:
       postgres:
         condition: service_healthy
       migrate:
+        condition: service_completed_successfully
+      ai-migrate:
         condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8001/health').status==200 else 1)"]

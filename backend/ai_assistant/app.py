@@ -2,10 +2,16 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
+from sqlalchemy import text
 
 from ai_assistant.api.routers import chat
 from ai_assistant.core.config import load_app_settings, load_ai_settings
-from ai_assistant.db.dependencies import init_main_session_factory, get_main_session_factory
+from ai_assistant.db.dependencies import (
+    get_ai_session_factory,
+    get_main_session_factory,
+    init_ai_session_factory,
+    init_main_session_factory,
+)
 from ai_assistant.llm.client import make_llm_client
 from ai_assistant.logger import get_logger
 from ai_assistant.tools.loader import load_tools
@@ -26,6 +32,12 @@ async def lifespan(_app: FastAPI):
     init_main_session_factory(_app.state.app_settings.main_database_url)
     async with get_main_session_factory()() as session:
         await load_topics(session)
+
+    init_ai_session_factory(_app.state.app_settings.ai_database_url)
+    async with get_ai_session_factory()() as session:
+        await session.execute(text("SELECT 1"))
+    logger.info("база помощника подключена | db=traffmarket_ai")
+
     load_tools()
     _app.state.llm_client = make_llm_client(_app.state.ai_settings)
     _app.state.system_prompt = load_system_prompt()

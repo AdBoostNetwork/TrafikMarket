@@ -14,6 +14,7 @@ from ai_assistant.db.dependencies import (
 )
 from ai_assistant.llm.client import make_llm_client
 from ai_assistant.logger import get_logger
+from ai_assistant.tools.dictionaries import load_dictionaries
 from ai_assistant.tools.loader import load_tools
 from ai_assistant.tools.topics import load_topics
 
@@ -32,6 +33,7 @@ async def lifespan(_app: FastAPI):
     init_main_session_factory(_app.state.app_settings.main_database_url)
     async with get_main_session_factory()() as session:
         await load_topics(session)
+        await load_dictionaries(session)
 
     init_ai_session_factory(_app.state.app_settings.ai_database_url)
     async with get_ai_session_factory()() as session:

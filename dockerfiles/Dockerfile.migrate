@@ -5,11 +5,14 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+RUN apt-get update && apt-get install -y --no-install-recommends postgresql-client && rm -rf /var/lib/apt/lists/*
+
 COPY requirements/migrate.txt ./
 RUN pip install --no-cache-dir -r migrate.txt
 
 COPY alembic.ini ./
 COPY alembic ./alembic
+COPY dockerfiles/entrypoint-migrate.sh ./entrypoint-migrate.sh
+RUN chmod +x ./entrypoint-migrate.sh
 
-ENTRYPOINT ["alembic"]
-CMD ["upgrade", "head"]
+ENTRYPOINT ["/app/entrypoint-migrate.sh"]
